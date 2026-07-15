@@ -94,10 +94,18 @@ button {
   gap: 9px;
 }
 .topbar .try-link {
-  color: var(--green);
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--green);
+  padding: 6px 16px;
+  border-radius: 8px;
+  border: 1px solid #000000;
+  box-shadow: 0 1px 3px rgba(31, 35, 40, 0.12);
+  transition: transform 0.12s ease, background 0.12s ease;
 }
 .topbar .try-link:hover {
-  text-decoration: underline;
+  background: var(--green-dim);
+  transform: translateY(-1px);
 }
 
 /* ---- buttons ---- */
