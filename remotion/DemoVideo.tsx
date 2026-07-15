@@ -2,9 +2,9 @@ import React from "react";
 import { Sequence } from "remotion";
 import { SceneBg, FadeScene } from "./common";
 import {
-  SceneHook,
-  SceneScan,
-  SceneQualify,
+  SceneDescribe,
+  SceneRank,
+  SceneWhy,
   SceneMessage,
   SceneResults,
   SceneOutro,
@@ -12,11 +12,11 @@ import {
 
 // 30 fps
 const SCENES: { comp: React.FC; duration: number }[] = [
-  { comp: SceneHook, duration: 120 }, // 4 s
-  { comp: SceneScan, duration: 220 }, // ~7 s
-  { comp: SceneQualify, duration: 180 }, // 6 s
-  { comp: SceneMessage, duration: 280 }, // ~9 s
-  { comp: SceneResults, duration: 150 }, // 5 s
+  { comp: SceneDescribe, duration: 210 }, // 7 s — type what you sell
+  { comp: SceneRank, duration: 200 }, // ~7 s — ranked leads, click #1
+  { comp: SceneWhy, duration: 200 }, // ~7 s — why she's hot
+  { comp: SceneMessage, duration: 280 }, // ~9 s — personalized email
+  { comp: SceneResults, duration: 160 }, // ~5 s — inbox
   { comp: SceneOutro, duration: 130 }, // ~4 s
 ];
 

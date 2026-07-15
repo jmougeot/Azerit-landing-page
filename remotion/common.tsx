@@ -6,8 +6,8 @@ export const SceneBg: React.FC<{ children: React.ReactNode }> = ({ children }) =
   <AbsoluteFill
     style={{
       background: T.bg,
-      backgroundImage: `linear-gradient(rgba(48,54,61,0.25) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(48,54,61,0.25) 1px, transparent 1px)`,
+      backgroundImage: `linear-gradient(rgba(34,48,64,0.3) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34,48,64,0.3) 1px, transparent 1px)`,
       backgroundSize: "60px 60px",
       fontFamily: T.sans,
       color: T.text,
@@ -74,31 +74,49 @@ export const TypeText: React.FC<{
   );
 };
 
-export const StepTag: React.FC<{ num: string; label: string }> = ({ num, label }) => (
-  <div
-    style={{
-      position: "absolute",
-      top: 56,
-      left: 80,
-      display: "flex",
-      alignItems: "center",
-      gap: 16,
-      fontFamily: T.mono,
-    }}
-  >
+// Légende flottante en bas de l'écran, par-dessus le dashboard
+export const StepTag: React.FC<{ num: string; label: string }> = ({ num, label }) => {
+  const pop = usePop(10);
+  return (
     <div
       style={{
-        background: T.greenSoft,
-        border: `2px solid ${T.green}`,
-        color: T.green,
-        borderRadius: 100,
-        padding: "6px 22px",
-        fontSize: 26,
-        fontWeight: 700,
+        position: "absolute",
+        bottom: 48,
+        left: 0,
+        right: 0,
+        display: "flex",
+        justifyContent: "center",
+        ...pop,
       }}
     >
-      {num}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 18,
+          fontFamily: T.mono,
+          background: "rgba(10, 15, 22, 0.94)",
+          border: `1px solid ${T.border}`,
+          borderRadius: 99,
+          padding: "14px 30px",
+          boxShadow: "0 16px 50px rgba(0,0,0,0.55)",
+        }}
+      >
+        <div
+          style={{
+            background: T.greenSoft,
+            border: `2px solid ${T.green}`,
+            color: T.green,
+            borderRadius: 100,
+            padding: "3px 18px",
+            fontSize: 24,
+            fontWeight: 700,
+          }}
+        >
+          {num}
+        </div>
+        <div style={{ fontSize: 27, color: T.text }}>{label}</div>
+      </div>
     </div>
-    <div style={{ fontSize: 30, color: T.dim }}>{label}</div>
-  </div>
-);
+  );
+};
