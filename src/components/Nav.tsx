@@ -22,6 +22,9 @@ export function Footer() {
       <div className="container" style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <LogoMark size={13} /> azerit © {new Date().getFullYear()} · the intent is already on
         GitHub.
+        <Link to="/legal" style={{ marginLeft: "auto", color: "inherit" }}>
+          legal &amp; privacy
+        </Link>
       </div>
     </footer>
   );
