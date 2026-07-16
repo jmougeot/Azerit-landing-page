@@ -1,35 +1,24 @@
-import React, { Suspense, lazy, useEffect } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import "./styles.css";
-import { Landing } from "./pages/Landing";
+import { App } from "./App";
 
-// GitHub Pages serves the same index.html for every route (404 fallback),
-// so the canonical URL must be kept in sync with the current route.
-function CanonicalSync() {
-  const { pathname } = useLocation();
-  useEffect(() => {
-    const link = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
-    if (link) link.href = `https://www.azerit.tech${pathname === "/" ? "/" : pathname}`;
-  }, [pathname]);
-  return null;
-}
-
-// Only the landing page is needed for the initial paint; split the rest.
-const Try = lazy(() => import("./pages/Try").then((m) => ({ default: m.Try })));
-const Admin = lazy(() => import("./pages/Admin").then((m) => ({ default: m.Admin })));
-
-ReactDOM.createRoot(document.getElementById("root")!).render(
+const root = document.getElementById("root")!;
+const app = (
   <React.StrictMode>
     <BrowserRouter>
-      <CanonicalSync />
-      <Suspense fallback={null}>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/try" element={<Try />} />
-          <Route path="/admin" element={<Admin />} />
-        </Routes>
-      </Suspense>
+      <App />
     </BrowserRouter>
-  </React.StrictMode>,
+  </React.StrictMode>
 );
+
+// index.html ships with the landing page prerendered into #root — hydrate it.
+// 404.html is a copy of index.html, so /try and /admin also arrive with that
+// markup; there it doesn't match the route, so discard it and render fresh.
+if (root.hasChildNodes() && window.location.pathname === "/") {
+  ReactDOM.hydrateRoot(root, app);
+} else {
+  root.innerHTML = "";
+  ReactDOM.createRoot(root).render(app);
+}
