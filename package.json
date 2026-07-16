@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && vite build --ssr src/entry-prerender.tsx --outDir dist-ssr --emptyOutDir && node scripts/prerender.mjs",
     "preview": "vite preview",
     "video": "remotion studio",
     "video:render": "remotion render DemoVideo out/demo.mp4"
