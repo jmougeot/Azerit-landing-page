@@ -5,6 +5,9 @@ import { Landing } from "./pages/Landing";
 // Only the landing page is needed for the initial paint; split the rest.
 const Try = lazy(() => import("./pages/Try").then((m) => ({ default: m.Try })));
 const Admin = lazy(() => import("./pages/Admin").then((m) => ({ default: m.Admin })));
+const NotFound = lazy(() =>
+  import("./pages/NotFound").then((m) => ({ default: m.NotFound }))
+);
 
 // GitHub Pages serves the same index.html for every route (404 fallback),
 // so the canonical URL must be kept in sync with the current route.
@@ -28,6 +31,7 @@ export function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/try" element={<Try />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
     </>

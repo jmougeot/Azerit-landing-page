@@ -309,7 +309,7 @@ export function Landing() {
         <p className="team-sub">Two Centrale engineers putting tech to work for sales teams.</p>
         <div className="team-grid">
           <div className="member">
-            <img src={luminePhoto} alt="Lumine Trentelivres" />
+            <img src={luminePhoto} alt="Lumine Trentelivres" width="84" height="84" loading="lazy" />
             <div className="name">Lumine Trentelivres</div>
             <div className="bio">Co-founder. Centrale Supélec engineer, ex-sales.</div>
             <div className="links">
@@ -320,7 +320,7 @@ export function Landing() {
             </div>
           </div>
           <div className="member">
-            <img src={jacquesPhoto} alt="Jacques Mougeot" />
+            <img src={jacquesPhoto} alt="Jacques Mougeot" width="84" height="84" loading="lazy" />
             <div className="name">Jacques Mougeot</div>
             <div className="bio">Co-founder. Centrale engineer, computer science research</div>
             <div className="links">
