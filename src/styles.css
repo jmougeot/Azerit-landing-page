@@ -684,3 +684,30 @@ button {
   border: 1px solid rgba(70, 209, 96, 0.4);
   background: var(--green-soft);
 }
+
+/* legal & privacy page */
+.legal {
+  max-width: 720px;
+  padding-top: 56px;
+  padding-bottom: 72px;
+}
+.legal h1 {
+  font-size: 28px;
+  margin-bottom: 28px;
+}
+.legal h2 {
+  font-size: 20px;
+  margin: 36px 0 10px;
+}
+.legal h3 {
+  font-size: 15.5px;
+  margin: 22px 0 6px;
+}
+.legal p {
+  color: var(--text-dim);
+  line-height: 1.65;
+  margin: 8px 0;
+}
+.legal a {
+  color: var(--green, inherit);
+}
