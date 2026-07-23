@@ -236,6 +236,8 @@ button {
   color: var(--blue);
   font-weight: 600;
   font-size: 14px;
+  overflow-wrap: anywhere;
+  min-width: 0;
 }
 .gh-repo-line .rname:hover {
   text-decoration: underline;
@@ -449,6 +451,13 @@ button {
   align-items: center;
   padding: 84px 0;
 }
+/* grid items default to min-width:auto, which lets a long mono token (repo
+   name, email address) push the track wider than the viewport. min-width:0
+   lets the column shrink so the cards stay inside the screen on mobile. */
+.f-copy,
+.f-visual {
+  min-width: 0;
+}
 .feature.rev .f-copy {
   order: 2;
 }
@@ -501,7 +510,7 @@ button {
   gap: 12px;
 }
 .repo-mock .gh-card.hit {
-  border-color: rgba(70, 209, 96, 0.45);
+  border-color: rgba(15, 118, 110, 0.45); /* match --green (teal), not GitHub's bright green */
 }
 
 /* email mock */
@@ -510,6 +519,10 @@ button {
   border: 1px solid #000000;
   border-radius: 8px;
   overflow: hidden;
+  max-width: 100%;
+  /* mono tokens like the email address / subject must not push past the edge */
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 .email-card .head {
   font-family: var(--font-mono);
@@ -518,6 +531,7 @@ button {
   padding: 14px 18px;
   border-bottom: 1px solid var(--border);
   line-height: 1.8;
+  overflow-wrap: anywhere;
 }
 .email-card .head b {
   color: var(--text);
@@ -758,7 +772,7 @@ button {
   padding: 2px 10px;
   border-radius: 6px;
   color: var(--green);
-  border: 1px solid rgba(70, 209, 96, 0.4);
+  border: 1px solid rgba(15, 118, 110, 0.4);
   background: var(--green-soft);
 }
 
