@@ -33,6 +33,11 @@
 
 html {
   scroll-behavior: smooth;
+  /* the decorative GitHub-logo backdrop extends a bit past the viewport on
+     narrow screens; clip horizontally so the page never scrolls sideways.
+     `clip` (not `hidden`) avoids creating a scroll container, so the sticky
+     top bar keeps working. */
+  overflow-x: clip;
 }
 
 body {
@@ -171,8 +176,23 @@ button {
 @media (max-width: 800px) {
   .hero {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+    align-items: stretch; /* column flex: stretch = children fill width & wrap.
+                             flex-start sized them to content width -> overflow. */
+    gap: 32px;
+    padding: 96px 0 56px;
+  }
+  .hero-copy {
+    max-width: 100%;
+  }
+  .hero .btn-try {
+    align-self: flex-start; /* keep the CTA at its natural width, left-aligned */
+  }
+  .hero h1,
+  .hero .sub {
+    max-width: 100%; /* don't let the desktop max-widths force horizontal overflow */
+  }
+  .hero h1 {
+    margin-bottom: 16px;
   }
 }
 .hero h1 {
@@ -235,7 +255,8 @@ button {
 .gh-meta {
   display: flex;
   align-items: center;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 6px 16px;
   color: var(--text-dim);
   font-size: 12px;
 }
@@ -280,12 +301,15 @@ button {
   background: rgba(9, 105, 218, 0.08);
   border-radius: 5px;
   padding: 1px 7px;
+  flex-shrink: 0;
 }
 .gh-commit .msg {
   color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex: 1;
+  min-width: 0; /* let the ellipsis kick in instead of overflowing the viewport */
 }
 .gh-commit .when {
   margin-left: auto;
@@ -338,6 +362,16 @@ button {
 }
 .video-wrap {
   padding: 80px 0 60px;
+}
+@media (max-width: 800px) {
+  .video-wrap {
+    /* horizontal gutter comes from .container (18px <560); just set the vertical
+       gap so the demo doesn't crowd the hero CTA above it */
+    padding: 80px 0 36px;
+  }
+  .app-frame {
+    border-radius: 14px;
+  }
 }
 
 /* ---- how it works : 3 short steps ---- */
@@ -550,6 +584,49 @@ button {
 }
 .member .links a:hover {
   text-decoration: underline;
+}
+
+/* ---- mobile spacing pass ---- */
+@media (max-width: 800px) {
+  /* On mobile the sections lose their generous desktop whitespace, so give each
+     one the same dashed divider the team/footer already use — makes the
+     boundaries unambiguous instead of blending together. */
+  .how,
+  .feature {
+    border-top: 1px dashed var(--border);
+    margin-top: 8px;
+  }
+  .how {
+    padding: 44px 0 8px;
+  }
+  .feature {
+    padding: 48px 0;
+  }
+  .team {
+    padding: 56px 24px 64px;
+  }
+  .team-grid {
+    gap: 40px;
+  }
+}
+@media (max-width: 560px) {
+  .container {
+    /* only touch horizontal padding — .hero and .video-wrap are also .container,
+       and a `padding` shorthand here would reset their vertical padding to 0
+       (equal specificity, later in source), collapsing all their spacing. */
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .team {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .footer {
+    padding: 20px 0 32px;
+  }
+  .footer .container {
+    flex-wrap: wrap;
+  }
 }
 
 /* ---- footer ---- */
