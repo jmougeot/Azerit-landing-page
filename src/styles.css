@@ -257,6 +257,47 @@ button {
   }
 }
 
+/* ---- interactive dot-grid backdrop (hero title section only) ---- */
+.hero-band {
+  position: relative;
+  --mx: 50%;
+  --my: 50%;
+  --glow: 0;
+  --dot-gap: 24px;
+}
+.hero-band > .hero {
+  position: relative;
+  z-index: 1; /* hero content sits above the grid */
+}
+.dot-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* faint resting dots */
+  background-image: radial-gradient(circle at center, var(--border) 1.3px, transparent 1.6px);
+  background-size: var(--dot-gap) var(--dot-gap);
+  -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent);
+  mask-image: linear-gradient(to bottom, #000 72%, transparent);
+}
+/* bigger green dots near the cursor — no background haze, just the dots */
+.dot-grid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at center, var(--green) 2.6px, transparent 3px);
+  background-size: var(--dot-gap) var(--dot-gap);
+  -webkit-mask-image: radial-gradient(circle 130px at var(--mx) var(--my), #000 40%, transparent 75%);
+  mask-image: radial-gradient(circle 130px at var(--mx) var(--my), #000 40%, transparent 75%);
+  opacity: var(--glow);
+  transition: opacity 0.35s ease;
+}
+@media (hover: none) {
+  .dot-grid::after {
+    display: none; /* no cursor to follow on touch devices */
+  }
+}
+
 /* ---- hero : copy + CTA left, 3D graph right ---- */
 .hero {
   display: flex;
