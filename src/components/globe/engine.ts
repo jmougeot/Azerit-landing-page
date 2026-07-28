@@ -8,7 +8,9 @@ import landDots from "../../data/land-dots.json";
 // three.js never lands in the main bundle.
 
 const R = 1;
-const CAMERA_Z = 4.4;
+// far enough back that the tallest arc trajectories (~1.25R from center) stay
+// inside the frustum instead of clipping at the canvas edge
+const CAMERA_Z = 5.15;
 const AUTO_SPIN = 0.032; // rad/s
 const MAX_TILT = 0.55; // vertical drag clamp
 const ARC_COUNT = 7;
@@ -235,15 +237,33 @@ export function initGlobe(container: HTMLElement): () => void {
     return landVecs[Math.floor(Math.random() * landVecs.length)];
   }
 
+  // traffic mirrors where Azerit is used: mostly Europe and North America,
+  // with the occasional line to the rest of the world
+  const euCenter = latLngToVec3(50, 12, R);
+  const naCenter = latLngToVec3(42, -95, R);
+  const euPoints = landVecs.filter((v) => v.angleTo(euCenter) < 0.3);
+  const naPoints = landVecs.filter((v) => v.angleTo(naCenter) < 0.42);
+
+  function pickArcPoint() {
+    const r = Math.random();
+    if (r < 0.4 && euPoints.length) {
+      return euPoints[Math.floor(Math.random() * euPoints.length)];
+    }
+    if (r < 0.76 && naPoints.length) {
+      return naPoints[Math.floor(Math.random() * naPoints.length)];
+    }
+    return randomLandPoint();
+  }
+
   // delayRange staggers the draw start: wide on first build so the initial
   // volley doesn't fire all at once, short on respawns.
   function buildArc(arc: Arc | null, delayRange: number): Arc {
-    let a = randomLandPoint();
-    let b = randomLandPoint();
+    let a = pickArcPoint();
+    let b = pickArcPoint();
     for (let tries = 0; tries < 20; tries++) {
       const ang = a.angleTo(b);
-      if (ang > 0.35 && ang < 2.3) break;
-      b = randomLandPoint();
+      if (ang > 0.28 && ang < 2.3) break; // floor low enough for intra-Europe hops
+      b = pickArcPoint();
     }
     // control point height; the curve peaks at roughly half of this above the
     // surface, so these values give visibly ballooning trajectories

@@ -321,7 +321,9 @@ button {
 /* github.com-style dot globe (three.js canvas injected by HeroGlobe) */
 .hero-globe {
   position: relative;
-  width: min(100%, 520px);
+  /* the camera leaves ~28% padding around the sphere so tall arcs don't clip;
+     the box is oversized so the sphere itself keeps its original screen size */
+  width: min(100%, 620px);
   aspect-ratio: 1;
   cursor: grab;
 }
@@ -335,10 +337,10 @@ button {
   inset: -6%;
   pointer-events: none;
   background: radial-gradient(
-    circle at 44% 38%,
+    circle at 45% 40%,
     rgba(15, 118, 110, 0.16),
-    rgba(15, 118, 110, 0.05) 46%,
-    transparent 64%
+    rgba(15, 118, 110, 0.05) 40%,
+    transparent 56%
   );
 }
 .hero-globe canvas {
@@ -364,7 +366,7 @@ button {
     min-height: 300px;
   }
   .hero-globe {
-    width: min(80vw, 320px);
+    width: min(88vw, 380px);
   }
   .hero .btn-try {
     align-self: flex-start; /* keep the CTA at its natural width, left-aligned */
