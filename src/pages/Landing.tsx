@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { TopBar, Footer } from "../components/Nav";
-import { Graph3D } from "../components/Graph3D";
+import { HeroGlobe } from "../components/HeroGlobe";
 import { DotGridBand } from "../components/DotGridBand";
 
 // The Remotion player + demo scenes are the heaviest dependency and sit below
@@ -150,7 +150,7 @@ export function Landing() {
               </Link>
             </div>
             <div className="hero-visual">
-              <Graph3D />
+              <HeroGlobe />
             </div>
           </header>
         </DotGridBand>
