@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { TopBar, Footer } from "../components/Nav";
 import { HeroGlobe } from "../components/HeroGlobe";
 import { DotGridBand } from "../components/DotGridBand";
+import { GithubUserCount } from "../components/GithubUserCount";
 
 // The Remotion player + demo scenes are the heaviest dependency and sit below
 // the fold. lazy() defers the download until the component renders, so we also
@@ -145,9 +146,12 @@ export function Landing() {
                 Azerit scans GitHub for devs already building in your niche, then reaches out with
                 messages that prove we read their code.
               </p>
-              <Link to="/try" className="btn-try">
-                Try Azerit →
-              </Link>
+              <div className="hero-cta">
+                <GithubUserCount />
+                <Link to="/try" className="btn-try">
+                  Try Azerit →
+                </Link>
+              </div>
             </div>
             <div className="hero-visual">
               <HeroGlobe />
