@@ -172,6 +172,91 @@ button {
   position: absolute;
 }
 
+/* ---- contribution-grid backdrop (pricing page) ---- */
+.contrib-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.contrib-patch-wrap {
+  position: absolute;
+  opacity: 0.72;
+}
+.contrib-patch-wrap.tl {
+  top: 48px;
+  left: 3vw;
+  transform: rotate(-8deg);
+}
+.contrib-patch-wrap.tr {
+  top: 72px;
+  right: 3vw;
+  transform: rotate(7deg);
+}
+.contrib-patch-wrap.bl {
+  bottom: 80px;
+  left: 4vw;
+  transform: rotate(6deg);
+}
+.contrib-patch-wrap.br {
+  bottom: 56px;
+  right: 4vw;
+  transform: rotate(-6deg);
+}
+.contrib-patch {
+  display: grid;
+  gap: 5px;
+}
+.contrib-cell {
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+  background: rgba(15, 118, 110, 0.09); /* faint empty cell, keeps the grid readable */
+}
+/* commit squares land in, then gently breathe so the grid keeps "committing" */
+.contrib-cell-on {
+  transform-origin: center;
+  animation:
+    commit-in 0.6s ease-out backwards,
+    commit-twinkle 6s ease-in-out infinite;
+}
+@keyframes commit-in {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes commit-twinkle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .contrib-cell-on {
+    animation: none;
+  }
+}
+/* keep the squares clear of the cards on narrow screens */
+@media (max-width: 1040px) {
+  .contrib-patch-wrap.tr,
+  .contrib-patch-wrap.br {
+    display: none;
+  }
+}
+@media (max-width: 720px) {
+  .contrib-bg {
+    display: none;
+  }
+}
+
 /* ---- hero : copy left, CTA right ---- */
 .hero {
   display: flex;
@@ -787,19 +872,111 @@ button {
 .pricing-wrap {
   position: relative; /* sit above the GitHub-logo backdrop (.gh-bg, absolute) */
   z-index: 1;
-  max-width: 420px;
+  max-width: 880px;
   margin: 0 auto;
   padding: 96px 24px 110px;
+  text-align: center;
+}
+.pricing-title {
+  text-align: center; /* only the word is centered; the logo hangs to its left */
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 52px;
+  letter-spacing: -0.02em;
+  margin-bottom: 34px;
+}
+.pricing-title-text {
+  position: relative;
+  display: inline-block;
+}
+.pricing-logo {
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-right: 16px;
+  display: flex;
+}
+.price-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin: 0 auto 40px;
+  padding: 4px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.price-toggle button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dim);
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.price-toggle button.active {
+  background: var(--bg);
+  color: var(--text);
+  box-shadow: 0 1px 3px rgba(31, 35, 40, 0.12);
+  border: 1px solid var(--border);
+}
+.badge-discount {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--green);
+  padding: 2px 6px;
+  border-radius: 5px;
+  line-height: 1.4;
+}
+.price-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  text-align: left;
+}
+@media (max-width: 720px) {
+  .price-grid {
+    grid-template-columns: 1fr;
+  }
 }
 .price-card {
+  display: flex;
+  flex-direction: column;
   background: var(--bg);
   border: 1px solid #000000;
   border-radius: 12px;
   padding: 32px 28px;
   box-shadow: 0 12px 40px rgba(31, 35, 40, 0.08);
 }
-.price-card h1 {
-  font-size: 22px;
+.price-features {
+  flex: 1 1 auto; /* push the CTA to the bottom so buttons align across cards */
+}
+.price-cta {
+  margin-top: auto;
+}
+.price-nocard {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-top: 10px;
+}
+.price-card-pro {
+  border: 2px solid var(--green);
+}
+.price-card h2 {
+  font-size: 20px;
   letter-spacing: -0.01em;
   margin-bottom: 6px;
 }
@@ -824,6 +1001,12 @@ button {
   font-family: var(--font-mono);
   font-size: 15px;
   color: var(--text-dim);
+}
+.price-billed {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 6px;
 }
 .price-features {
   list-style: none;
