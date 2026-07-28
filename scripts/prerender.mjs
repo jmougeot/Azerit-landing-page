@@ -12,6 +12,7 @@ const ROUTES = [
   { path: "/", out: "index.html" },
   { path: "/try", out: "try.html", title: "Try Azerit on Your Niche · AI Lead Generation on GitHub" },
   { path: "/legal", out: "legal.html", title: "Legal Notice & Privacy Policy · Azerit" },
+  { path: "/pricing", out: "pricing.html", title: "Pricing · Azerit — $20 / month, everything included" },
 ];
 
 const base = readFileSync(new URL("../dist/index.html", import.meta.url), "utf8");
