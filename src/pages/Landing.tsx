@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { TopBar, Footer } from "../components/Nav";
 import { Graph3D } from "../components/Graph3D";
+import { DotGridBand } from "../components/DotGridBand";
 
 // The Remotion player + demo scenes are the heaviest dependency and sit below
 // the fold. lazy() defers the download until the component renders, so we also
@@ -134,23 +135,25 @@ export function Landing() {
       <div className="hero-zone">
 
         {/* hero */}
-        <header className="container hero">
-          <div className="hero-copy">
-            <h1>
-              Find leads on <em>GitHub</em> with&nbsp;AI
-            </h1>
-            <p className="sub">
-              Azerit scans GitHub for devs already building in your niche, then reaches out with
-              messages that prove we read their code.
-            </p>
-            <Link to="/try" className="btn-try">
-              Try Azerit →
-            </Link>
-          </div>
-          <div className="hero-visual">
-            <Graph3D />
-          </div>
-        </header>
+        <DotGridBand>
+          <header className="container hero">
+            <div className="hero-copy">
+              <h1>
+                Find leads on <em>GitHub</em> with&nbsp;AI
+              </h1>
+              <p className="sub">
+                Azerit scans GitHub for devs already building in your niche, then reaches out with
+                messages that prove we read their code.
+              </p>
+              <Link to="/try" className="btn-try">
+                Try Azerit →
+              </Link>
+            </div>
+            <div className="hero-visual">
+              <Graph3D />
+            </div>
+          </header>
+        </DotGridBand>
 
         {/* demo video */}
         <div className="container video-wrap" id="demo" ref={videoWrapRef}>
