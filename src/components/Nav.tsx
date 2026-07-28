@@ -8,9 +8,14 @@ export function TopBar() {
         <Link to="/" className="logo">
           <LogoMark size={18} /> azerit
         </Link>
-        <Link to="/try" className="try-link">
-          try it →
-        </Link>
+        <div className="topbar-nav">
+          <Link to="/pricing" className="nav-link">
+            pricing
+          </Link>
+          <Link to="/try" className="try-link">
+            try it →
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -22,7 +27,10 @@ export function Footer() {
       <div className="container" style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <LogoMark size={13} /> azerit © {new Date().getFullYear()} · the intent is already on
         GitHub.
-        <Link to="/legal" style={{ marginLeft: "auto", color: "inherit" }}>
+        <Link to="/pricing" style={{ marginLeft: "auto", color: "inherit" }}>
+          pricing
+        </Link>
+        <Link to="/legal" style={{ color: "inherit" }}>
           legal &amp; privacy
         </Link>
       </div>

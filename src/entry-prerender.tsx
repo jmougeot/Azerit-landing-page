@@ -4,6 +4,7 @@ import { StaticRouter } from "react-router";
 import { App } from "./App";
 import { Try } from "./pages/Try";
 import { Legal } from "./pages/Legal";
+import { Pricing } from "./pages/Pricing";
 
 // Built with `vite build --ssr`, then invoked by scripts/prerender.mjs to
 // bake each route's markup into a static HTML file so crawlers that don't
@@ -24,7 +25,7 @@ export function render(path: string): string {
       </React.StrictMode>
     );
   }
-  const page = { "/try": <Try />, "/legal": <Legal /> }[path];
+  const page = { "/try": <Try />, "/legal": <Legal />, "/pricing": <Pricing /> }[path];
   if (!page) throw new Error(`No prerender component for route ${path}`);
   return renderToString(<StaticRouter location={path}>{page}</StaticRouter>);
 }

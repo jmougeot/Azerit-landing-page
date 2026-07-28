@@ -9,6 +9,9 @@ const NotFound = lazy(() =>
   import("./pages/NotFound").then((m) => ({ default: m.NotFound }))
 );
 const Legal = lazy(() => import("./pages/Legal").then((m) => ({ default: m.Legal })));
+const Pricing = lazy(() =>
+  import("./pages/Pricing").then((m) => ({ default: m.Pricing }))
+);
 
 // GitHub Pages serves the same index.html for every route (404 fallback),
 // so the canonical URL must be kept in sync with the current route.
@@ -33,6 +36,7 @@ export function App() {
           <Route path="/try" element={<Try />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/legal" element={<Legal />} />
+          <Route path="/pricing" element={<Pricing />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
