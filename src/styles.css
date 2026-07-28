@@ -257,7 +257,7 @@ button {
   }
 }
 
-/* ---- hero : copy left, CTA right ---- */
+/* ---- hero : copy + CTA left, 3D graph right ---- */
 .hero {
   display: flex;
   align-items: center;
@@ -265,16 +265,42 @@ button {
   gap: 48px;
   padding: 140px 0 110px;
 }
+.hero-copy {
+  flex: 1 1 0;
+  max-width: 560px;
+}
+.hero-visual {
+  flex: 1 1 0;
+  align-self: stretch;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.graph3d {
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  display: block;
+}
 @media (max-width: 800px) {
   .hero {
     flex-direction: column;
     align-items: stretch; /* column flex: stretch = children fill width & wrap.
                              flex-start sized them to content width -> overflow. */
-    gap: 32px;
+    gap: 24px;
     padding: 96px 0 56px;
   }
   .hero-copy {
     max-width: 100%;
+    order: 1;
+  }
+  .hero-visual {
+    order: 0; /* graph sits above the copy on narrow screens */
+    min-height: 300px;
+  }
+  .graph3d {
+    min-height: 300px;
   }
   .hero .btn-try {
     align-self: flex-start; /* keep the CTA at its natural width, left-aligned */
@@ -288,10 +314,11 @@ button {
   }
 }
 .hero h1 {
-  font-size: clamp(38px, 5vw, 56px);
-  font-weight: 800;
+  font-family: var(--font-mono);
+  font-size: clamp(36px, 4.6vw, 52px);
+  font-weight: 700;
   letter-spacing: -0.03em;
-  line-height: 1.08;
+  line-height: 1.1;
   max-width: 720px;
   margin: 0 0 20px;
 }
@@ -303,7 +330,10 @@ button {
   font-size: 18.5px;
   color: var(--text-dim);
   max-width: 520px;
-  margin: 0;
+  margin: 0 0 28px;
+}
+.hero .btn-try {
+  align-self: flex-start;
 }
 
 /* ---- GitHub-style cards : light gray ---- */
