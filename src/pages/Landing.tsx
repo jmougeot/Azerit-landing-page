@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { TopBar, Footer } from "../components/Nav";
-import { GithubBg } from "../components/GithubBg";
+import { Graph3D } from "../components/Graph3D";
 
 // The Remotion player + demo scenes are the heaviest dependency and sit below
 // the fold. lazy() defers the download until the component renders, so we also
@@ -130,9 +130,8 @@ export function Landing() {
       <TopBar />
 
       <main>
-      {/* hero + demo video, over a bed of GitHub logos */}
+      {/* hero + demo video */}
       <div className="hero-zone">
-        <GithubBg />
 
         {/* hero */}
         <header className="container hero">
@@ -144,10 +143,13 @@ export function Landing() {
               Azerit scans GitHub for devs already building in your niche, then reaches out with
               messages that prove we read their code.
             </p>
+            <Link to="/try" className="btn-try">
+              Try Azerit →
+            </Link>
           </div>
-          <Link to="/try" className="btn-try">
-            Try it →
-          </Link>
+          <div className="hero-visual">
+            <Graph3D />
+          </div>
         </header>
 
         {/* demo video */}
