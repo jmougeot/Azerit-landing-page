@@ -79,7 +79,7 @@ button {
   top: 0;
   z-index: 50;
   background: var(--bg);
-  border-bottom: 1px dashed var(--border);
+  border-bottom: 1px solid var(--border);
 }
 .topbar-inner {
   max-width: 1060px;
@@ -463,11 +463,10 @@ button {
   }
 }
 
-/* ---- GitHub-style cards : light gray ---- */
+/* ---- GitHub-style cards : flat white panels on the tinted cell ---- */
 .gh-card {
-  background: var(--bg-soft);
-  border: 1px solid #000000;
-  border-radius: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
   padding: 16px;
   font-size: 13.5px;
 }
@@ -490,13 +489,6 @@ button {
 }
 .gh-repo-line .rname:hover {
   text-decoration: underline;
-}
-.gh-visibility {
-  font-size: 11px;
-  color: var(--text-dim);
-  border: 1px solid var(--border);
-  border-radius: 99px;
-  padding: 1px 8px;
 }
 .gh-desc {
   color: var(--text-dim);
@@ -537,40 +529,6 @@ button {
   background: transparent;
   border: 1px solid var(--border);
   color: var(--text-dim);
-}
-/* commit row */
-.gh-commit {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-}
-.gh-commit .hash {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: #0550ae; /* darker than --blue: 12px text on tinted bg needs 4.5:1 */
-  background: rgba(9, 105, 218, 0.08);
-  border-radius: 5px;
-  padding: 1px 7px;
-  flex-shrink: 0;
-}
-.gh-commit .msg {
-  color: var(--text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex: 1;
-  min-width: 0; /* let the ellipsis kick in instead of overflowing the viewport */
-}
-.gh-commit .when {
-  margin-left: auto;
-  color: var(--text-dim);
-  font-size: 12px;
-  white-space: nowrap;
-}
-.gh-commit .check {
-  color: var(--green);
-  font-size: 12px;
 }
 
 /* ---- app window chrome (video) : dashboard preview, stays dark ---- */
@@ -625,16 +583,61 @@ button {
   }
 }
 
-/* ---- how it works : 3 short steps ---- */
+/* ---- section bands ---- */
+/* laravel.com-style section rules: each band draws a full-width hairline at its
+   top edge; on wide screens the inner container adds verticals along its
+   edges and a small teal square centered on each line crossing. Bands stack
+   with no margins so the verticals read as one continuous line. */
+.band {
+  border-top: 1px solid var(--border);
+}
+@media (min-width: 1140px) {
+  .band > .container {
+    position: relative;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    /* extra air so content never sits against the rules */
+    padding-left: 36px;
+    padding-right: 36px;
+  }
+  .band > .container::before,
+  .band > .container::after {
+    content: "";
+    position: absolute;
+    top: -4px;
+    width: 7px;
+    height: 7px;
+    background: var(--green);
+  }
+  .band > .container::before {
+    left: -4px;
+  }
+  .band > .container::after {
+    right: -4px;
+  }
+}
+
+/* ---- how it works : title cell + 3 short steps ---- */
+/* NOTE: banded cells only set vertical padding longhands — a `padding`
+   shorthand would zero the horizontal gutter inherited from .container and
+   glue the content to the dashed rules. */
+/* the heading sits in its own band so the rules box it in like a table cell */
+.how-title {
+  text-align: center;
+  padding-top: 44px;
+  padding-bottom: 44px;
+}
+.how-title h2 {
+  /* same face as the hero h1; mono only ships 400/500/700 so cap at 700 */
+  font-family: var(--font-mono);
+  font-size: clamp(26px, 3.5vw, 34px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+/* no vertical padding here: it lives inside each .step cell so the dividers
+   between steps run from the top hairline all the way to the bottom one */
 .how {
   text-align: center;
-  padding: 72px 0 20px;
-}
-.how h2 {
-  font-size: clamp(26px, 3.5vw, 34px);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin-bottom: 12px;
 }
 .how .intro {
   color: var(--text-dim);
@@ -642,17 +645,25 @@ button {
   max-width: 680px;
   margin: 0 auto 44px;
 }
+/* flat cells divided by the same hairlines as the section rules,
+   laravel.com-style, instead of boxed cards. Each cell carries the band's
+   vertical padding so the dividers connect the top and bottom hairlines. */
 .steps {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(3, 1fr);
   text-align: left;
 }
 .step {
-  background: var(--bg-soft);
-  border: 1px solid #000000;
-  border-radius: 8px;
-  padding: 24px;
+  padding: 56px 28px 64px;
+}
+.step:first-child {
+  padding-left: 0;
+}
+.step:last-child {
+  padding-right: 0;
+}
+.step + .step {
+  border-left: 1px solid var(--border);
 }
 .step .tag {
   font-family: var(--font-mono);
@@ -692,13 +703,13 @@ button {
   color: var(--blue);
 }
 
-/* ---- alternating feature rows ---- */
+/* ---- alternating feature rows ----
+   two full-height cells split by a hairline that meets the band rules top and
+   bottom (same trick as the steps: the vertical padding lives in the cells).
+   The visual cell is tinted and bleeds to the container frame, laravel-style. */
 .feature {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 56px;
-  align-items: center;
-  padding: 84px 0;
 }
 /* grid items default to min-width:auto, which lets a long mono token (repo
    name, email address) push the track wider than the viewport. min-width:0
@@ -707,11 +718,48 @@ button {
 .f-visual {
   min-width: 0;
 }
+.f-copy {
+  align-self: center;
+  padding: 64px 56px 64px 0;
+}
 .feature.rev .f-copy {
   order: 2;
+  padding-right: 0;
+  padding-left: 56px;
+}
+.f-visual {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-left: 1px solid var(--border);
+  background: var(--bg-soft);
+  /* -24px margin cancels the container's gutter so the tint runs to its edge;
+     the matching padding keeps the content off that edge */
+  margin-right: -24px;
+  padding: 40px 24px 40px 40px;
 }
 .feature.rev .f-visual {
   order: 1;
+  border-left: none;
+  border-right: 1px solid var(--border);
+  margin-right: 0;
+  margin-left: -24px;
+  padding: 40px 40px 40px 24px;
+}
+@media (min-width: 1140px) {
+  /* the container gutter grows to 36px here and gains its side borders: the
+     tint now meets the band's vertical rule exactly */
+  .f-visual {
+    margin-right: -36px;
+    padding-right: 36px;
+  }
+  .feature.rev .f-visual {
+    margin-right: 0;
+    margin-left: -36px;
+    padding-right: 40px;
+    padding-left: 36px;
+  }
 }
 .f-copy .eyebrow {
   font-family: var(--font-mono);
@@ -720,9 +768,10 @@ button {
   margin-bottom: 12px;
 }
 .f-copy h2 {
+  font-family: var(--font-mono);
   font-size: clamp(24px, 3vw, 32px);
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-weight: 700;
+  letter-spacing: -0.03em;
   line-height: 1.2;
   margin-bottom: 14px;
 }
@@ -739,34 +788,157 @@ button {
   color: var(--text);
 }
 @media (max-width: 800px) {
+  /* stacked: the band padding comes back on the section and the cells lose
+     their divider, tint and bleed */
   .feature {
     grid-template-columns: 1fr;
     gap: 28px;
-    padding: 56px 0;
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+  .f-copy {
+    align-self: auto;
+    padding: 0;
   }
   .feature.rev .f-copy {
     order: 1;
+    padding-left: 0;
+  }
+  .f-visual,
+  .feature.rev .f-visual {
+    border: none;
+    background: none;
+    margin: 0;
+    padding: 0;
   }
   .feature.rev .f-visual {
     order: 2;
   }
 }
 
-/* repo list mock : gh cards */
-.repo-mock {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+/* ---- repo feed : auto-scrolling scan ---- */
+.repo-feed {
+  border: 1px solid var(--border);
+  background: var(--bg);
 }
-.repo-mock .gh-card.hit {
-  border-color: rgba(15, 118, 110, 0.45); /* match --green (teal), not GitHub's bright green */
+/* on desktop the feed IS the cell: no inner frame, the band hairlines, the
+   cell divider and the container border do the framing */
+@media (min-width: 801px) {
+  .f-visual.flush {
+    padding: 0;
+  }
+  .f-visual.flush .repo-feed {
+    /* fixed height: without it the window's auto height = the full track
+       (both copies of the list) and the whole cell explodes */
+    height: 520px;
+    border: none;
+    display: flex;
+    flex-direction: column;
+  }
+  .f-visual.flush .repo-feed-window {
+    flex: 1;
+    height: auto;
+    min-height: 0;
+  }
+  /* rows span a whole grid cell now: give them more air */
+  .f-visual.flush .repo-feed-head {
+    padding: 12px 24px;
+  }
+  .f-visual.flush .repo-row {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+.repo-feed-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-soft);
+}
+.repo-feed-head .feed-dot {
+  width: 7px;
+  height: 7px;
+  background: var(--green);
+  animation: feed-blink 1.6s ease-in-out infinite;
+}
+.repo-feed-head .count {
+  margin-left: auto;
+  color: var(--green);
+  font-weight: 700;
+}
+.repo-feed-window {
+  height: 430px;
+  overflow: hidden;
+  /* rows fade out against the frame instead of being cut mid-card */
+  -webkit-mask-image: linear-gradient(180deg, #000 82%, transparent);
+  mask-image: linear-gradient(180deg, #000 82%, transparent);
+}
+.repo-feed-track {
+  animation: feed-scroll 32s linear infinite;
+}
+.repo-feed:hover .repo-feed-track {
+  animation-play-state: paused;
+}
+@keyframes feed-scroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+@keyframes feed-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .repo-feed-track {
+    animation: none;
+  }
+  .repo-feed-head .feed-dot {
+    animation: none;
+  }
+}
+
+/* feed rows: flat cells sharing hairlines, like the rest of the grid.
+   border-bottom (not border-top on siblings) so both track copies are
+   pixel-identical and the -50% loop point is seamless. */
+.repo-row {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.repo-row.hit {
+  box-shadow: inset 2px 0 0 var(--green);
+}
+.repo-row .rname {
+  font-size: 13.5px;
+}
+.repo-row .gh-intent {
+  border-radius: 4px;
+}
+.repo-row .gh-desc {
+  margin: 4px 0 8px;
+  font-size: 12.5px;
+}
+.repo-row .gh-meta {
+  font-size: 11.5px;
 }
 
 /* email mock */
 .email-card {
-  background: var(--bg-soft);
-  border: 1px solid #000000;
-  border-radius: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
   overflow: hidden;
   max-width: 100%;
   /* mono tokens like the email address / subject must not push past the edge */
@@ -777,6 +949,7 @@ button {
   font-family: var(--font-mono);
   font-size: 12.5px;
   color: var(--text-dim);
+  background: var(--bg-soft);
   padding: 14px 18px;
   border-bottom: 1px solid var(--border);
   line-height: 1.8;
@@ -797,16 +970,73 @@ button {
   padding: 0 4px;
   border-radius: 4px;
 }
+/* typewriter caret that trails the text while the email is being written */
+.email-card .caret {
+  display: inline-block;
+  width: 8px;
+  height: 1.05em;
+  margin-left: 1px;
+  transform: translateY(2px);
+  background: var(--green);
+  animation: caret-blink 1s step-end infinite;
+}
+@keyframes caret-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .email-card .caret {
+    display: none;
+  }
+}
+
+/* on desktop the email fills the whole cell, framed by the grid — same
+   treatment as the repo feed on the other feature row */
+@media (min-width: 801px) {
+  /* the .rev row's `.feature.rev .f-visual` padding rules are more specific
+     than `.f-visual.flush`, so zero the padding here with matching weight —
+     otherwise the cell padding shows as a tint band around the panel */
+  .feature .f-visual.flush,
+  .feature.rev .f-visual.flush {
+    padding: 0;
+  }
+  .f-visual.flush .email-card {
+    /* flex:1 makes the card fill the cell top-to-bottom instead of being
+       centered by .f-visual's justify-content, so no tint band shows */
+    flex: 1;
+    min-height: 520px;
+    border: none;
+    display: flex;
+    flex-direction: column;
+  }
+  .f-visual.flush .email-card .head {
+    padding: 18px 40px;
+    font-size: 13px;
+  }
+  .f-visual.flush .email-card .body {
+    flex: 1;
+    padding: 32px 40px;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+}
 
 /* ---- team ---- */
 .team {
   text-align: center;
-  padding: 72px 24px 88px;
-  border-top: 1px dashed var(--border);
+  padding-top: 72px;
+  padding-bottom: 88px;
 }
 .team h2 {
+  font-family: var(--font-mono);
   font-size: 22px;
   font-weight: 700;
+  letter-spacing: -0.03em;
   margin-bottom: 8px;
 }
 .team .team-sub {
@@ -851,22 +1081,35 @@ button {
 
 /* ---- mobile spacing pass ---- */
 @media (max-width: 800px) {
-  /* On mobile the sections lose their generous desktop whitespace, so give each
-     one the same dashed divider the team/footer already use — makes the
-     boundaries unambiguous instead of blending together. */
-  .how,
-  .feature {
-    border-top: 1px dashed var(--border);
-    margin-top: 8px;
+  /* On mobile the sections lose their generous desktop whitespace; the .band
+     hairlines keep the boundaries unambiguous, just tighten the padding. */
+  .how-title {
+    padding-top: 28px;
+    padding-bottom: 28px;
   }
-  .how {
-    padding: 44px 0 8px;
+  /* steps stack: the divider moves from between columns to between rows */
+  .steps {
+    grid-template-columns: 1fr;
   }
-  .feature {
-    padding: 48px 0;
+  .step {
+    padding: 28px 0;
+  }
+  .step:first-child {
+    padding-top: 36px;
+  }
+  .step:last-child {
+    padding-bottom: 44px;
+  }
+  .step + .step {
+    border-left: none;
+    border-top: 1px solid var(--border);
+  }
+  .repo-feed-window {
+    height: 340px;
   }
   .team {
-    padding: 56px 24px 64px;
+    padding-top: 56px;
+    padding-bottom: 64px;
   }
   .team-grid {
     gap: 40px;
@@ -880,10 +1123,6 @@ button {
     padding-left: 18px;
     padding-right: 18px;
   }
-  .team {
-    padding-left: 18px;
-    padding-right: 18px;
-  }
   .footer {
     padding: 20px 0 32px;
   }
@@ -893,8 +1132,8 @@ button {
 }
 
 /* ---- footer ---- */
+/* the top hairline + crosses come from .band (see section bands) */
 .footer {
-  border-top: 1px dashed var(--border);
   padding: 24px 0 38px;
   font-family: var(--font-mono);
   font-size: 12.5px;
