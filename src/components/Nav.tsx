@@ -23,7 +23,7 @@ export function TopBar() {
 
 export function Footer() {
   return (
-    <footer className="footer">
+    <footer className="footer band">
       <div className="container" style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <LogoMark size={13} /> azerit © {new Date().getFullYear()} · the intent is already on
         GitHub.

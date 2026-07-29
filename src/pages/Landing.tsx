@@ -1,9 +1,10 @@
-import { Suspense, lazy, useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { TopBar, Footer } from "../components/Nav";
 import { HeroGlobe } from "../components/HeroGlobe";
 import { DotGridBand } from "../components/DotGridBand";
 import { GithubUserCount } from "../components/GithubUserCount";
+import { Email } from "../components/Email";
 
 // The Remotion player + demo scenes are the heaviest dependency and sit below
 // the fold. lazy() defers the download until the component renders, so we also
@@ -16,8 +17,10 @@ import jacquesPhoto from "../assets/jacques.webp";
 
 const LANG_COLORS: Record<string, string> = {
   TypeScript: "#3178c6",
+  JavaScript: "#f1e05a",
   Python: "#3572A5",
   Go: "#00ADD8",
+  Rust: "#dea584",
   Shell: "#89e051",
 };
 
@@ -79,15 +82,62 @@ const REPOS: Repo[] = [
     updated: "Updated 2 days ago",
     hit: true,
   },
+  {
+    name: "marc-o/embeddings-cache",
+    desc: "Redis-backed cache for OpenAI embeddings",
+    lang: "TypeScript",
+    stars: "156",
+    updated: "Updated 5 hours ago",
+    hit: true,
+  },
+  {
+    name: "tomas-v/awesome-wallpapers",
+    desc: "Curated 4K wallpapers for devs",
+    lang: "JavaScript",
+    stars: "58",
+    updated: "Updated on Mar 2, 2024",
+    hit: false,
+  },
+  {
+    name: "aiko-labs/chunk-viz",
+    desc: "Visualize document chunking strategies",
+    lang: "Python",
+    stars: "892",
+    updated: "Updated yesterday",
+    hit: true,
+  },
+  {
+    name: "elsa-k/hybrid-search-api",
+    desc: "BM25 + dense retrieval behind one endpoint",
+    lang: "Rust",
+    stars: "341",
+    updated: "Updated 6 days ago",
+    hit: true,
+  },
+  {
+    name: "bob-m/todo-app-final-v2",
+    desc: "todo app (react)",
+    lang: "JavaScript",
+    stars: "1",
+    updated: "Updated on Jul 19, 2023",
+    hit: false,
+  },
+  {
+    name: "devpriya/llm-eval-harness",
+    desc: "Eval suite for retrieval pipelines",
+    lang: "Python",
+    stars: "2.3k",
+    updated: "Updated 40 minutes ago",
+    hit: true,
+  },
 ];
 
-function GhRepoCard({ repo }: { repo: Repo }) {
+function RepoRow({ repo }: { repo: Repo }) {
   return (
-    <div className={`gh-card${repo.hit ? " hit" : ""}`}>
+    <div className={`repo-row${repo.hit ? " hit" : ""}`}>
       <div className="gh-repo-line">
         <RepoIcon />
         <span className="rname">{repo.name}</span>
-        <span className="gh-visibility">Public</span>
         <span className={`gh-intent${repo.hit ? "" : " off"}`}>{repo.hit ? "✓ intent" : "skipped"}</span>
       </div>
       <div className="gh-desc">{repo.desc}</div>
@@ -101,6 +151,137 @@ function GhRepoCard({ repo }: { repo: Repo }) {
         </span>
         <span>{repo.updated}</span>
       </div>
+    </div>
+  );
+}
+
+function RepoFeed() {
+  // two identical copies back to back: the keyframe slides the track up by
+  // exactly half its height, so the loop point is invisible
+  const loop = [...REPOS, ...REPOS];
+  return (
+    <div className="repo-feed" aria-hidden="true">
+      <div className="repo-feed-head">
+        <span className="feed-dot" />
+        scanning github…
+        <span className="count">84 signals found</span>
+      </div>
+      <div className="repo-feed-window">
+        <div className="repo-feed-track">
+          {loop.map((r, i) => (
+            <RepoRow key={`${r.name}-${i}`} repo={r} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// The outreach email body, split into plain + highlighted segments so the
+// typewriter can reveal it one character at a time across the whole run while
+// each segment still renders with its own styling.
+const EMAIL_SEGMENTS: { text: string; hl?: boolean }[] = [
+  { text: "Hi Léa,\n\n" },
+  { text: "Just saw " },
+  { text: "pg-vector-search", hl: true },
+  { text: ". The way you combine pgvector with " },
+  { text: "your own reranker", hl: true },
+  { text: " is really clean, and the chunking in " },
+  { text: "ingest.ts", hl: true },
+  { text: "? Smart.\n\n" },
+  {
+    text: "We built a tool that fixes the exact issue in your README: hybrid query latency at scale.\n\n",
+  },
+  { text: "Up for trying it on your repo?" },
+];
+
+const EMAIL_TOTAL = EMAIL_SEGMENTS.reduce((n, s) => n + s.text.length, 0);
+
+function TypedEmail() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [count, setCount] = useState(0);
+
+  // Reveal the body character by character, but only once it scrolls into view
+  // so the visitor actually watches it being written. Honors reduced-motion by
+  // showing the finished email immediately.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setCount(EMAIL_TOTAL);
+      return;
+    }
+    let timer: ReturnType<typeof setTimeout>;
+    const type = () => {
+      setCount((c) => {
+        if (c >= EMAIL_TOTAL) return c;
+        timer = setTimeout(type, 22);
+        return c + 1;
+      });
+    };
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          obs.disconnect();
+          timer = setTimeout(type, 450);
+        }
+      },
+      { threshold: 0.35 }
+    );
+    obs.observe(el);
+    return () => {
+      obs.disconnect();
+      clearTimeout(timer);
+    };
+  }, []);
+
+  const done = count >= EMAIL_TOTAL;
+  let remaining = count;
+
+  return (
+    <div className="email-card" ref={ref}>
+      <div className="head">
+        to: <b>lea.dubois@…</b>
+        <br />
+        subject: <b>your reranker in pg-vector-search</b>
+      </div>
+      <div className="body">
+        {EMAIL_SEGMENTS.map((seg, i) => {
+          const shown = Math.max(0, Math.min(seg.text.length, remaining));
+          remaining -= seg.text.length;
+          if (shown === 0) return null;
+          const slice = seg.text.slice(0, shown);
+          return seg.hl ? (
+            <span className="hl" key={i}>
+              {slice}
+            </span>
+          ) : (
+            <span key={i}>{slice}</span>
+          );
+        })}
+        {!done && <span className="caret" aria-hidden="true" />}
+      </div>
+    </div>
+  );
+}
+
+function StepCard({
+  tag,
+  title,
+  desc,
+  children,
+}: {
+  tag: string;
+  title: string;
+  desc: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="step">
+      <span className="tag">{tag}</span>
+      <h3>{title}</h3>
+      <p>{desc}</p>
+      <div className="art">{children}</div>
     </div>
   );
 }
@@ -172,44 +353,48 @@ export function Landing() {
       </div>
 
       {/* how it works */}
-      <section className="container how">
-        <h2>How it works</h2>
+      <section className="band">
+        <div className="container how-title">
+          <h2>Your pipeline, on autopilot</h2>
+        </div>
+      </section>
+      <section className="band">
+        <div className="container how">
         <div className="steps">
-          <div className="step">
-            <span className="tag">step 1</span>
-            <h3>We find the intent</h3>
-            <p>Issues, migrations, new dependencies: buying signals hiding in code.</p>
-            <div className="art">
-              <span className="g">✓</span> 12,406 repos scanned
-              <br />
-              <span className="g">✓</span> 84 signals found
-            </div>
-          </div>
-          <div className="step">
-            <span className="tag">step 2</span>
-            <h3>We rank by intent</h3>
-            <p>Every lead scored. You start with the hottest.</p>
-            <div className="art">
-              <span className="g">#1</span> Léa Dubois · <span className="b">92</span>
-              <br />
-              <span className="g">#2</span> Sami Benali · <span className="b">87</span>
-            </div>
-          </div>
-          <div className="step">
-            <span className="tag">step 3</span>
-            <h3>We personalize &amp; send</h3>
-            <p>Every email cites their code. Replies in your inbox.</p>
-            <div className="art">
-              <span className="g">✓</span> 84 emails sent
-              <br />
-              <span className="b">→</span> 21 replies
-            </div>
-          </div>
+          <StepCard
+            tag="step 1"
+            title="We find the intent"
+            desc="Issues, migrations, new dependencies: buying signals hiding in code."
+          >
+            <span className="g">✓</span> 12,406 repos scanned
+            <br />
+            <span className="g">✓</span> 84 signals found
+          </StepCard>
+          <StepCard
+            tag="step 2"
+            title="We rank by intent"
+            desc="Every lead scored. You start with the hottest."
+          >
+            <span className="g">#1</span> Léa Dubois · <span className="b">92</span>
+            <br />
+            <span className="g">#2</span> Sami Benali · <span className="b">87</span>
+          </StepCard>
+          <StepCard
+            tag="step 3"
+            title="We personalize & send"
+            desc="Every email cites their code. Replies in your inbox."
+          >
+            <span className="g">✓</span> 84 emails sent
+            <br />
+            <span className="b">→</span> 21 replies
+          </StepCard>
+        </div>
         </div>
       </section>
 
       {/* feature: warm intent */}
-      <section className="container feature">
+      <section className="band">
+        <div className="container feature">
         <div className="f-copy">
           <div className="eyebrow">// warm intent, not cold lists</div>
           <h2>Their code is the buying signal</h2>
@@ -218,15 +403,15 @@ export function Landing() {
             in their commits.
           </p>
         </div>
-        <div className="f-visual repo-mock">
-          {REPOS.map((r) => (
-            <GhRepoCard key={r.name} repo={r} />
-          ))}
+        <div className="f-visual flush">
+          <RepoFeed />
+        </div>
         </div>
       </section>
 
       {/* feature: personalization */}
-      <section className="container feature rev">
+      <section className="band">
+        <div className="container feature rev">
         <div className="f-copy">
           <div className="eyebrow">// hyper-personalization</div>
           <h2>
@@ -237,36 +422,15 @@ export function Landing() {
             <b> Impossible to mistake for spam.</b>
           </p>
         </div>
-        <div className="f-visual">
-          <div className="gh-card" style={{ marginBottom: 12 }}>
-            <div className="gh-commit">
-              <span className="hash">a3f9c2e</span>
-              <span className="msg">feat: add custom reranker for hybrid queries</span>
-              <span className="check">✓</span>
-              <span className="when">2 hours ago</span>
-            </div>
-          </div>
-          <div className="email-card">
-            <div className="head">
-              to: <b>lea.dubois@…</b>
-              <br />
-              subject: <b>your reranker in pg-vector-search</b>
-            </div>
-            <div className="body">
-              Hi Léa,{"\n\n"}
-              Just saw <span className="hl">pg-vector-search</span>. The way you combine pgvector
-              with <span className="hl">your own reranker</span> is really clean, and the chunking
-              in <span className="hl">ingest.ts</span>? Smart.{"\n\n"}
-              We built a tool that fixes the exact issue in your README: hybrid query latency at
-              scale.{"\n\n"}
-              Up for trying it on your repo?
-            </div>
-          </div>
+        <div className="f-visual flush">
+          <TypedEmail />
+        </div>
         </div>
       </section>
 
       {/* team */}
-      <section className="team">
+      <section className="band">
+        <div className="container team">
         <h2>The team</h2>
         <p className="team-sub">Two Centrale engineers putting tech to work for sales teams.</p>
         <div className="team-grid">
@@ -278,7 +442,7 @@ export function Landing() {
               <a href="https://www.linkedin.com/in/lumine-trentelivres/" target="_blank" rel="noreferrer">
                 linkedin
               </a>{" "}
-              · <a href="mailto:lumine.builds@gmail.com">email</a>
+              · <Email user="lumine.builds" domain="gmail.com">email</Email>
             </div>
           </div>
           <div className="member">
@@ -289,9 +453,10 @@ export function Landing() {
               <a href="https://www.linkedin.com/in/jacquesmougeot/" target="_blank" rel="noreferrer">
                 linkedin
               </a>{" "}
-              · <a href="mailto:jacques.mougeot@centrale-med.fr">email</a>
+              · <Email user="jacques.mougeot" domain="centrale-med.fr">email</Email>
             </div>
           </div>
+        </div>
         </div>
       </section>
       </main>

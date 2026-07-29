@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { TopBar, Footer } from "../components/Nav";
+import { Email } from "../components/Email";
 
 export function Legal() {
   useEffect(() => {
@@ -21,7 +22,7 @@ export function Legal() {
           Trentelivres and Jacques Mougeot. Director of publication: Jacques Mougeot.
         </p>
         <p>
-          Contact: <a href="mailto:jacques.mougeot@centrale-med.fr">jacques.mougeot@centrale-med.fr</a>
+          Contact: <Email user="jacques.mougeot" domain="centrale-med.fr" />
         </p>
         <p>
           Hosting: GitHub, Inc. (GitHub Pages), 88 Colin P. Kelly Jr. Street, San Francisco, CA
@@ -63,7 +64,7 @@ export function Legal() {
         <p>
           Under the GDPR you can access, correct, delete, or export the data we hold about you,
           and withdraw your consent at any time. Email{" "}
-          <a href="mailto:jacques.mougeot@centrale-med.fr">jacques.mougeot@centrale-med.fr</a> and
+          <Email user="jacques.mougeot" domain="centrale-med.fr" /> and
           we will act on it within 30 days. You may also lodge a complaint with your local data
           protection authority (in France, the CNIL).
         </p>
