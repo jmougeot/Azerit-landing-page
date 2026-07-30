@@ -265,23 +265,23 @@ function TypedEmail() {
   );
 }
 
-function StepCard({
-  tag,
+function FlowStep({
+  n,
   title,
-  desc,
+  data,
   children,
 }: {
-  tag: string;
+  n: number;
   title: string;
-  desc: string;
+  data: string;
   children: ReactNode;
 }) {
   return (
-    <div className="step">
-      <span className="tag">{tag}</span>
+    <div className={`fstep fs-${n}`}>
+      <span className="tag">step {n}</span>
       <h3>{title}</h3>
-      <p>{desc}</p>
-      <div className="art">{children}</div>
+      <p>{children}</p>
+      <div className="fs-data">{data}</div>
     </div>
   );
 }
@@ -360,35 +360,65 @@ export function Landing() {
       </section>
       <section className="band">
         <div className="container how">
-        <div className="steps">
-          <StepCard
-            tag="step 1"
-            title="We find the intent"
-            desc="Issues, migrations, new dependencies: buying signals hiding in code."
-          >
-            <span className="g">✓</span> 12,406 repos scanned
-            <br />
-            <span className="g">✓</span> 84 signals found
-          </StepCard>
-          <StepCard
-            tag="step 2"
-            title="We rank by intent"
-            desc="Every lead scored. You start with the hottest."
-          >
-            <span className="g">#1</span> Léa Dubois · <span className="b">92</span>
-            <br />
-            <span className="g">#2</span> Sami Benali · <span className="b">87</span>
-          </StepCard>
-          <StepCard
-            tag="step 3"
-            title="We personalize & send"
-            desc="Every email cites their code. Replies in your inbox."
-          >
-            <span className="g">✓</span> 84 emails sent
-            <br />
-            <span className="b">→</span> 21 replies
-          </StepCard>
-        </div>
+          {/* the pipeline as a data-flow diagram: your offer drops in top-left,
+              runs through the four processing stages, a reply falls out bottom-right */}
+          <div className="flow">
+            <div className="flow-input">
+              <span className="tag">input</span>
+              <p>Your product, described in one sentence.</p>
+            </div>
+            <div className="f-drop f-drop-in" aria-hidden="true" />
+
+            <FlowStep n={1} title="We scan GitHub" data="scan: 12,406 repos">
+              Your niche, mapped: every matching repo, pulled by topics, dependencies and
+              keywords.
+            </FlowStep>
+            <div className="f-link f-l1" aria-hidden="true" />
+            <FlowStep n={2} title="We find the signals" data="signals: 84 · issues">
+              Open issues, README pains, fresh commits — buying intent, written in public.
+            </FlowStep>
+            <div className="f-link f-l2" aria-hidden="true" />
+            <FlowStep n={3} title="We enrich the profiles" data="email: lea.dubois@…">
+              A handle becomes a person: name, role, company, verified email.
+            </FlowStep>
+            <div className="f-link f-l3" aria-hidden="true" />
+            <FlowStep n={4} title="We rank the leads" data="top lead: score 94">
+              Re-scored on hard evidence, sorted hottest to coldest. You start at the top.
+            </FlowStep>
+
+            {/* all four stages converge into the last one: writing the message.
+                The email itself is typed out live further down the page, so this
+                node shows the ingredients, not the prose. */}
+            <div className="f-fan" aria-hidden="true">
+              <i className="fv fv-1" />
+              <i className="fv fv-2" />
+              <i className="fv fv-3" />
+              <i className="fv fv-4" />
+              <svg className="fc fc-l" viewBox="0 0 12 12">
+                <path d="M0.75 0 A11.25 11.25 0 0 0 12 11.25" />
+              </svg>
+              <svg className="fc fc-r" viewBox="0 0 12 12">
+                <path d="M11.25 0 A11.25 11.25 0 0 1 0 11.25" />
+              </svg>
+              <i className="fb fb-l" />
+              <i className="fb fb-r" />
+            </div>
+            <div className="f-drop f-cd" aria-hidden="true" />
+            <div className="flow-merge">
+              <span className="tag">output</span>
+              <h3>The email writes itself</h3>
+              <div className="merge-chips">
+                <span className="chip">pg-vector-search</span>
+                <span className="chip">"hybrid latency…"</span>
+                <span className="chip">Léa · CTO</span>
+                <span className="chip">#1 · score 94</span>
+              </div>
+              <p>
+                Subject, hook, ask, every line generated from her data, for her alone. Watch
+                it being written below ↓
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
