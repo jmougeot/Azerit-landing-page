@@ -127,7 +127,7 @@ button {
   font-size: 16px;
   font-weight: 700;
   color: #ffffff;
-  background: var(--green);
+  background: linear-gradient(180deg, #128379, var(--green-dim));
   padding: 14px 30px;
   border-radius: 8px;
   border: 1px solid #000000;
@@ -135,7 +135,7 @@ button {
   transition: transform 0.12s ease, background 0.12s ease;
 }
 .btn-try:hover {
-  background: var(--green-dim);
+  background: linear-gradient(180deg, var(--green-dim), #0d4f4a);
   transform: translateY(-1px);
 }
 .btn-ghost {
@@ -626,6 +626,9 @@ button {
   text-align: center;
   padding-top: 44px;
   padding-bottom: 44px;
+  /* the title cell reads as a tinted cell: strongest under the top hairline,
+     settling into a light teal rather than fading to white */
+  background: linear-gradient(180deg, rgba(15, 118, 110, 0.13), rgba(15, 118, 110, 0.03));
 }
 .how-title h2 {
   /* same face as the hero h1; mono only ships 400/500/700 so cap at 700 */
@@ -634,73 +637,325 @@ button {
   font-weight: 700;
   letter-spacing: -0.03em;
 }
-/* no vertical padding here: it lives inside each .step cell so the dividers
-   between steps run from the top hairline all the way to the bottom one */
 .how {
-  text-align: center;
+  padding-top: 56px;
+  padding-bottom: 64px;
 }
-.how .intro {
-  color: var(--text-dim);
-  font-size: 16.5px;
-  max-width: 680px;
-  margin: 0 auto 44px;
-}
-/* flat cells divided by the same hairlines as the section rules,
-   laravel.com-style, instead of boxed cards. Each cell carries the band's
-   vertical padding so the dividers connect the top and bottom hairlines. */
-.steps {
+/* one lead traced through the pipeline, drawn as a data-flow diagram: the
+   offer drops in at the top-left, runs through three nodes, and the reply
+   falls out at the bottom-right. Dashed teal connectors = data moving. */
+.flow {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  text-align: left;
+  grid-template-columns: 1fr 30px 1fr 30px 1fr 30px 1fr;
+  /* the input pill may spill into the neighbouring connector columns so its
+     quote never truncates; below the cards, one line drops from each of the
+     four stages onto a shared bus that funnels into the output node */
+  grid-template-areas:
+    "in  in  in  .   .   .   ."
+    "d1  .   .   .   .   .   ."
+    "s1  l1  s2  l2  s3  l3  s4"
+    "fan fan fan fan fan fan fan"
+    "cd  cd  cd  cd  cd  cd  cd"
+    "out out out out out out out";
 }
-.step {
-  padding: 56px 28px 64px;
+
+/* the input node: what the user hands the pipeline. Dashed border = "yours",
+   solid nodes = ours. */
+.flow-input {
+  grid-area: in;
+  justify-self: start;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  background: var(--bg-soft);
+  padding: 12px 18px 11px;
+  max-width: 100%;
 }
-.step:first-child {
-  padding-left: 0;
+.flow-input p {
+  font-size: 13.5px;
+  color: var(--text-dim);
 }
-.step:last-child {
-  padding-right: 0;
+
+/* connectors are drawn as repeating gradients (not dashed borders) so the
+   dash pattern itself can march along the flow direction — the movement IS
+   the lines advancing. Dash cycle: 4px on / 5px off = 9px period. */
+.f-drop {
+  width: 1.5px;
+  height: 30px;
+  background: repeating-linear-gradient(180deg, var(--text-dim) 0 4px, transparent 4px 9px);
+  position: relative;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
-.step + .step {
-  border-left: 1px solid var(--border);
+.f-drop::after {
+  content: "";
+  position: absolute;
+  left: -2.75px;
+  bottom: -1px;
+  border-top: 5px solid var(--text-dim);
+  border-left: 3.5px solid transparent;
+  border-right: 3.5px solid transparent;
 }
-.step .tag {
+.f-drop-in {
+  grid-area: d1;
+  margin-left: 32px;
+}
+/* the convergence fan: a line drops from the centre of each card, the outer
+   two turn inwards through rounded SVG elbows onto a shared bus, and the bus
+   funnels into the arrowed centre drop. All positions derive from the card
+   column centres: a card column is (100% - 3*30px)/4 wide, so the first
+   centre sits at (100% - 90px)/8 and the rest at +column+connector offsets. */
+.f-fan {
+  grid-area: fan;
+  position: relative;
+  height: 24px;
+}
+.f-fan .fv {
+  position: absolute;
+  top: 0;
+  width: 1.5px;
+  background: repeating-linear-gradient(180deg, var(--text-dim) 0 4px, transparent 4px 9px);
+}
+.fv-1 {
+  left: calc((100% - 90px) / 8);
+  height: 10px;
+}
+.fv-2 {
+  left: calc(3 * (100% - 90px) / 8 + 30px);
+  height: 22px;
+}
+.fv-3 {
+  left: calc(5 * (100% - 90px) / 8 + 60px);
+  height: 22px;
+}
+.fv-4 {
+  left: calc(7 * (100% - 90px) / 8 + 90px);
+  height: 10px;
+}
+.f-fan .fc {
+  position: absolute;
+  top: 10px;
+  width: 12px;
+  height: 12px;
+}
+.fc-l {
+  left: calc((100% - 90px) / 8);
+}
+.fc-r {
+  left: calc(7 * (100% - 90px) / 8 + 79.5px);
+}
+.f-fan .fc path {
+  fill: none;
+  stroke: var(--text-dim);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 5;
+}
+.f-fan .fb {
+  position: absolute;
+  top: 22px;
+  height: 1.5px;
+  background: repeating-linear-gradient(90deg, var(--text-dim) 0 4px, transparent 4px 9px);
+}
+.fb-l {
+  left: calc((100% - 90px) / 8 + 12px);
+  right: 50%;
+}
+.fb-r {
+  left: 50%;
+  right: calc((100% - 90px) / 8 + 10.5px);
+}
+.f-cd {
+  grid-area: cd;
+  justify-self: center;
+  height: 26px;
+  margin-top: 0;
+}
+/* …and horizontal links between the step nodes */
+.f-link {
+  align-self: center;
+  justify-self: stretch;
+  height: 1.5px;
+  background: repeating-linear-gradient(90deg, var(--text-dim) 0 4px, transparent 4px 9px);
+  position: relative;
+  margin: 0 5px;
+}
+.f-link::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: -2.75px;
+  border-left: 5px solid var(--text-dim);
+  border-top: 3.5px solid transparent;
+  border-bottom: 3.5px solid transparent;
+}
+.f-l1 {
+  grid-area: l1;
+}
+.f-l2 {
+  grid-area: l2;
+}
+.f-l3 {
+  grid-area: l3;
+}
+
+/* the three nodes share one anatomy — tag, title, story, telemetry line —
+   and margin-top:auto pins every telemetry line to the same baseline */
+.fstep {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  padding: 20px 20px 16px;
+  box-shadow: 0 1px 2px rgba(31, 35, 40, 0.04);
+}
+.fs-1 {
+  grid-area: s1;
+}
+.fs-2 {
+  grid-area: s2;
+}
+.fs-3 {
+  grid-area: s3;
+}
+.fs-4 {
+  grid-area: s4;
+}
+.fstep .tag,
+.flow-merge .tag,
+.flow-input .tag {
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--green);
-  background: var(--green-soft);
+  margin-bottom: 12px;
+}
+.fstep .tag::before,
+.flow-merge .tag::before,
+.flow-input .tag::before {
+  content: "[ ";
+}
+.fstep .tag::after,
+.flow-merge .tag::after,
+.flow-input .tag::after {
+  content: " ]";
+}
+.flow-input .tag {
   display: inline-block;
-  padding: 2px 10px;
-  border-radius: 6px;
-  margin-bottom: 14px;
+  margin-bottom: 3px;
 }
-.step h3 {
-  font-size: 18px;
-  margin-bottom: 6px;
+.fstep h3 {
+  font-size: 16.5px;
+  margin-bottom: 8px;
 }
-.step p {
-  font-size: 14.5px;
+.fstep p {
+  font-size: 13.5px;
   color: var(--text-dim);
+  line-height: 1.6;
+  margin-bottom: 18px;
 }
-.step .art {
+.fstep p em {
+  color: var(--text);
+}
+.fs-data {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
   font-family: var(--font-mono);
-  font-size: 13px;
-  margin-top: 18px;
-  background: var(--bg);
-  border: 1px solid #000000;
-  border-radius: 8px;
-  padding: 12px 14px;
+  font-size: 11.5px;
   color: var(--text-dim);
-  line-height: 1.8;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fs-data::before {
+  content: "●";
+  color: var(--green);
+  font-size: 7px;
+  margin-right: 8px;
+  vertical-align: 2px;
+}
+
+/* the output node: the four stages' data assembled into one message.
+   The email itself is typed out live further down the page, so this node
+   shows the ingredients (one chip per stage), not the prose. */
+.flow-merge {
+  grid-area: out;
+  justify-self: center;
+  max-width: 620px;
+  border: 1px solid var(--green);
+  background: var(--green-soft);
+  border-radius: 12px;
+  padding: 20px 26px 18px;
+  text-align: center;
+}
+.flow-merge .tag {
+  margin-bottom: 8px;
+  display: inline-block;
+}
+.flow-merge h3 {
+  font-size: 16.5px;
+  margin-bottom: 12px;
+}
+.merge-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+}
+.merge-chips .chip {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  border-radius: 6px;
+  padding: 3px 9px;
+  color: var(--text);
   white-space: nowrap;
 }
-.step .art .g {
-  color: var(--green);
+.flow-merge p {
+  font-size: 13.5px;
+  color: var(--text-dim);
+  line-height: 1.6;
 }
-.step .art .b {
-  color: var(--blue);
+
+/* the movement is the lines themselves advancing: every dash pattern marches
+   along its flow direction at the same 12px/s (9px period / 0.75s), so the
+   whole diagram reads as one conveyor — down from the input, rightwards
+   through the cards, inwards along the bus, down into the output */
+@media (prefers-reduced-motion: no-preference) {
+  .f-drop,
+  .f-fan .fv {
+    animation: march-v 0.75s linear infinite;
+  }
+  .f-link,
+  .fb-l {
+    animation: march-h 0.75s linear infinite;
+  }
+  .fb-r {
+    animation: march-h-rev 0.75s linear infinite;
+  }
+  .f-fan .fc path {
+    animation: march-c 0.75s linear infinite;
+  }
+  @keyframes march-v {
+    to { background-position: 0 9px; }
+  }
+  @keyframes march-h {
+    to { background-position: 9px 0; }
+  }
+  @keyframes march-h-rev {
+    to { background-position: -9px 0; }
+  }
+  @keyframes march-c {
+    to { stroke-dashoffset: -9; }
+  }
+}
+/* below the breakpoint the inter-card links turn vertical (layout rules live
+   in the mobile pass further down), so their dashes march downwards instead */
+@media (max-width: 800px) and (prefers-reduced-motion: no-preference) {
+  .f-link {
+    animation-name: march-v;
+  }
 }
 
 /* ---- alternating feature rows ----
@@ -719,13 +974,23 @@ button {
   min-width: 0;
 }
 .f-copy {
-  align-self: center;
-  padding: 64px 56px 64px 0;
+  /* full-height flex cell (text stays vertically centered) so the title-cell
+     tint runs from the top hairline to the bottom one, like the visual cell */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 64px 56px 64px 24px;
+  /* bleed to the container edge so the tint meets the frame */
+  margin-left: -24px;
+  /* teal tint drifting in from the outer corner, mirroring the visual cell */
+  background: linear-gradient(135deg, rgba(15, 118, 110, 0.13), rgba(15, 118, 110, 0) 60%);
 }
 .feature.rev .f-copy {
   order: 2;
-  padding-right: 0;
-  padding-left: 56px;
+  margin-left: 0;
+  margin-right: -24px;
+  padding: 64px 24px 64px 56px;
+  background: linear-gradient(225deg, rgba(15, 118, 110, 0.13), rgba(15, 118, 110, 0) 60%);
 }
 .f-visual {
   position: relative;
@@ -733,7 +998,9 @@ button {
   flex-direction: column;
   justify-content: center;
   border-left: 1px solid var(--border);
-  background: var(--bg-soft);
+  /* bg-soft with a teal tint drifting in from the outer corner */
+  background: linear-gradient(225deg, rgba(15, 118, 110, 0.15), rgba(15, 118, 110, 0) 70%),
+    var(--bg-soft);
   /* -24px margin cancels the container's gutter so the tint runs to its edge;
      the matching padding keeps the content off that edge */
   margin-right: -24px;
@@ -746,6 +1013,9 @@ button {
   margin-right: 0;
   margin-left: -24px;
   padding: 40px 40px 40px 24px;
+  /* mirrored: teal drifts in from the left outer corner */
+  background: linear-gradient(135deg, rgba(15, 118, 110, 0.15), rgba(15, 118, 110, 0) 70%),
+    var(--bg-soft);
 }
 @media (min-width: 1140px) {
   /* the container gutter grows to 36px here and gains its side borders: the
@@ -759,6 +1029,15 @@ button {
     margin-left: -36px;
     padding-right: 40px;
     padding-left: 36px;
+  }
+  .f-copy {
+    margin-left: -36px;
+    padding-left: 36px;
+  }
+  .feature.rev .f-copy {
+    margin-left: 0;
+    margin-right: -36px;
+    padding-right: 36px;
   }
 }
 .f-copy .eyebrow {
@@ -797,12 +1076,15 @@ button {
     padding-bottom: 48px;
   }
   .f-copy {
-    align-self: auto;
     padding: 0;
+    margin: 0;
+    background: none;
   }
   .feature.rev .f-copy {
     order: 1;
-    padding-left: 0;
+    padding: 0;
+    margin: 0;
+    background: none;
   }
   .f-visual,
   .feature.rev .f-visual {
@@ -1031,6 +1313,8 @@ button {
   text-align: center;
   padding-top: 72px;
   padding-bottom: 88px;
+  /* teal glow rising from the footer hairline */
+  background: radial-gradient(ellipse 85% 75% at 50% 100%, rgba(15, 118, 110, 0.14), transparent 75%);
 }
 .team h2 {
   font-family: var(--font-mono);
@@ -1087,22 +1371,47 @@ button {
     padding-top: 28px;
     padding-bottom: 28px;
   }
-  /* steps stack: the divider moves from between columns to between rows */
-  .steps {
-    grid-template-columns: 1fr;
-  }
-  .step {
-    padding: 28px 0;
-  }
-  .step:first-child {
+  .how {
     padding-top: 36px;
-  }
-  .step:last-child {
     padding-bottom: 44px;
   }
-  .step + .step {
-    border-left: none;
-    border-top: 1px solid var(--border);
+  /* the flow folds into a single vertical spine: every connector points down,
+     and the four-line convergence fan collapses to the single centre drop */
+  .flow {
+    grid-template-columns: 1fr;
+    grid-template-areas: "in" "d1" "s1" "l1" "s2" "l2" "s3" "l3" "s4" "cd" "out";
+  }
+  .flow-input {
+    justify-self: center;
+  }
+  .f-drop-in {
+    margin-left: 0;
+    justify-self: center;
+  }
+  .f-fan {
+    display: none;
+  }
+  .flow-merge {
+    justify-self: stretch;
+    max-width: none;
+  }
+  .f-link {
+    align-self: auto;
+    justify-self: center;
+    width: 1.5px;
+    height: 30px;
+    background: repeating-linear-gradient(180deg, var(--text-dim) 0 4px, transparent 4px 9px);
+    margin: 5px 0;
+  }
+  .f-link::after {
+    right: auto;
+    top: auto;
+    left: -2.75px;
+    bottom: -1px;
+    border-top: 5px solid var(--text-dim);
+    border-left: 3.5px solid transparent;
+    border-right: 3.5px solid transparent;
+    border-bottom: none;
   }
   .repo-feed-window {
     height: 340px;
@@ -1370,6 +1679,8 @@ button {
 }
 .price-card-pro {
   border: 2px solid var(--green);
+  /* teal tint under the card top so the featured plan reads warmer */
+  background: linear-gradient(180deg, rgba(15, 118, 110, 0.12), rgba(15, 118, 110, 0) 55%), var(--bg);
 }
 .price-card h2 {
   font-size: 20px;
