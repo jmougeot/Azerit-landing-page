@@ -265,9 +265,10 @@ button {
   --glow: 0;
   --dot-gap: 24px;
 }
-.hero-band > .hero {
+.hero-band > .hero,
+.hero-band > .video-wrap {
   position: relative;
-  z-index: 1; /* hero content sits above the grid */
+  z-index: 1; /* hero content + demo window sit above the grid */
 }
 .dot-grid {
   position: absolute;
@@ -277,8 +278,10 @@ button {
   /* faint resting dots */
   background-image: radial-gradient(circle at center, var(--border) 1.3px, transparent 1.6px);
   background-size: var(--dot-gap) var(--dot-gap);
-  -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent);
-  mask-image: linear-gradient(to bottom, #000 72%, transparent);
+  /* the band now spans hero + demo window: keep dots crisp through the hero,
+     dissolve them behind the window's lower half */
+  -webkit-mask-image: linear-gradient(to bottom, #000 52%, transparent 88%);
+  mask-image: linear-gradient(to bottom, #000 52%, transparent 88%);
 }
 /* bigger green dots near the cursor — no background haze, just the dots */
 .dot-grid::after {
@@ -304,7 +307,8 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 48px;
-  padding: 140px 0 110px;
+  /* shallow bottom padding: the demo window hugs the hero, linear.app-style */
+  padding: 140px 0 72px;
 }
 .hero-copy {
   flex: 1 1 0;
@@ -533,53 +537,36 @@ button {
 
 /* ---- app window chrome (video) : dashboard preview, stays dark ---- */
 .app-frame {
+  position: relative; /* paints above the .video-stage glow */
   background: var(--dark);
   border: 1px solid #000000;
-  border-radius: 22px;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 24px 70px rgba(31, 35, 40, 0.25);
-}
-.app-bar {
-  display: flex;
-  align-items: center;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--dark-border);
-  background: var(--dark-soft);
-}
-.app-bar .dots {
-  display: flex;
-  gap: 7px;
-}
-.app-bar .d {
-  width: 11px;
-  height: 11px;
-  border-radius: 99px;
-  background: var(--dark-border);
-}
-.app-bar .url {
-  margin: 0 auto;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--dark-dim);
-  background: var(--dark);
-  border: 1px solid var(--dark-border);
-  border-radius: 99px;
-  padding: 2px 18px;
-}
-.app-bar .spacer {
-  width: 47px;
+  /* nearly flat, linear.app-style: the stage plate does the lifting, the
+     window just needs a hairline ring and a whisper of depth */
+  box-shadow:
+    0 0 0 1px rgba(15, 23, 42, 0.05),
+    0 2px 6px rgba(15, 23, 42, 0.12),
+    0 18px 44px -20px rgba(15, 23, 42, 0.3);
 }
 .video-wrap {
-  padding: 80px 0 60px;
+  /* the video is ~1.94:1 (1920x990), so at 92vw the window is no taller than
+     a 16:9 one at 84vw — wide like linear.app without gaining height. The
+     bottom padding matches the side gaps so the air around the window reads
+     evenly against the page-wide stage light */
+  width: min(92vw, 1560px);
+  margin: 0 auto;
+  padding: 0 0 min(4vw, 64px);
+}
+.video-stage {
+  position: relative;
 }
 @media (max-width: 800px) {
   .video-wrap {
-    /* horizontal gutter comes from .container (18px <560); just set the vertical
-       gap so the demo doesn't crowd the hero CTA above it */
-    padding: 80px 0 36px;
+    padding: 0 0 40px;
   }
   .app-frame {
-    border-radius: 14px;
+    border-radius: 10px;
   }
 }
 
@@ -1437,6 +1424,112 @@ button {
   }
   .footer .container {
     flex-wrap: wrap;
+  }
+}
+
+/* ---- final CTA band ---- */
+/* lives in the same band + rail system as every other section: the marching
+   contribution banner, then a bare mono link centered in its own rule cell */
+.cta-final {
+  --cta-cell: 16px; /* pricing-patch proportions, banner-sized */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 0; /* the band's own hairline is the link cell's top rule */
+  padding-bottom: 0;
+}
+/* banner and link row break out of the container to the viewport edges: the
+   commits run the full width of the screen and the rules go all the way out */
+.cta-commits {
+  overflow: hidden;
+  /* flush between the link cell's bottom rule and the footer's hairline:
+     the pattern fills its whole cell, no leftover strips */
+  margin: 0 calc(50% - 50vw);
+  padding: 16px 0;
+  /* opaque strip: the container rails must not show through the pattern */
+  background: var(--bg);
+}
+.cta-marquee {
+  display: flex;
+  width: max-content;
+  /* barely-there drift: one full copy (~2.7k px) every 8 minutes */
+  animation: cta-scroll 480s linear infinite;
+}
+/* each copy carries the inter-copy gap so -50% lands exactly one copy over */
+.cta-marquee > .cta-commits-grid {
+  margin-right: 5px;
+}
+@keyframes cta-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cta-marquee {
+    animation: none;
+  }
+}
+.cta-commits-grid {
+  display: grid;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.cta-cell {
+  width: var(--cta-cell);
+  height: var(--cta-cell);
+  border-radius: 3px;
+  background: rgba(15, 118, 110, 0.09); /* faint empty cell keeps the grid readable */
+  transition: background 0.9s ease;
+}
+/* commits flare as they march under the cursor, then cool back down */
+.cta-cell:hover {
+  transition-duration: 0s;
+  background: var(--green) !important;
+}
+/* the link's cell in the page's rule grid: hairline above, verticals on both
+   sides, the footer band's own hairline closes it below */
+.cta-row {
+  align-self: stretch;
+  margin: 0 calc(50% - 50vw);
+  display: grid;
+  grid-template-columns: 1fr minmax(240px, 460px) 1fr;
+  border-bottom: 1px solid var(--border);
+}
+.cta-row span:first-child {
+  border-right: 1px solid var(--border);
+}
+.cta-row span:last-child {
+  border-left: 1px solid var(--border);
+}
+.cta-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 38px 0;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  transition: color 0.12s ease;
+}
+.cta-link:hover {
+  color: var(--green);
+}
+@media (max-width: 800px) {
+  .cta-final {
+    --cta-cell: 10px;
+  }
+  .cta-commits-grid {
+    gap: 3px;
+  }
+  .cta-marquee > .cta-commits-grid {
+    margin-right: 3px;
+  }
+  .cta-commits {
+    padding: 12px 0;
+  }
+  .cta-link {
+    padding: 28px 0;
   }
 }
 

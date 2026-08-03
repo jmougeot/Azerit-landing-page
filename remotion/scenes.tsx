@@ -40,7 +40,7 @@ const DashFrame: React.FC<{
           alignItems: "center",
           gap: 14,
           fontFamily: T.mono,
-          fontSize: 28,
+          fontSize: 23,
           fontWeight: 700,
           padding: "0 14px",
           marginBottom: 40,
@@ -53,7 +53,7 @@ const DashFrame: React.FC<{
           key={n.id}
           style={{
             fontFamily: T.mono,
-            fontSize: 22,
+            fontSize: 18,
             padding: "15px 18px",
             borderRadius: 16,
             marginBottom: 8,
@@ -91,7 +91,7 @@ const PageTitle: React.FC<{ title: string; right?: React.ReactNode }> = ({ title
       marginBottom: 26,
     }}
   >
-    <div style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.01em" }}>{title}</div>
+    <div style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.01em" }}>{title}</div>
     {right}
   </div>
 );
@@ -135,7 +135,7 @@ export const SceneDescribe: React.FC = () => {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
-  const cy = interpolate(frame, [72, 100], [880, 640], {
+  const cy = interpolate(frame, [72, 100], [835, 595], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -154,14 +154,14 @@ export const SceneDescribe: React.FC = () => {
     <AbsoluteFill>
       <DashFrame active="describe">
         <PageTitle title="Your product" />
-        <div style={{ fontSize: 26, color: T.dim, marginBottom: 16 }}>What do you sell?</div>
+        <div style={{ fontSize: 21, color: T.dim, marginBottom: 16 }}>What do you sell?</div>
         <div
           style={{
             background: T.bgSoft,
             border: `1px solid ${frame < 80 ? T.green : T.border}`,
             borderRadius: 18,
             padding: "26px 30px",
-            fontSize: 28,
+            fontSize: 23,
             minHeight: 96,
             marginBottom: 30,
           }}
@@ -173,17 +173,15 @@ export const SceneDescribe: React.FC = () => {
             style={{
               display: "inline-block",
               fontFamily: T.mono,
-              fontSize: 24,
+              fontSize: 20,
               fontWeight: 700,
-              color: "#04201c",
-              background: T.green,
+              /* même recette que le .btn-try de la landing */
+              color: "#ffffff",
+              background: "linear-gradient(180deg, #128379, #115e59)",
               border: "1px solid #000000",
-              borderRadius: 22,
+              borderRadius: 12,
               padding: "16px 36px",
-              opacity: interpolate(frame, [62, 72], [0, 1], {
-                extrapolateLeft: "clamp",
-                extrapolateRight: "clamp",
-              }),
+              /* visible dès la frame 0 : elle sert de poster au player */
               transform: `scale(${pressed ? 0.94 : 1})`,
             }}
           >
@@ -192,7 +190,7 @@ export const SceneDescribe: React.FC = () => {
           <div
             style={{
               fontFamily: T.mono,
-              fontSize: 22,
+              fontSize: 18,
               color: frame >= 168 ? T.green : T.dim,
               opacity: frame >= 118 ? 1 : 0,
             }}
@@ -252,7 +250,7 @@ export const SceneRank: React.FC = () => {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
-  const cy = interpolate(frame, [115, 150], [900, 330], {
+  const cy = interpolate(frame, [115, 150], [855, 285], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -270,7 +268,7 @@ export const SceneRank: React.FC = () => {
             <div
               style={{
                 fontFamily: T.mono,
-                fontSize: 19,
+                fontSize: 16,
                 color: T.green,
                 background: T.greenSoft,
                 border: "1px solid rgba(82,208,189,0.5)",
@@ -303,7 +301,7 @@ export const SceneRank: React.FC = () => {
                 border: `1px solid ${lit ? T.green : top ? "rgba(82,208,189,0.6)" : T.border}`,
               }}
             >
-              <div style={{ fontFamily: T.mono, fontSize: 22, color: T.dim, width: 34 }}>
+              <div style={{ fontFamily: T.mono, fontSize: 18, color: T.dim, width: 34 }}>
                 #{i + 1}
               </div>
               <div
@@ -316,22 +314,22 @@ export const SceneRank: React.FC = () => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: 23,
+                  fontSize: 19,
                   fontWeight: 800,
                 }}
               >
                 {l.initials}
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 25, fontWeight: 700 }}>{l.name}</div>
-                <div style={{ fontFamily: T.mono, fontSize: 18, color: T.dim, marginTop: 2 }}>
+                <div style={{ fontSize: 21, fontWeight: 700 }}>{l.name}</div>
+                <div style={{ fontFamily: T.mono, fontSize: 15, color: T.dim, marginTop: 2 }}>
                   {l.role}
                 </div>
               </div>
               <div
                 style={{
                   fontFamily: T.mono,
-                  fontSize: 18,
+                  fontSize: 15,
                   color: T.blue,
                   background: "rgba(108,182,255,0.1)",
                   border: "1px solid rgba(108,182,255,0.35)",
@@ -343,7 +341,7 @@ export const SceneRank: React.FC = () => {
                 {l.signal}
               </div>
               <div style={{ width: 130, textAlign: "right" }}>
-                <div style={{ fontFamily: T.mono, fontSize: 40, fontWeight: 800, color: T.green }}>
+                <div style={{ fontFamily: T.mono, fontSize: 33, fontWeight: 800, color: T.green }}>
                   {Math.round(p * l.score)}
                 </div>
                 <div
@@ -415,7 +413,7 @@ export const SceneWhy: React.FC = () => {
   return (
     <AbsoluteFill>
       <DashFrame active="rank">
-        <div style={{ fontFamily: T.mono, fontSize: 19, color: T.dim, marginBottom: 20 }}>
+        <div style={{ fontFamily: T.mono, fontSize: 16, color: T.dim, marginBottom: 20 }}>
           ← Ranked leads
         </div>
         <div
@@ -438,26 +436,26 @@ export const SceneWhy: React.FC = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: 30,
+              fontSize: 25,
               fontWeight: 800,
             }}
           >
             LD
           </div>
           <div>
-            <div style={{ fontSize: 34, fontWeight: 800 }}>Léa Dubois</div>
-            <div style={{ fontFamily: T.mono, fontSize: 20, color: T.dim, marginTop: 3 }}>
+            <div style={{ fontSize: 28, fontWeight: 800 }}>Léa Dubois</div>
+            <div style={{ fontFamily: T.mono, fontSize: 16, color: T.dim, marginTop: 3 }}>
               CTO · lea-dubois/pg-vector-search
             </div>
           </div>
           <div style={{ marginLeft: "auto", textAlign: "center" }}>
-            <div style={{ fontFamily: T.mono, fontSize: 62, fontWeight: 800, color: T.green }}>
+            <div style={{ fontFamily: T.mono, fontSize: 51, fontWeight: 800, color: T.green }}>
               {score}
             </div>
-            <div style={{ fontFamily: T.mono, fontSize: 18, color: T.dim }}>intent score</div>
+            <div style={{ fontFamily: T.mono, fontSize: 15, color: T.dim }}>intent score</div>
           </div>
         </div>
-        <div style={{ fontSize: 26, fontWeight: 700, marginBottom: 18 }}>
+        <div style={{ fontSize: 21, fontWeight: 700, marginBottom: 18 }}>
           Why she&rsquo;s a hot prospect
         </div>
         {WHY.map((w, i) => {
@@ -479,12 +477,12 @@ export const SceneWhy: React.FC = () => {
                 transform: `translateY(${interpolate(p, [0, 1], [20, 0])}px)`,
               }}
             >
-              <div style={{ fontFamily: T.mono, fontSize: 24, color: w.color }}>✓</div>
-              <div style={{ flex: 1, fontSize: 23 }}>{w.text}</div>
+              <div style={{ fontFamily: T.mono, fontSize: 20, color: w.color }}>✓</div>
+              <div style={{ flex: 1, fontSize: 19 }}>{w.text}</div>
               <div
                 style={{
                   fontFamily: T.mono,
-                  fontSize: 18,
+                  fontSize: 15,
                   fontWeight: 700,
                   color: w.color,
                   background: w.soft,
@@ -528,7 +526,7 @@ export const SceneMessage: React.FC = () => {
               <div
                 style={{
                   fontFamily: T.mono,
-                  fontSize: 19,
+                  fontSize: 16,
                   color: T.green,
                   background: T.greenSoft,
                   border: "1px solid rgba(82,208,189,0.5)",
@@ -543,7 +541,7 @@ export const SceneMessage: React.FC = () => {
           <div
             style={{
               fontFamily: T.mono,
-              fontSize: 19,
+              fontSize: 16,
               color: T.dim,
               paddingBottom: 18,
               borderBottom: `1px solid ${T.border}`,
@@ -568,7 +566,7 @@ export const SceneMessage: React.FC = () => {
           </div>
           <div
             style={{
-              fontSize: 25,
+              fontSize: 21,
               lineHeight: 1.6,
               whiteSpace: "pre-wrap",
               minHeight: 400,
@@ -589,7 +587,7 @@ export const SceneMessage: React.FC = () => {
                 key={t}
                 style={{
                   fontFamily: T.mono,
-                  fontSize: 18,
+                  fontSize: 15,
                   color: T.green,
                   background: T.greenSoft,
                   border: `1px solid rgba(82,208,189,0.5)`,
@@ -655,10 +653,10 @@ export const SceneResults: React.FC = () => {
                     transform: `translateY(${interpolate(p, [0, 1], [20, 0])}px)`,
                   }}
                 >
-                  <div style={{ fontFamily: T.mono, fontSize: 52, fontWeight: 800, color: T.green }}>
+                  <div style={{ fontFamily: T.mono, fontSize: 43, fontWeight: 800, color: T.green }}>
                     {Math.round(p * s.n)}
                   </div>
-                  <div style={{ fontSize: 20, color: T.dim, marginTop: 4 }}>{s.label}</div>
+                  <div style={{ fontSize: 16, color: T.dim, marginTop: 4 }}>{s.label}</div>
                 </div>
               );
             })}
@@ -692,17 +690,17 @@ export const SceneResults: React.FC = () => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: 21,
+                    fontSize: 17,
                     fontWeight: 800,
                   }}
                 >
                   {r.initials}
                 </div>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 23, fontWeight: 700 }}>{r.name}</div>
-                  <div style={{ fontSize: 20, color: T.dim, marginTop: 2 }}>“{r.text}”</div>
+                  <div style={{ fontSize: 19, fontWeight: 700 }}>{r.name}</div>
+                  <div style={{ fontSize: 16, color: T.dim, marginTop: 2 }}>“{r.text}”</div>
                 </div>
-                <div style={{ fontFamily: T.mono, fontSize: 18, color: T.dim }}>{r.when}</div>
+                <div style={{ fontFamily: T.mono, fontSize: 15, color: T.dim }}>{r.when}</div>
               </div>
             );
           })}
@@ -720,7 +718,7 @@ export const SceneOutro: React.FC = () => {
         <div
           style={{
             fontFamily: T.mono,
-            fontSize: 56,
+            fontSize: 46,
             fontWeight: 700,
             display: "flex",
             alignItems: "center",
@@ -733,7 +731,7 @@ export const SceneOutro: React.FC = () => {
       <Pop delay={25}>
         <div
           style={{
-            fontSize: 44,
+            fontSize: 36,
             fontWeight: 700,
             marginTop: 36,
             textAlign: "center",
@@ -751,11 +749,13 @@ export const SceneOutro: React.FC = () => {
           style={{
             marginTop: 48,
             fontFamily: T.mono,
-            fontSize: 26,
-            color: "#04201c",
-            background: T.green,
+            fontSize: 21,
+            /* même recette que le .btn-try de la landing */
+            color: "#ffffff",
+            background: "linear-gradient(180deg, #128379, #115e59)",
+            border: "1px solid #000000",
             padding: "16px 44px",
-            borderRadius: 22,
+            borderRadius: 12,
             fontWeight: 700,
           }}
         >
