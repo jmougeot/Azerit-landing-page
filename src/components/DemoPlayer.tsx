@@ -33,15 +33,6 @@ export function DemoPlayer() {
 
   return (
     <div className="app-frame" ref={frameRef}>
-      <div className="app-bar">
-        <span className="dots">
-          <span className="d" />
-          <span className="d" />
-          <span className="d" />
-        </span>
-        <span className="url">app.azerit.com</span>
-        <span className="spacer" />
-      </div>
       <Player
         ref={playerRef}
         component={DemoVideo}

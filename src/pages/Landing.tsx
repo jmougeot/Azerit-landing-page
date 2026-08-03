@@ -286,6 +286,59 @@ function FlowStep({
   );
 }
 
+// Giant contribution-graph banner for the final CTA — the same recipe as the
+// pricing page's ContribBg patches (real GitHub greens, ~45% density, commits
+// landing in then twinkling), stretched into one full-width band.
+const CTA_GREENS = ["#9be9a8", "#40c463", "#30a14e", "#216e39"];
+
+// deterministic pseudo-random so the pattern is identical on every render
+function ctaSeeded(n: number) {
+  const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
+  return x - Math.floor(x);
+}
+
+function CtaCommits() {
+  // each marquee copy must stay wider than the widest viewport (~2680px at
+  // 16px cells) so the loop never shows a gap while it scrolls
+  const cols = 128;
+  const rows = 7;
+  const cells: ({ color: string; delay: number } | null)[] = [];
+  for (let i = 0; i < cols * rows; i++) {
+    const on = ctaSeeded(i * 3.1 + 7) > 0.55; // ~45% of cells carry a commit
+    const lvl = Math.floor(ctaSeeded(i * 3.1 + 7.5) * CTA_GREENS.length);
+    // staggered start so commits appear to land one after another, then twinkle
+    const delay = ctaSeeded(i * 3.1 + 7.8) * 6;
+    cells.push(on ? { color: CTA_GREENS[lvl], delay } : null);
+  }
+  const grid = (
+    <div
+      className="cta-commits-grid"
+      style={{ gridTemplateColumns: `repeat(${cols}, var(--cta-cell))` }}
+    >
+      {cells.map((cell, i) => (
+        <span
+          key={i}
+          className={cell ? "cta-cell contrib-cell-on" : "cta-cell"}
+          style={
+            cell
+              ? { background: cell.color, animationDelay: `${cell.delay}s, ${cell.delay + 0.6}s` }
+              : undefined
+          }
+        />
+      ))}
+    </div>
+  );
+  // two copies slide left by exactly one copy's width for a seamless loop
+  return (
+    <div className="cta-commits" aria-hidden>
+      <div className="cta-marquee">
+        {grid}
+        {grid}
+      </div>
+    </div>
+  );
+}
+
 export function Landing() {
   const videoWrapRef = useRef<HTMLDivElement>(null);
   const [showPlayer, setShowPlayer] = useState(false);
@@ -338,18 +391,22 @@ export function Landing() {
               <HeroGlobe />
             </div>
           </header>
-        </DotGridBand>
 
-        {/* demo video */}
-        <div className="container video-wrap" id="demo" ref={videoWrapRef}>
-          {showPlayer ? (
-            <Suspense fallback={<div className="app-frame" style={{ aspectRatio: "16 / 9" }} />}>
-              <DemoPlayer />
-            </Suspense>
-          ) : (
-            <div className="app-frame" style={{ aspectRatio: "16 / 9" }} />
-          )}
-        </div>
+          {/* demo video — Linear-style: the app window sits tight under the
+              hero copy, on the same dot-grid backdrop, lifted by a soft teal
+              glow instead of floating on an empty white band */}
+          <div className="video-wrap" id="demo" ref={videoWrapRef}>
+            <div className="video-stage">
+              {showPlayer ? (
+                <Suspense fallback={<div className="app-frame" style={{ aspectRatio: "1920 / 990" }} />}>
+                  <DemoPlayer />
+                </Suspense>
+              ) : (
+                <div className="app-frame" style={{ aspectRatio: "1920 / 990" }} />
+              )}
+            </div>
+          </div>
+        </DotGridBand>
       </div>
 
       {/* how it works */}
@@ -487,6 +544,21 @@ export function Landing() {
             </div>
           </div>
         </div>
+        </div>
+      </section>
+
+      {/* final CTA — a bare mono link centered in its own cell of the page's
+          rule grid, the contribution banner resting below it: nothing else */}
+      <section className="band">
+        <div className="container cta-final">
+          <div className="cta-row">
+            <span aria-hidden />
+            <Link to="/try" className="cta-link">
+              Find my leads ↗
+            </Link>
+            <span aria-hidden />
+          </div>
+          <CtaCommits />
         </div>
       </section>
       </main>

@@ -6,9 +6,9 @@ export const SceneBg: React.FC<{ children: React.ReactNode }> = ({ children }) =
   <AbsoluteFill
     style={{
       background: T.bg,
-      backgroundImage: `linear-gradient(rgba(34,48,64,0.3) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(34,48,64,0.3) 1px, transparent 1px)`,
-      backgroundSize: "60px 60px",
+      /* même grille de points que le hero de la landing (.dot-grid), version sombre */
+      backgroundImage: `radial-gradient(circle at center, rgba(34,48,64,0.9) 2px, transparent 2.5px)`,
+      backgroundSize: "34px 34px",
       fontFamily: T.sans,
       color: T.text,
     }}
@@ -17,16 +17,21 @@ export const SceneBg: React.FC<{ children: React.ReactNode }> = ({ children }) =
   </AbsoluteFill>
 );
 
-// Fondu entrée/sortie appliqué à toute une scène
+// Fondu entrée/sortie appliqué à toute une scène. fadeIn=false pour la
+// première scène : la frame 0 sert de poster au player, elle doit montrer
+// l'app, pas un écran noir.
 export const FadeScene: React.FC<{
   durationInFrames: number;
+  fadeIn?: boolean;
   children: React.ReactNode;
-}> = ({ durationInFrames, children }) => {
+}> = ({ durationInFrames, fadeIn = true, children }) => {
   const frame = useCurrentFrame();
   const opacity = interpolate(
     frame,
-    [0, 12, durationInFrames - 12, durationInFrames],
-    [0, 1, 1, 0],
+    fadeIn
+      ? [0, 12, durationInFrames - 12, durationInFrames]
+      : [durationInFrames - 12, durationInFrames],
+    fadeIn ? [0, 1, 1, 0] : [1, 0],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
   return <AbsoluteFill style={{ opacity }}>{children}</AbsoluteFill>;
@@ -102,20 +107,18 @@ export const StepTag: React.FC<{ num: string; label: string }> = ({ num, label }
           boxShadow: "0 16px 50px rgba(0,0,0,0.55)",
         }}
       >
+        {/* même idiome que les tags [ step n ] des sections de la landing */}
         <div
           style={{
-            background: T.greenSoft,
-            border: `2px solid ${T.green}`,
             color: T.green,
-            borderRadius: 100,
-            padding: "3px 18px",
-            fontSize: 24,
+            fontSize: 20,
             fontWeight: 700,
+            whiteSpace: "nowrap",
           }}
         >
-          {num}
+          [ step {num} ]
         </div>
-        <div style={{ fontSize: 27, color: T.text }}>{label}</div>
+        <div style={{ fontSize: 22, color: T.text }}>{label}</div>
       </div>
     </div>
   );
