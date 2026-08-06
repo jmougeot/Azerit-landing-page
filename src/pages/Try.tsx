@@ -1,9 +1,14 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { TopBar, Footer } from "../components/Nav";
 import { saveLead, getLeads } from "../leads";
 
 export function Try() {
+  // /try?for=hiring flips the copy for visitors landing from the hiring page:
+  // same form, same queue — but a recruiter is asked for a role, not a product.
+  const [params] = useSearchParams();
+  const hiring = params.get("for") === "hiring";
+
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -14,7 +19,11 @@ export function Try() {
     e.preventDefault();
     if (submitting) return;
     setSubmitting(true);
-    await saveLead({ email, website, event: "try_requested" });
+    await saveLead({
+      email,
+      website,
+      event: hiring ? "try_requested_hiring" : "try_requested",
+    });
     await new Promise((r) => setTimeout(r, 700));
     setPosition(42 + (getLeads().length % 30));
     setDone(true);
@@ -30,24 +39,32 @@ export function Try() {
             <div className="check">✓ request received</div>
             <h1>You're in the queue.</h1>
             <p>
-              We're onboarding teams one by one so every niche gets set up properly. You'll get an
-              email at <strong style={{ color: "var(--text)" }}>{email}</strong> when your dashboard
-              is ready.
+              We're onboarding teams one by one so every {hiring ? "search" : "niche"} gets set up
+              properly. You'll get an email at{" "}
+              <strong style={{ color: "var(--text)" }}>{email}</strong> when your dashboard is
+              ready.
             </p>
             <div className="pos">position #{position} in line</div>
             <p style={{ fontSize: 13.5 }}>
-              Early users get their first lead batch free. We'll run your niche as the test.
+              {hiring
+                ? "Early users get their first candidate batch free. We'll run your role as the test."
+                : "Early users get their first lead batch free. We'll run your niche as the test."}
             </p>
-            <Link to="/" className="btn-ghost" style={{ display: "inline-block", marginTop: 20 }}>
-              ← back home
+            <Link
+              to={hiring ? "/hiring" : "/"}
+              className="btn-ghost"
+              style={{ display: "inline-block", marginTop: 20 }}
+            >
+              ← back
             </Link>
           </div>
         ) : (
           <div className="try-card">
-            <h1>Try Azerit on your niche</h1>
+            <h1>Try Azerit on your {hiring ? "role" : "niche"}</h1>
             <p className="sub">
-              Drop your email and your website, we'll figure out your niche, set up your scan and
-              open your dashboard.
+              {hiring
+                ? "Drop your email and the role you're hiring for: we'll set up your scan and open your dashboard."
+                : "Drop your email and your website, we'll figure out your niche, set up your scan and open your dashboard."}
             </p>
             <form onSubmit={submit}>
               <div className="field">
@@ -62,12 +79,18 @@ export function Try() {
                 />
               </div>
               <div className="field">
-                <label htmlFor="website">website or product</label>
+                <label htmlFor="website">
+                  {hiring ? "the role you're hiring for" : "website or product"}
+                </label>
                 <input
                   id="website"
                   type="text"
                   required
-                  placeholder="acme.com, or your payments API for devs"
+                  placeholder={
+                    hiring
+                      ? "senior backend eng, real-time systems"
+                      : "acme.com, or your payments API for devs"
+                  }
                   value={website}
                   onChange={(e) => setWebsite(e.target.value)}
                 />

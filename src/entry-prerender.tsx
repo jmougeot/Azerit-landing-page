@@ -2,6 +2,8 @@ import React from "react";
 import { renderToString } from "react-dom/server";
 import { StaticRouter } from "react-router";
 import { App } from "./App";
+import { Landing } from "./pages/Landing";
+import { Hiring } from "./pages/Hiring";
 import { Try } from "./pages/Try";
 import { Legal } from "./pages/Legal";
 import { Pricing } from "./pages/Pricing";
@@ -25,7 +27,13 @@ export function render(path: string): string {
       </React.StrictMode>
     );
   }
-  const page = { "/try": <Try />, "/legal": <Legal />, "/pricing": <Pricing /> }[path];
+  const page = {
+    "/prospection": <Landing />,
+    "/hiring": <Hiring />,
+    "/try": <Try />,
+    "/legal": <Legal />,
+    "/pricing": <Pricing />,
+  }[path];
   if (!page) throw new Error(`No prerender component for route ${path}`);
   return renderToString(<StaticRouter location={path}>{page}</StaticRouter>);
 }

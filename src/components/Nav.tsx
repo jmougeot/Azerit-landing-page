@@ -1,5 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { LogoMark } from "./Logo";
+
+// nav-link with an active state so the topbar shows which product page
+// (prospection / hiring) the visitor is on
+function TopLink({ to, children }: { to: string; children: string }) {
+  return (
+    <NavLink to={to} className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>
+      {children}
+    </NavLink>
+  );
+}
 
 export function TopBar() {
   return (
@@ -9,9 +19,14 @@ export function TopBar() {
           <LogoMark size={18} /> azerit
         </Link>
         <div className="topbar-nav">
-          <Link to="/pricing" className="nav-link">
+          <TopLink to="/prospection">prospection</TopLink>
+          <TopLink to="/hiring">hiring</TopLink>
+          <NavLink
+            to="/pricing"
+            className={({ isActive }) => `nav-link nav-secondary${isActive ? " active" : ""}`}
+          >
             pricing
-          </Link>
+          </NavLink>
           <Link to="/try" className="try-link">
             try it →
           </Link>
@@ -27,7 +42,13 @@ export function Footer() {
       <div className="container" style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <LogoMark size={13} /> azerit © {new Date().getFullYear()} · the intent is already on
         GitHub.
-        <Link to="/pricing" style={{ marginLeft: "auto", color: "inherit" }}>
+        <Link to="/prospection" style={{ marginLeft: "auto", color: "inherit" }}>
+          prospection
+        </Link>
+        <Link to="/hiring" style={{ color: "inherit" }}>
+          hiring
+        </Link>
+        <Link to="/pricing" style={{ color: "inherit" }}>
           pricing
         </Link>
         <Link to="/legal" style={{ color: "inherit" }}>

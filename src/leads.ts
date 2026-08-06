@@ -1,8 +1,10 @@
 export type Lead = {
   id: string;
   email: string;
+  // the second form field: a website/product for prospection sign-ups, a role
+  // description for hiring sign-ups (the event says which)
   website: string;
-  event: "try_requested";
+  event: "try_requested" | "try_requested_hiring";
   createdAt: string;
 };
 
