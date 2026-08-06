@@ -41,3 +41,7 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          # Pages deployments sometimes sit in deployment_queued well past the
+          # default 10 min (seen 2026-08-06); give the queue 30 min before aborting
+          timeout: 1800000
