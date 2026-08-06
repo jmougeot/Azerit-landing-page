@@ -10,6 +10,17 @@ import { render } from "../dist-ssr/entry-prerender.js";
 
 const ROUTES = [
   { path: "/", out: "index.html" },
+  {
+    path: "/prospection",
+    out: "prospection.html",
+    title: "Prospection · Azerit — AI Lead Generation on GitHub",
+  },
+  {
+    path: "/hiring",
+    out: "hiring.html",
+    title: "Hiring · Azerit — Recruit Engineers from GitHub",
+    desc: "Azerit analyzes GitHub to match your role with developers who've already built exactly what you're hiring for, then writes the outreach they answer.",
+  },
   { path: "/try", out: "try.html", title: "Try Azerit on Your Niche · AI Lead Generation on GitHub" },
   { path: "/legal", out: "legal.html", title: "Legal Notice & Privacy Policy · Azerit" },
   { path: "/pricing", out: "pricing.html", title: "Pricing · Azerit — $20 / month, everything included" },
@@ -21,7 +32,7 @@ if (!base.includes(marker)) {
   throw new Error("Empty #root div not found in dist/index.html");
 }
 
-for (const { path, out, title } of ROUTES) {
+for (const { path, out, title, desc } of ROUTES) {
   let html = base.replace(marker, `<div id="root">${render(path)}</div>`);
   const url = `https://www.azerit.tech${path === "/" ? "/" : path}`;
   html = html
@@ -32,6 +43,14 @@ for (const { path, out, title } of ROUTES) {
       .replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
       .replace(/<meta property="og:title" content="[^"]*"/, `<meta property="og:title" content="${title}"`)
       .replace(/<meta name="twitter:title" content="[^"]*"/, `<meta name="twitter:title" content="${title}"`);
+  }
+  if (desc) {
+    // the three description tags span multiple lines in index.html, so the
+    // pattern must cross newlines between attributes
+    html = html
+      .replace(/<meta\s+name="description"\s+content="[^"]*"/, `<meta name="description" content="${desc}"`)
+      .replace(/<meta\s+property="og:description"\s+content="[^"]*"/, `<meta property="og:description" content="${desc}"`)
+      .replace(/<meta\s+name="twitter:description"\s+content="[^"]*"/, `<meta name="twitter:description" content="${desc}"`);
   }
   writeFileSync(new URL(`../dist/${out}`, import.meta.url), html);
   console.log(`Prerendered ${path} into dist/${out}`);

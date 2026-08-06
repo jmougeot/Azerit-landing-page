@@ -1,10 +1,14 @@
-import { Suspense, lazy, useEffect, useRef, useState, type ReactNode } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { TopBar, Footer } from "../components/Nav";
 import { HeroGlobe } from "../components/HeroGlobe";
 import { DotGridBand } from "../components/DotGridBand";
 import { GithubUserCount } from "../components/GithubUserCount";
 import { Email } from "../components/Email";
+import { RepoFeed, type Repo } from "../components/RepoFeed";
+import { TypedEmail, type EmailSegment } from "../components/TypedEmail";
+import { FlowStep } from "../components/FlowStep";
+import { CtaCommits } from "../components/CtaCommits";
 
 // The Remotion player + demo scenes are the heaviest dependency and sit below
 // the fold. lazy() defers the download until the component renders, so we also
@@ -14,40 +18,6 @@ const DemoPlayer = lazy(() =>
 );
 import luminePhoto from "../assets/lumine.webp";
 import jacquesPhoto from "../assets/jacques.webp";
-
-const LANG_COLORS: Record<string, string> = {
-  TypeScript: "#3178c6",
-  JavaScript: "#f1e05a",
-  Python: "#3572A5",
-  Go: "#00ADD8",
-  Rust: "#dea584",
-  Shell: "#89e051",
-};
-
-function RepoIcon() {
-  return (
-    <svg className="repo-ic" aria-hidden height="16" viewBox="0 0 16 16" width="16" fill="currentColor">
-      <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
-    </svg>
-  );
-}
-
-function StarIcon() {
-  return (
-    <svg aria-hidden height="14" viewBox="0 0 16 16" width="14" fill="currentColor">
-      <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" />
-    </svg>
-  );
-}
-
-type Repo = {
-  name: string;
-  desc: string;
-  lang: string;
-  stars: string;
-  updated: string;
-  hit: boolean;
-};
 
 const REPOS: Repo[] = [
   {
@@ -132,55 +102,7 @@ const REPOS: Repo[] = [
   },
 ];
 
-function RepoRow({ repo }: { repo: Repo }) {
-  return (
-    <div className={`repo-row${repo.hit ? " hit" : ""}`}>
-      <div className="gh-repo-line">
-        <RepoIcon />
-        <span className="rname">{repo.name}</span>
-        <span className={`gh-intent${repo.hit ? "" : " off"}`}>{repo.hit ? "✓ intent" : "skipped"}</span>
-      </div>
-      <div className="gh-desc">{repo.desc}</div>
-      <div className="gh-meta">
-        <span className="lang">
-          <span className="langdot" style={{ background: LANG_COLORS[repo.lang] }} />
-          {repo.lang}
-        </span>
-        <span className="lang">
-          <StarIcon /> {repo.stars}
-        </span>
-        <span>{repo.updated}</span>
-      </div>
-    </div>
-  );
-}
-
-function RepoFeed() {
-  // two identical copies back to back: the keyframe slides the track up by
-  // exactly half its height, so the loop point is invisible
-  const loop = [...REPOS, ...REPOS];
-  return (
-    <div className="repo-feed" aria-hidden="true">
-      <div className="repo-feed-head">
-        <span className="feed-dot" />
-        scanning github…
-        <span className="count">84 signals found</span>
-      </div>
-      <div className="repo-feed-window">
-        <div className="repo-feed-track">
-          {loop.map((r, i) => (
-            <RepoRow key={`${r.name}-${i}`} repo={r} />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// The outreach email body, split into plain + highlighted segments so the
-// typewriter can reveal it one character at a time across the whole run while
-// each segment still renders with its own styling.
-const EMAIL_SEGMENTS: { text: string; hl?: boolean }[] = [
+const EMAIL_SEGMENTS: EmailSegment[] = [
   { text: "Hi Léa,\n\n" },
   { text: "Just saw " },
   { text: "pg-vector-search", hl: true },
@@ -194,150 +116,6 @@ const EMAIL_SEGMENTS: { text: string; hl?: boolean }[] = [
   },
   { text: "Up for trying it on your repo?" },
 ];
-
-const EMAIL_TOTAL = EMAIL_SEGMENTS.reduce((n, s) => n + s.text.length, 0);
-
-function TypedEmail() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [count, setCount] = useState(0);
-
-  // Reveal the body character by character, but only once it scrolls into view
-  // so the visitor actually watches it being written. Honors reduced-motion by
-  // showing the finished email immediately.
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setCount(EMAIL_TOTAL);
-      return;
-    }
-    let timer: ReturnType<typeof setTimeout>;
-    const type = () => {
-      setCount((c) => {
-        if (c >= EMAIL_TOTAL) return c;
-        timer = setTimeout(type, 22);
-        return c + 1;
-      });
-    };
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          obs.disconnect();
-          timer = setTimeout(type, 450);
-        }
-      },
-      { threshold: 0.35 }
-    );
-    obs.observe(el);
-    return () => {
-      obs.disconnect();
-      clearTimeout(timer);
-    };
-  }, []);
-
-  const done = count >= EMAIL_TOTAL;
-  let remaining = count;
-
-  return (
-    <div className="email-card" ref={ref}>
-      <div className="head">
-        to: <b>lea.dubois@…</b>
-        <br />
-        subject: <b>your reranker in pg-vector-search</b>
-      </div>
-      <div className="body">
-        {EMAIL_SEGMENTS.map((seg, i) => {
-          const shown = Math.max(0, Math.min(seg.text.length, remaining));
-          remaining -= seg.text.length;
-          if (shown === 0) return null;
-          const slice = seg.text.slice(0, shown);
-          return seg.hl ? (
-            <span className="hl" key={i}>
-              {slice}
-            </span>
-          ) : (
-            <span key={i}>{slice}</span>
-          );
-        })}
-        {!done && <span className="caret" aria-hidden="true" />}
-      </div>
-    </div>
-  );
-}
-
-function FlowStep({
-  n,
-  title,
-  data,
-  children,
-}: {
-  n: number;
-  title: string;
-  data: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className={`fstep fs-${n}`}>
-      <span className="tag">step {n}</span>
-      <h3>{title}</h3>
-      <p>{children}</p>
-      <div className="fs-data">{data}</div>
-    </div>
-  );
-}
-
-// Giant contribution-graph banner for the final CTA — the same recipe as the
-// pricing page's ContribBg patches (real GitHub greens, ~45% density, commits
-// landing in then twinkling), stretched into one full-width band.
-const CTA_GREENS = ["#9be9a8", "#40c463", "#30a14e", "#216e39"];
-
-// deterministic pseudo-random so the pattern is identical on every render
-function ctaSeeded(n: number) {
-  const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
-  return x - Math.floor(x);
-}
-
-function CtaCommits() {
-  // each marquee copy must stay wider than the widest viewport (~2680px at
-  // 16px cells) so the loop never shows a gap while it scrolls
-  const cols = 128;
-  const rows = 7;
-  const cells: ({ color: string; delay: number } | null)[] = [];
-  for (let i = 0; i < cols * rows; i++) {
-    const on = ctaSeeded(i * 3.1 + 7) > 0.55; // ~45% of cells carry a commit
-    const lvl = Math.floor(ctaSeeded(i * 3.1 + 7.5) * CTA_GREENS.length);
-    // staggered start so commits appear to land one after another, then twinkle
-    const delay = ctaSeeded(i * 3.1 + 7.8) * 6;
-    cells.push(on ? { color: CTA_GREENS[lvl], delay } : null);
-  }
-  const grid = (
-    <div
-      className="cta-commits-grid"
-      style={{ gridTemplateColumns: `repeat(${cols}, var(--cta-cell))` }}
-    >
-      {cells.map((cell, i) => (
-        <span
-          key={i}
-          className={cell ? "cta-cell contrib-cell-on" : "cta-cell"}
-          style={
-            cell
-              ? { background: cell.color, animationDelay: `${cell.delay}s, ${cell.delay + 0.6}s` }
-              : undefined
-          }
-        />
-      ))}
-    </div>
-  );
-  // two copies slide left by exactly one copy's width for a seamless loop
-  return (
-    <div className="cta-commits" aria-hidden>
-      <div className="cta-marquee">
-        {grid}
-        {grid}
-      </div>
-    </div>
-  );
-}
 
 export function Landing() {
   const videoWrapRef = useRef<HTMLDivElement>(null);
@@ -491,7 +269,7 @@ export function Landing() {
           </p>
         </div>
         <div className="f-visual flush">
-          <RepoFeed />
+          <RepoFeed repos={REPOS} count="84 signals found" />
         </div>
         </div>
       </section>
@@ -510,7 +288,11 @@ export function Landing() {
           </p>
         </div>
         <div className="f-visual flush">
-          <TypedEmail />
+          <TypedEmail
+            to="lea.dubois@…"
+            subject="your reranker in pg-vector-search"
+            segments={EMAIL_SEGMENTS}
+          />
         </div>
         </div>
       </section>
