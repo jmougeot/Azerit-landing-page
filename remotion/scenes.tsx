@@ -14,8 +14,8 @@ import { LogoMark } from "../src/components/Logo";
 /* The landing page wraps the Player in an "app.azerit.com" browser frame,
    so the video itself IS the app — no window chrome inside. */
 const NAV = [
-  { id: "describe", label: "1 · Your product" },
-  { id: "rank", label: "2 · Ranked leads" },
+  { id: "describe", label: "1 · Your role" },
+  { id: "rank", label: "2 · Ranked candidates" },
   { id: "outreach", label: "3 · Outreach" },
   { id: "inbox", label: "Inbox" },
 ];
@@ -126,8 +126,8 @@ const Cursor: React.FC<{ x: number; y: number; down?: boolean; opacity?: number 
   </div>
 );
 
-/* ============ Scene 1 — Describe : the client types what they sell ============ */
-const PRODUCT_TEXT = "We speed up hybrid vector search on Postgres (pgvector).";
+/* ============ Scene 1 — Describe : the client types the role they're hiring for ============ */
+const ROLE_TEXT = "Senior backend engineer, real-time systems (Rust or Go).";
 
 export const SceneDescribe: React.FC = () => {
   const frame = useCurrentFrame();
@@ -145,7 +145,7 @@ export const SceneDescribe: React.FC = () => {
   });
   const pressed = frame >= 105 && frame <= 114;
   const scanCount = Math.round(
-    interpolate(frame, [118, 162], [0, 12406], {
+    interpolate(frame, [118, 162], [0, 2148302], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
     }),
@@ -153,8 +153,8 @@ export const SceneDescribe: React.FC = () => {
   return (
     <AbsoluteFill>
       <DashFrame active="describe">
-        <PageTitle title="Your product" />
-        <div style={{ fontSize: 21, color: T.dim, marginBottom: 16 }}>What do you sell?</div>
+        <PageTitle title="Your role" />
+        <div style={{ fontSize: 21, color: T.dim, marginBottom: 16 }}>Who are you hiring?</div>
         <div
           style={{
             background: T.bgSoft,
@@ -166,7 +166,7 @@ export const SceneDescribe: React.FC = () => {
             marginBottom: 30,
           }}
         >
-          <TypeText text={PRODUCT_TEXT} startFrame={20} charsPerFrame={1.2} />
+          <TypeText text={ROLE_TEXT} startFrame={20} charsPerFrame={1.2} />
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 28 }}>
           <div
@@ -185,7 +185,7 @@ export const SceneDescribe: React.FC = () => {
               transform: `scale(${pressed ? 0.94 : 1})`,
             }}
           >
-            Find my leads →
+            Find my candidates →
           </div>
           <div
             style={{
@@ -196,48 +196,48 @@ export const SceneDescribe: React.FC = () => {
             }}
           >
             {frame < 168
-              ? `⟳ scanning GitHub… ${scanCount.toLocaleString("en-US")} repos`
-              : "✓ 84 leads found · ranked by intent"}
+              ? `⟳ scanning GitHub… ${scanCount.toLocaleString("en-US")} profiles`
+              : "✓ 27 devs matched · ranked on shipped work"}
           </div>
         </div>
       </DashFrame>
       <Cursor x={cx} y={cy} down={pressed} opacity={cursorOpacity} />
-      <StepTag num="1" label="Describe what you sell" />
+      <StepTag num="1" label="Describe the role you're hiring for" />
     </AbsoluteFill>
   );
 };
 
-/* ============ Scene 2 — Rank : leads sorted by intent, click the top one ============ */
-const LEADS = [
+/* ============ Scene 2 — Rank : candidates sorted by match, click the top one ============ */
+const CANDIDATES = [
   {
-    initials: "LD",
-    name: "Léa Dubois",
-    role: "CTO · pg-vector-search",
-    signal: "issue: hybrid query latency",
-    score: 92,
+    initials: "LF",
+    name: "Léa Fabre",
+    role: "Staff SWE · rt-order-matching",
+    signal: "lock-free hot path · Rust",
+    score: 94,
     grad: [T.purple, T.blue],
   },
   {
     initials: "SB",
     name: "Sami Benali",
-    role: "ML engineer · rag-chatbot-prod",
-    signal: "migrating from Pinecone",
+    role: "Backend eng · distributed-kv",
+    signal: "Raft from scratch · Go",
     score: 87,
     grad: [T.blue, T.green],
   },
   {
     initials: "NT",
     name: "Nina Torres",
-    role: "Founder · vector-db-bench",
-    signal: "evaluating vector DBs",
+    role: "Infra eng · ws-gateway",
+    signal: "50k conns per node",
     score: 81,
     grad: [T.orange, T.red],
   },
   {
-    initials: "MK",
-    name: "Marc Klein",
-    role: "Data eng · embeddings-pipeline",
-    signal: "new dependency: pgvector",
+    initials: "MO",
+    name: "Marc Olivier",
+    role: "Systems eng · lockfree-queue",
+    signal: "MPMC queue + benchmarks",
     score: 74,
     grad: [T.green, T.blue],
   },
@@ -263,7 +263,7 @@ export const SceneRank: React.FC = () => {
     <AbsoluteFill>
       <DashFrame active="rank">
         <PageTitle
-          title="Ranked leads"
+          title="Ranked candidates"
           right={
             <div
               style={{
@@ -276,11 +276,11 @@ export const SceneRank: React.FC = () => {
                 padding: "7px 20px",
               }}
             >
-              sorted by intent ▾
+              sorted by match ▾
             </div>
           }
         />
-        {LEADS.map((l, i) => {
+        {CANDIDATES.map((l, i) => {
           const delay = 15 + i * 14;
           const p = spring({ frame: frame - delay, fps, config: { damping: 16 } });
           const top = i === 0;
@@ -368,7 +368,7 @@ export const SceneRank: React.FC = () => {
         })}
       </DashFrame>
       <Cursor x={cx} y={cy} down={frame >= 158 && frame <= 168} opacity={cursorOpacity} />
-      <StepTag num="2" label="Your leads, ranked by intent" />
+      <StepTag num="2" label="Your candidates, ranked on shipped work" />
     </AbsoluteFill>
   );
 };
@@ -376,28 +376,28 @@ export const SceneRank: React.FC = () => {
 /* ============ Scene 3 — Why : the proof behind the score ============ */
 const WHY = [
   {
-    badge: "strong signal",
+    badge: "built it already",
     color: T.green,
     soft: "rgba(82,208,189,0.14)",
-    text: "Opened an issue 3 days ago: “hybrid queries too slow at scale”",
+    text: "rt-order-matching: a real-time matching engine, lock-free hot path",
   },
   {
-    badge: "active",
+    badge: "ships daily",
     color: T.blue,
     soft: "rgba(108,182,255,0.12)",
-    text: "47 commits on pg-vector-search in the last 30 days",
+    text: "3,669 contributions and 212 pull requests reviewed this year",
   },
   {
-    badge: "perfect fit",
+    badge: "stack match",
     color: T.purple,
     soft: "rgba(188,140,255,0.12)",
-    text: "Stack: Postgres + pgvector + TypeScript — exactly what you sell",
+    text: "Rust 52% · Go 26% · TypeScript 14% — exactly your stack",
   },
   {
     badge: "reachable",
     color: T.orange,
     soft: "rgba(210,153,34,0.12)",
-    text: "lea.dubois@… found in commit metadata",
+    text: "lea.fabre@… found in commit metadata",
   },
 ];
 
@@ -405,7 +405,7 @@ export const SceneWhy: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const score = Math.round(
-    interpolate(frame, [20, 75], [0, 92], {
+    interpolate(frame, [20, 75], [0, 94], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
     }),
@@ -414,7 +414,7 @@ export const SceneWhy: React.FC = () => {
     <AbsoluteFill>
       <DashFrame active="rank">
         <div style={{ fontFamily: T.mono, fontSize: 16, color: T.dim, marginBottom: 20 }}>
-          ← Ranked leads
+          ← Ranked candidates
         </div>
         <div
           style={{
@@ -440,23 +440,23 @@ export const SceneWhy: React.FC = () => {
               fontWeight: 800,
             }}
           >
-            LD
+            LF
           </div>
           <div>
-            <div style={{ fontSize: 28, fontWeight: 800 }}>Léa Dubois</div>
+            <div style={{ fontSize: 28, fontWeight: 800 }}>Léa Fabre</div>
             <div style={{ fontFamily: T.mono, fontSize: 16, color: T.dim, marginTop: 3 }}>
-              CTO · lea-dubois/pg-vector-search
+              Staff SWE · lea-fabre/rt-order-matching
             </div>
           </div>
           <div style={{ marginLeft: "auto", textAlign: "center" }}>
             <div style={{ fontFamily: T.mono, fontSize: 51, fontWeight: 800, color: T.green }}>
               {score}
             </div>
-            <div style={{ fontFamily: T.mono, fontSize: 15, color: T.dim }}>intent score</div>
+            <div style={{ fontFamily: T.mono, fontSize: 15, color: T.dim }}>match score</div>
           </div>
         </div>
         <div style={{ fontSize: 21, fontWeight: 700, marginBottom: 18 }}>
-          Why she&rsquo;s a hot prospect
+          Why she&rsquo;s a fit
         </div>
         {WHY.map((w, i) => {
           const delay = 30 + i * 16;
@@ -498,7 +498,7 @@ export const SceneWhy: React.FC = () => {
           );
         })}
       </DashFrame>
-      <StepTag num="3" label="Why she’s hot — the proof behind the score" />
+      <StepTag num="3" label="Why she’s a fit — the proof behind the score" />
     </AbsoluteFill>
   );
 };
@@ -506,14 +506,15 @@ export const SceneWhy: React.FC = () => {
 /* ============ Scene 4 — Personalize : the email cites their code ============ */
 const EMAIL_TEXT = `Hi Léa,
 
-Just saw pg-vector-search. The way you combine
-pgvector with your own reranker is really clean.
-The chunking in ingest.ts? Smart.
+Just went through rt-order-matching. The way you
+handle partial fills under contention is really
+clean, and the replay log in journal.rs? Smart.
 
-We built a tool that fixes the exact issue you
-opened last week: hybrid query latency at scale.
+We're building the matching engine behind a new
+exchange, and we hit the exact backpressure issue
+your README calls out.
 
-Up for trying it on your repo?`;
+Worth a chat? I'm free Thursday.`;
 
 export const SceneMessage: React.FC = () => {
   const frame = useCurrentFrame();
@@ -521,7 +522,7 @@ export const SceneMessage: React.FC = () => {
     <AbsoluteFill>
       <DashFrame active="outreach">
           <PageTitle
-            title="Outreach · Léa Dubois"
+            title="Outreach · Léa Fabre"
             right={
               <div
                 style={{
@@ -534,7 +535,7 @@ export const SceneMessage: React.FC = () => {
                   padding: "7px 20px",
                 }}
               >
-                intent score: 92
+                match score: 94
               </div>
             }
           />
@@ -550,13 +551,13 @@ export const SceneMessage: React.FC = () => {
             }}
           >
             <div>
-              To: <span style={{ color: T.text }}>lea.dubois@…</span>
+              To: <span style={{ color: T.text }}>lea.fabre@…</span>
             </div>
             <div>
               Subject:{" "}
               <span style={{ color: T.text }}>
                 <TypeText
-                  text="your reranker in pg-vector-search"
+                  text="your matching engine in rt-order-matching"
                   startFrame={20}
                   charsPerFrame={1.4}
                   cursor={false}
@@ -582,7 +583,7 @@ export const SceneMessage: React.FC = () => {
               opacity: frame >= 200 ? 1 : 0,
             }}
           >
-            {["real repo cited", "her issue quoted", "zero templates"].map((t) => (
+            {["real repo cited", "her code read", "zero templates"].map((t) => (
               <div
                 key={t}
                 style={{
@@ -600,7 +601,7 @@ export const SceneMessage: React.FC = () => {
             ))}
           </div>
       </DashFrame>
-      <StepTag num="4" label="The email cites her code — impossible to mistake for spam" />
+      <StepTag num="4" label="The email reads her code — nothing like a recruiter blast" />
     </AbsoluteFill>
   );
 };
@@ -608,16 +609,16 @@ export const SceneMessage: React.FC = () => {
 /* ============ Scene 5 — Inbox : replies come back ============ */
 const REPLIES = [
   {
-    initials: "LD",
-    name: "Léa Dubois",
-    text: "Ok, you clearly read the repo. Yes — let's try it.",
+    initials: "LF",
+    name: "Léa Fabre",
+    text: "You're the first person to actually read journal.rs. I'm free Thursday.",
     when: "2m ago",
     grad: [T.purple, T.blue],
   },
   {
     initials: "SB",
     name: "Sami Benali",
-    text: "How did you know about the migration? Impressive. Call this week?",
+    text: "Not looking, but this one's different. What's the team like?",
     when: "1h ago",
     grad: [T.blue, T.green],
   },
@@ -627,9 +628,9 @@ export const SceneResults: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const stats = [
-    { n: 84, label: "leads found & ranked" },
-    { n: 84, label: "personalized emails" },
-    { n: 21, label: "replies" },
+    { n: 27, label: "devs matched & ranked" },
+    { n: 27, label: "personalized emails" },
+    { n: 9, label: "replies" },
   ];
   return (
     <AbsoluteFill>
@@ -705,7 +706,7 @@ export const SceneResults: React.FC = () => {
             );
           })}
       </DashFrame>
-      <StepTag num="5" label="You just collect the replies" />
+      <StepTag num="5" label="You just book the calls" />
     </AbsoluteFill>
   );
 };
@@ -739,9 +740,9 @@ export const SceneOutro: React.FC = () => {
             lineHeight: 1.35,
           }}
         >
-          Find them. Rank them. Win them.
+          Find them. Rank them. Hire them.
           <br />
-          <span style={{ color: T.green }}>The intent is already on GitHub.</span>
+          <span style={{ color: T.green }}>The proof is already on GitHub.</span>
         </div>
       </Pop>
       <Pop delay={55}>

@@ -11,20 +11,19 @@ import { render } from "../dist-ssr/entry-prerender.js";
 const ROUTES = [
   { path: "/", out: "index.html" },
   {
-    path: "/prospection",
-    out: "prospection.html",
-    title: "Prospection · Azerit — AI Lead Generation on GitHub",
+    path: "/try",
+    out: "try.html",
+    title: "Try Azerit on Your Role · Recruit Engineers from GitHub",
   },
-  {
-    path: "/hiring",
-    out: "hiring.html",
-    title: "Hiring · Azerit — Recruit Engineers from GitHub",
-    desc: "Azerit analyzes GitHub to match your role with developers who've already built exactly what you're hiring for, then writes the outreach they answer.",
-  },
-  { path: "/try", out: "try.html", title: "Try Azerit on Your Niche · AI Lead Generation on GitHub" },
   { path: "/legal", out: "legal.html", title: "Legal Notice & Privacy Policy · Azerit" },
   { path: "/pricing", out: "pricing.html", title: "Pricing · Azerit — $20 / month, everything included" },
 ];
+
+// Azerit used to ship a lead-generation product alongside sourcing, on its own
+// page; both product URLs now fold into "/". GitHub Pages can't return a 301,
+// so each old path keeps a file whose only job is to send visitors and crawlers
+// home — canonical + meta-refresh is what Google reads as a redirect here.
+const REDIRECTS = ["/prospection", "/hiring"];
 
 const base = readFileSync(new URL("../dist/index.html", import.meta.url), "utf8");
 const marker = '<div id="root"></div>';
@@ -54,6 +53,28 @@ for (const { path, out, title, desc } of ROUTES) {
   }
   writeFileSync(new URL(`../dist/${out}`, import.meta.url), html);
   console.log(`Prerendered ${path} into dist/${out}`);
+}
+
+for (const path of REDIRECTS) {
+  const out = `${path.slice(1)}.html`;
+  writeFileSync(
+    new URL(`../dist/${out}`, import.meta.url),
+    `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0; url=https://www.azerit.tech/" />
+    <link rel="canonical" href="https://www.azerit.tech/" />
+    <meta name="robots" content="noindex, follow" />
+    <title>Azerit</title>
+  </head>
+  <body>
+    <p>This page has moved to <a href="https://www.azerit.tech/">azerit.tech</a>.</p>
+  </body>
+</html>
+`
+  );
+  console.log(`Redirect stub ${path} -> / in dist/${out}`);
 }
 
 rmSync(new URL("../dist-ssr/", import.meta.url), { recursive: true, force: true });

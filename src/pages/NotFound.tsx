@@ -6,7 +6,7 @@ export function NotFound() {
   useEffect(() => {
     document.title = "Page not found · Azerit";
     return () => {
-      document.title = "Azerit · Find Leads on GitHub with AI-Powered Outreach";
+      document.title = "Azerit · Recruit Engineers from GitHub with AI";
     };
   }, []);
 
@@ -28,7 +28,7 @@ export function NotFound() {
               ← back home
             </Link>
             <Link to="/try" className="btn-try" style={{ display: "inline-block" }}>
-              Try Azerit →
+              Find my candidates →
             </Link>
           </p>
         </div>

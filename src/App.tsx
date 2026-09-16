@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Landing } from "./pages/Landing";
 
 // Only the landing page is needed for the initial paint; split the rest.
@@ -11,9 +11,6 @@ const NotFound = lazy(() =>
 const Legal = lazy(() => import("./pages/Legal").then((m) => ({ default: m.Legal })));
 const Pricing = lazy(() =>
   import("./pages/Pricing").then((m) => ({ default: m.Pricing }))
-);
-const Hiring = lazy(() =>
-  import("./pages/Hiring").then((m) => ({ default: m.Hiring }))
 );
 
 // GitHub Pages serves the same index.html for every route (404 fallback),
@@ -36,8 +33,12 @@ export function App() {
       <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/prospection" element={<Landing />} />
-          <Route path="/hiring" element={<Hiring />} />
+          {/* Azerit used to ship two products on two pages; only sourcing
+              remains, so both old product URLs fold back into "/". The build
+              also emits meta-refresh stubs for them (scripts/prerender.mjs) —
+              these routes catch visitors who arrive client-side. */}
+          <Route path="/hiring" element={<Navigate to="/" replace />} />
+          <Route path="/prospection" element={<Navigate to="/" replace />} />
           <Route path="/try" element={<Try />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/legal" element={<Legal />} />

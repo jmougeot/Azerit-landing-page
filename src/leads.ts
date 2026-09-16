@@ -1,12 +1,16 @@
 export type Lead = {
   id: string;
   email: string;
-  // the second form field: a website/product for prospection sign-ups, a role
-  // description for hiring sign-ups (the event says which)
-  website: string;
-  event: "try_requested" | "try_requested_hiring";
+  // the second form field: the role the visitor is hiring for
+  role: string;
+  event: "try_requested";
   createdAt: string;
 };
+
+// Sign-ups captured while Azerit still sold lead generation stored that field
+// as `website` (a product URL) under two event names — keep reading them so
+// /admin doesn't blank out rows collected before the pivot to sourcing.
+type StoredLead = Omit<Lead, "role" | "event"> & { role?: string; website?: string };
 
 const STORAGE_KEY = "azerit_leads";
 
@@ -17,7 +21,14 @@ const REMOTE_ENDPOINT = import.meta.env.VITE_LEAD_ENDPOINT as string | undefined
 
 export function getLeads(): Lead[] {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]");
+    const stored: StoredLead[] = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]");
+    return stored.map((l): Lead => ({
+      id: l.id,
+      email: l.email,
+      createdAt: l.createdAt,
+      role: l.role ?? l.website ?? "",
+      event: "try_requested",
+    }));
   } catch {
     return [];
   }
@@ -47,9 +58,9 @@ export async function saveLead(lead: Omit<Lead, "id" | "createdAt">): Promise<Le
 }
 
 export function leadsToCsv(leads: Lead[]): string {
-  const header = "date,email,website,event";
+  const header = "date,email,role,event";
   const rows = leads.map((l) =>
-    [l.createdAt, l.email, l.website, l.event]
+    [l.createdAt, l.email, l.role, l.event]
       .map((v) => `"${String(v).replaceAll('"', '""')}"`)
       .join(","),
   );

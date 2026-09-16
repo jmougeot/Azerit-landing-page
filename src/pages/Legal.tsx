@@ -6,7 +6,7 @@ export function Legal() {
   useEffect(() => {
     document.title = "Legal notice & privacy policy · Azerit";
     return () => {
-      document.title = "Azerit · Find Leads on GitHub with AI-Powered Outreach";
+      document.title = "Azerit · Recruit Engineers from GitHub with AI";
     };
   }, []);
 

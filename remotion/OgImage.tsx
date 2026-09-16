@@ -54,14 +54,14 @@ export const OgImage: React.FC = () => (
     </div>
 
     <div style={{ fontSize: 84, fontWeight: 800, lineHeight: 1.06, color: T.text, letterSpacing: -2 }}>
-      Find leads on <span style={{ color: T.green }}>GitHub</span>
+      Hire the engineers
       <br />
-      with AI
+      who actually <span style={{ color: T.green }}>ship</span>
     </div>
 
     <div style={{ marginTop: 34, fontSize: 30, lineHeight: 1.45, color: T.dim, maxWidth: 760 }}>
-      We scan GitHub for devs already building in your niche, then reach out with messages that
-      prove we read their code.
+      We match your role with the GitHub devs who've already built exactly what you're hiring for,
+      then write the outreach they answer.
     </div>
   </AbsoluteFill>
 );

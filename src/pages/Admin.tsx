@@ -42,7 +42,7 @@ export function Admin() {
               <tr>
                 <th>date</th>
                 <th>email</th>
-                <th>website / product</th>
+                <th>role</th>
                 <th>intent</th>
               </tr>
             </thead>
@@ -53,7 +53,7 @@ export function Admin() {
                     {new Date(l.createdAt).toLocaleString("en-GB")}
                   </td>
                   <td>{l.email}</td>
-                  <td>{l.website}</td>
+                  <td>{l.role}</td>
                   <td>
                     <span className="badge">wants the dashboard</span>
                   </td>

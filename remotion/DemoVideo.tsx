@@ -12,9 +12,9 @@ import {
 
 // 30 fps
 const SCENES: { comp: React.FC; duration: number }[] = [
-  { comp: SceneDescribe, duration: 210 }, // 7 s — type what you sell
-  { comp: SceneRank, duration: 200 }, // ~7 s — ranked leads, click #1
-  { comp: SceneWhy, duration: 200 }, // ~7 s — why she's hot
+  { comp: SceneDescribe, duration: 210 }, // 7 s — type the role you're hiring for
+  { comp: SceneRank, duration: 200 }, // ~7 s — ranked candidates, click #1
+  { comp: SceneWhy, duration: 200 }, // ~7 s — why she's a fit
   { comp: SceneMessage, duration: 280 }, // ~9 s — personalized email
   { comp: SceneResults, duration: 160 }, // ~5 s — inbox
   { comp: SceneOutro, duration: 130 }, // ~4 s

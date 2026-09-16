@@ -1245,68 +1245,7 @@ button {
   font-size: 11.5px;
 }
 
-/* email mock */
-.email-card {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  overflow: hidden;
-  max-width: 100%;
-  /* mono tokens like the email address / subject must not push past the edge */
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-.email-card .head {
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  color: var(--text-dim);
-  background: var(--bg-soft);
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--border);
-  line-height: 1.8;
-  overflow-wrap: anywhere;
-}
-.email-card .head b {
-  color: var(--text);
-  font-weight: 500;
-}
-.email-card .body {
-  padding: 18px;
-  font-size: 14.5px;
-  white-space: pre-line;
-}
-.email-card .body .hl {
-  background: var(--green-soft);
-  color: var(--green);
-  padding: 0 4px;
-  border-radius: 4px;
-}
-/* typewriter caret that trails the text while the email is being written */
-.email-card .caret {
-  display: inline-block;
-  width: 8px;
-  height: 1.05em;
-  margin-left: 1px;
-  transform: translateY(2px);
-  background: var(--green);
-  animation: caret-blink 1s step-end infinite;
-}
-@keyframes caret-blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .email-card .caret {
-    display: none;
-  }
-}
-
-/* on desktop the email fills the whole cell, framed by the grid — same
-   treatment as the repo feed on the other feature row */
+/* on desktop the repo feed fills the whole cell, framed by the grid */
 @media (min-width: 801px) {
   /* the .rev row's `.feature.rev .f-visual` padding rules are more specific
      than `.f-visual.flush`, so zero the padding here with matching weight —
@@ -1314,25 +1253,6 @@ button {
   .feature .f-visual.flush,
   .feature.rev .f-visual.flush {
     padding: 0;
-  }
-  .f-visual.flush .email-card {
-    /* flex:1 makes the card fill the cell top-to-bottom instead of being
-       centered by .f-visual's justify-content, so no tint band shows */
-    flex: 1;
-    min-height: 520px;
-    border: none;
-    display: flex;
-    flex-direction: column;
-  }
-  .f-visual.flush .email-card .head {
-    padding: 18px 40px;
-    font-size: 13px;
-  }
-  .f-visual.flush .email-card .body {
-    flex: 1;
-    padding: 32px 40px;
-    font-size: 16px;
-    line-height: 1.7;
   }
 }
 

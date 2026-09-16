@@ -17,7 +17,7 @@ export function Pricing() {
   useEffect(() => {
     document.title = "Pricing · Azerit";
     return () => {
-      document.title = "Azerit · Find Leads on GitHub with AI-Powered Outreach";
+      document.title = "Azerit · Recruit Engineers from GitHub with AI";
     };
   }, []);
 
@@ -57,7 +57,7 @@ export function Pricing() {
           <div className="price-grid">
             <div className="price-card">
               <h2>Starter</h2>
-              <p className="price-sub">Everything you need to start prospecting.</p>
+              <p className="price-sub">Everything you need to start sourcing.</p>
 
               <div className="price-amount">
                 <span className="amount">${PLANS.starter[billing]}</span>
@@ -68,13 +68,13 @@ export function Pricing() {
               </p>
 
               <ul className="price-features">
-                <li>Full GitHub search across 70M+ profiles</li>
-                <li>Send personalised 50 messages</li>
+                <li>One open role, matched across 70M+ GitHub profiles</li>
+                <li>50 personalised candidate emails</li>
               </ul>
 
               <div className="price-cta">
                 <Link to="/try" className="btn-try" style={{ display: "block", textAlign: "center" }}>
-                  Try Azerit →
+                  Find my candidates →
                 </Link>
                 <p className="price-nocard">No credit card required</p>
               </div>
@@ -82,7 +82,7 @@ export function Pricing() {
 
             <div className="price-card price-card-pro">
               <h2>Pro</h2>
-              <p className="price-sub">For teams that want to outgrow the competition.</p>
+              <p className="price-sub">For teams hiring on several roles at once.</p>
 
               <div className="price-amount">
                 <span className="amount">${PLANS.pro[billing]}</span>
@@ -93,14 +93,14 @@ export function Pricing() {
               </p>
 
               <ul className="price-features">
-                <li>Full GitHub search across 70M+ profiles</li>
-                <li>Send personalised 200 messages</li>
-                <li>Track 4 competitors</li>
+                <li>Up to 4 open roles, matched across 70M+ GitHub profiles</li>
+                <li>200 personalised candidate emails</li>
+                <li>Ranked shortlists with verified emails</li>
               </ul>
 
               <div className="price-cta">
                 <Link to="/try" className="btn-try" style={{ display: "block", textAlign: "center" }}>
-                  Try Azerit →
+                  Find my candidates →
                 </Link>
                 <p className="price-nocard">No credit card required</p>
               </div>
