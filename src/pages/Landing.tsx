@@ -139,7 +139,7 @@ const INMAILS = [
     initials: "MR",
     name: "Marc R. · TalentForge",
     date: "Jun 5",
-    text: "InMail · 100% Remote Senior Software Engineer Opportunity — Build the Future of AI",
+    text: "InMail · 100% Remote Senior Software Engineer Opportunity: Build the Future of AI",
   },
   {
     initials: "ES",
@@ -151,7 +151,7 @@ const INMAILS = [
     initials: "HL",
     name: "Hugo L. · Aurora Labs",
     date: "May 8",
-    text: "Hi Léa! Resurfacing this role — we're scaling and need the best engineering minds shaping the…",
+    text: "Hi Léa! Resurfacing this role, we're scaling and need the best engineering minds shaping the…",
   },
   {
     initials: "CW",
@@ -204,7 +204,7 @@ export function Landing() {
               </h1>
               <p className="sub">
                 Azerit matches your role with the GitHub devs who've already built exactly what
-                you're hiring for — and writes the outreach they answer.
+                you're hiring for, and writes the outreach they answer.
               </p>
               <div className="hero-cta">
                 <GithubUserCount />
@@ -284,7 +284,7 @@ export function Landing() {
             </FlowStep>
             <div className="f-link f-l1" aria-hidden="true" />
             <FlowStep n={2} title="We read the code" data="signals: commits · PRs">
-              Commits, pull requests, reviews, stars — proof of skill, written in public.
+              Commits, pull requests, reviews, stars: proof of skill, written in public.
             </FlowStep>
             <div className="f-link f-l2" aria-hidden="true" />
             <FlowStep n={3} title="We enrich the profiles" data="email: lea.fabre@…">
@@ -322,7 +322,7 @@ export function Landing() {
                 <span className="chip">Léa · Staff SWE</span>
                 <span className="chip">#1 · score 94</span>
               </div>
-              <p>Subject, hook, pitch — every line generated from her real work. She answers below ↓</p>
+              <p>Subject, hook, pitch: every line generated from her real work. She answers below ↓</p>
             </div>
           </div>
         </div>
@@ -335,7 +335,7 @@ export function Landing() {
           <div className="eyebrow">// the code is the résumé</div>
           <h2>Read the work, not the CV</h2>
           <p>
-            No keyword-stuffed PDFs. <b>Public code proves the skill</b> — we skip the devs
+            No keyword-stuffed PDFs. <b>Public code proves the skill.</b> We skip the devs
             whose code doesn't.
           </p>
         </div>
@@ -353,7 +353,7 @@ export function Landing() {
           <h2>Who's actually cracked?</h2>
           <p>
             Every dev is scored on shipped work. You get <b>a ranked shortlist with verified
-            emails</b> — not a pile of maybes.
+            emails</b>, not a pile of maybes.
           </p>
         </div>
         <div className="f-visual">
@@ -434,7 +434,7 @@ export function Landing() {
           <div className="vs-cell vs-linkedin">
             <div className="vs-head">
               <span className="li-mark">in</span>
-              linkedin — léa's inbox
+              linkedin: léa's inbox
               <span className="vs-stat">5 InMails · 0 replies</span>
             </div>
             {/* her phone, cropped at the cell floor like vamo's panels */}
@@ -470,7 +470,7 @@ export function Landing() {
           <div className="vs-cell vs-azerit">
             <div className="vs-head">
               <LogoMark size={14} />
-              azerit — léa's inbox
+              azerit: léa's inbox
               <span className="vs-stat">1 email · 1 reply</span>
             </div>
             <div className="vs-stage" aria-hidden="true">
@@ -490,7 +490,7 @@ export function Landing() {
                       <span className="vs-replied">replied ✓</span>
                     </div>
                     <p className="msg">
-                      Ha — journal.rs took a while to get right, you're the first person to
+                      Ha, journal.rs took a while to get right, you're the first person to
                       actually read it. We hit exactly the backpressure issue you mention.
                       What are you building? I'm free Thursday.
                     </p>
@@ -512,7 +512,7 @@ export function Landing() {
       <section className="band">
         <div className="container demo-band">
           <h2>Book a demo</h2>
-          <p>30 minutes with the founders — we run Azerit live on a role you're actually hiring for.</p>
+          <p>30 minutes with the founders, we run Azerit live on a role you're actually hiring for.</p>
           <Email user="lumine.builds" domain="gmail.com" subject="Azerit demo" className="btn-try">
             book a demo →
           </Email>

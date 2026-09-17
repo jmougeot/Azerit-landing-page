@@ -26,7 +26,7 @@ export function Legal() {
         </p>
         <p>
           Hosting: GitHub, Inc. (GitHub Pages), 88 Colin P. Kelly Jr. Street, San Francisco, CA
-          94107, United States — <a href="https://pages.github.com" target="_blank" rel="noreferrer">pages.github.com</a>
+          94107, United States (<a href="https://pages.github.com" target="_blank" rel="noreferrer">pages.github.com</a>)
         </p>
 
         <h2>Privacy policy</h2>
@@ -57,7 +57,7 @@ export function Legal() {
         <h3>How long we keep it</h3>
         <p>
           Until we have onboarded you, or for a maximum of 12 months after your request if we
-          have not — whichever comes first. You can ask us to delete it at any time.
+          have not, whichever comes first. You can ask us to delete it at any time.
         </p>
 
         <h3>Your rights</h3>
