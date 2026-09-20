@@ -4,7 +4,6 @@ import { TopBar, Footer } from "../components/Nav";
 import { LogoMark } from "../components/Logo";
 import { HeroGlobe } from "../components/HeroGlobe";
 import { DotGridBand } from "../components/DotGridBand";
-import { GithubUserCount } from "../components/GithubUserCount";
 import { Email } from "../components/Email";
 import { RepoFeed, type Repo } from "../components/RepoFeed";
 import { FlowStep } from "../components/FlowStep";
@@ -203,11 +202,10 @@ export function Landing() {
                 Hire the engineers who actually <em>ship</em>
               </h1>
               <p className="sub">
-                Azerit matches your role with the GitHub devs who've already built exactly what
-                you're hiring for, and writes the outreach they answer.
+                Find developers on GitHub by what they've built. Get their verified emails
+                and personalized outreach.
               </p>
               <div className="hero-cta">
-                <GithubUserCount />
                 <Link to="/try" className="btn-try">
                   Find my candidates →
                 </Link>
@@ -227,116 +225,24 @@ export function Landing() {
           <div className="video-wrap" id="demo" ref={videoWrapRef}>
             <div className="video-stage">
               {showPlayer ? (
-                <Suspense fallback={<div className="app-frame" style={{ aspectRatio: "1920 / 990" }} />}>
+                <Suspense fallback={<div className="app-frame demo-placeholder" />}>
                   <DemoPlayer />
                 </Suspense>
               ) : (
-                <div className="app-frame" style={{ aspectRatio: "1920 / 990" }} />
+                <div className="app-frame demo-placeholder" />
               )}
             </div>
           </div>
         </DotGridBand>
       </div>
 
-      {/* the database: GitHub itself */}
-      <section className="band">
-        <div className="container how-title">
-          <h2>The largest talent pool on earth</h2>
-        </div>
-      </section>
-      <section className="band">
-        <div className="container stats">
-          <div className="stat">
-            <div className="stat-num">145M+</div>
-            <div className="stat-label">developers on GitHub</div>
-          </div>
-          <div className="stat">
-            <div className="stat-num">400M+</div>
-            <div className="stat-label">public repositories read</div>
-          </div>
-          <div className="stat">
-            <div className="stat-num">200K+</div>
-            <div className="stat-label">commits &amp; repos analyzed daily</div>
-          </div>
-        </div>
-      </section>
-
-      {/* how it works */}
-      <section className="band">
-        <div className="container how-title">
-          <h2>Your sourcing, on autopilot</h2>
-        </div>
-      </section>
-      <section className="band">
-        <div className="container how">
-          {/* the pipeline as a data-flow diagram: the role drops in top-left,
-              runs through the four processing stages, a candidate reply falls
-              out bottom-right */}
-          <div className="flow">
-            <div className="flow-input">
-              <span className="tag">input</span>
-              <p>The role you're hiring for, in one sentence.</p>
-            </div>
-            <div className="f-drop f-drop-in" aria-hidden="true" />
-
-            <FlowStep n={1} title="We scan GitHub" data="scan: 2.1M profiles">
-              Every dev shipping in your stack, pulled by repos, topics and dependencies.
-            </FlowStep>
-            <div className="f-link f-l1" aria-hidden="true" />
-            <FlowStep n={2} title="We read the code" data="signals: commits · PRs">
-              Commits, pull requests, reviews, stars: proof of skill, written in public.
-            </FlowStep>
-            <div className="f-link f-l2" aria-hidden="true" />
-            <FlowStep n={3} title="We enrich the profiles" data="email: lea.fabre@…">
-              A handle becomes a candidate: name, experience, location, verified email.
-            </FlowStep>
-            <div className="f-link f-l3" aria-hidden="true" />
-            <FlowStep n={4} title="We rank the matches" data="top match: score 94">
-              Scored on hard evidence against your role, sorted strongest to weakest.
-            </FlowStep>
-
-            {/* all four stages converge into the last one: writing the message.
-                The email itself is typed out live further down the page, so this
-                node shows the ingredients, not the prose. */}
-            <div className="f-fan" aria-hidden="true">
-              <i className="fv fv-1" />
-              <i className="fv fv-2" />
-              <i className="fv fv-3" />
-              <i className="fv fv-4" />
-              <svg className="fc fc-l" viewBox="0 0 12 12">
-                <path d="M0.75 0 A11.25 11.25 0 0 0 12 11.25" />
-              </svg>
-              <svg className="fc fc-r" viewBox="0 0 12 12">
-                <path d="M11.25 0 A11.25 11.25 0 0 1 0 11.25" />
-              </svg>
-              <i className="fb fb-l" />
-              <i className="fb fb-r" />
-            </div>
-            <div className="f-drop f-cd" aria-hidden="true" />
-            <div className="flow-merge">
-              <span className="tag">output</span>
-              <h3>The outreach writes itself</h3>
-              <div className="merge-chips">
-                <span className="chip">rt-order-matching</span>
-                <span className="chip">"3,669 contributions"</span>
-                <span className="chip">Léa · Staff SWE</span>
-                <span className="chip">#1 · score 94</span>
-              </div>
-              <p>Subject, hook, pitch: every line generated from her real work. She answers below ↓</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* feature: code as the résumé */}
       <section className="band">
         <div className="container feature">
         <div className="f-copy">
-          <div className="eyebrow">// the code is the résumé</div>
           <h2>Read the work, not the CV</h2>
           <p>
-            No keyword-stuffed PDFs. <b>Public code proves the skill.</b> We skip the devs
-            whose code doesn't.
+            Match on <b>repository topics, languages and dependencies</b>.
           </p>
         </div>
         <div className="f-visual flush">
@@ -349,11 +255,9 @@ export function Landing() {
       <section className="band">
         <div className="container feature rev">
         <div className="f-copy">
-          <div className="eyebrow">// scored on hard evidence</div>
-          <h2>Who's actually cracked?</h2>
+          <h2>Your ranked shortlist</h2>
           <p>
-            Every dev is scored on shipped work. You get <b>a ranked shortlist with verified
-            emails</b>, not a pile of maybes.
+            See the projects and contributions behind each score.
           </p>
         </div>
         <div className="f-visual">
@@ -417,16 +321,90 @@ export function Landing() {
         </div>
       </section>
 
+      {/* the database: GitHub itself */}
+      <section className="band">
+        <div className="container stats">
+          <div className="stat">
+            <div className="stat-num">145M+</div>
+            <div className="stat-label">developers on GitHub</div>
+          </div>
+          <div className="stat">
+            <div className="stat-num">400M+</div>
+            <div className="stat-label">public repositories read</div>
+          </div>
+          <div className="stat">
+            <div className="stat-num">200K+</div>
+            <div className="stat-label">commits &amp; repos analyzed daily</div>
+          </div>
+        </div>
+      </section>
+
+      {/* how it works */}
+      <section className="band">
+        <div className="container how-title">
+          <h2>How it works</h2>
+        </div>
+      </section>
+      <section className="band">
+        <div className="container how">
+          {/* the pipeline as a data-flow diagram: the role drops in top-left,
+              runs through the four processing stages, a candidate reply falls
+              out bottom-right */}
+          <div className="flow">
+            <div className="flow-input">
+              <span className="tag">input</span>
+              <p>Describe your role in one sentence.</p>
+            </div>
+            <div className="f-drop f-drop-in" aria-hidden="true" />
+
+            <FlowStep n={1} title="Scan GitHub">
+              Find developers working in your stack.
+            </FlowStep>
+            <div className="f-link f-l1" aria-hidden="true" />
+            <FlowStep n={2} title="Read the code">
+              Analyze commits, pull requests and reviews.
+            </FlowStep>
+            <div className="f-link f-l2" aria-hidden="true" />
+            <FlowStep n={3} title="Enrich profiles">
+              Add names, locations and verified emails.
+            </FlowStep>
+            <div className="f-link f-l3" aria-hidden="true" />
+            <FlowStep n={4} title="Rank matches">
+              Score fit against your role requirements.
+            </FlowStep>
+
+            {/* all four stages converge into the outreach */}
+            <div className="f-fan" aria-hidden="true">
+              <i className="fv fv-1" />
+              <i className="fv fv-2" />
+              <i className="fv fv-3" />
+              <i className="fv fv-4" />
+              <svg className="fc fc-l" viewBox="0 0 12 12">
+                <path d="M0.75 0 A11.25 11.25 0 0 0 12 11.25" />
+              </svg>
+              <svg className="fc fc-r" viewBox="0 0 12 12">
+                <path d="M11.25 0 A11.25 11.25 0 0 1 0 11.25" />
+              </svg>
+              <i className="fb fb-l" />
+              <i className="fb fb-r" />
+            </div>
+            <div className="f-drop f-cd" aria-hidden="true" />
+            <div className="flow-merge">
+              <span className="tag">output</span>
+              <h3>A ready-to-send email</h3>
+              <p>Opens on a specific project or contribution.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
       {/* linkedin vs azerit — the same candidate, two channels. Léa ignores
           the recruiter blasts on the left; she answers the email that read
           her code on the right. */}
       <section className="band">
         <div className="container how-title">
-          <h2>Cracked engineers are not responding to you on LinkedIn</h2>
-          <p className="how-sub">
-            LinkedIn outreach only gets a <b>1–3% response rate</b>. Azerit personalizes
-            outreach based on their GitHub activity to get <b>30%+</b>.
-          </p>
+          <h2>Give them a reason to reply</h2>
         </div>
       </section>
       <section className="band">
@@ -511,8 +489,8 @@ export function Landing() {
       {/* book a demo — vamo-style: a live run on a real search, zero friction */}
       <section className="band">
         <div className="container demo-band">
-          <h2>Book a demo</h2>
-          <p>30 minutes with the founders, we run Azerit live on a role you're actually hiring for.</p>
+          <h2>See Azerit work on your open role</h2>
+          <p>A 30-minute live session with the founders.</p>
           <Email user="lumine.builds" domain="gmail.com" subject="Azerit demo" className="btn-try">
             book a demo →
           </Email>
@@ -523,7 +501,6 @@ export function Landing() {
       <section className="band">
         <div className="container team">
         <h2>The team</h2>
-        <p className="team-sub">Two Centrale engineers putting tech to work for hiring teams.</p>
         <div className="team-grid">
           <div className="member">
             <img src={luminePhoto} alt="Lumine Trentelivres" width="84" height="84" loading="lazy" />
