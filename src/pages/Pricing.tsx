@@ -1,19 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { TopBar, Footer } from "../components/Nav";
 import { ContribBg } from "../components/ContribBg";
 import { LogoMark } from "../components/Logo";
-
-type Billing = "monthly" | "annual";
-
-const PLANS = {
-  starter: { annual: 19, monthly: 25 },
-  pro: { annual: 39, monthly: 49 },
-};
+import { DemoLink } from "../components/DemoLink";
+import { STRIPE_CHECKOUT_URL, PRICE_EUR_MONTHLY } from "../links";
 
 export function Pricing() {
-  const [billing, setBilling] = useState<Billing>("annual");
-
   useEffect(() => {
     document.title = "Pricing · Azerit";
     return () => {
@@ -36,73 +29,43 @@ export function Pricing() {
             </span>
           </h1>
 
-          <div className="price-toggle" role="group" aria-label="Billing period">
-            <button
-              type="button"
-              className={billing === "monthly" ? "active" : ""}
-              onClick={() => setBilling("monthly")}
-            >
-              Monthly
-            </button>
-            <button
-              type="button"
-              className={billing === "annual" ? "active" : ""}
-              onClick={() => setBilling("annual")}
-            >
-              Annual
-              <span className="badge-discount">-20%</span>
-            </button>
-          </div>
-
-          <div className="price-grid">
-            <div className="price-card">
-              <h2>Starter</h2>
-              <p className="price-sub">Everything you need to start sourcing.</p>
-
-              <div className="price-amount">
-                <span className="amount">${PLANS.starter[billing]}</span>
-                <span className="per">/ month</span>
-              </div>
-              <p className="price-billed">
-                {billing === "annual" ? "Billed annually" : "Billed monthly"}
-              </p>
-
-              <ul className="price-features">
-                <li>One open role, matched across 70M+ GitHub profiles</li>
-                <li>50 personalised candidate emails</li>
-              </ul>
-
-              <div className="price-cta">
-                <Link to="/try" className="btn-try" style={{ display: "block", textAlign: "center" }}>
-                  Find my candidates →
-                </Link>
-                <p className="price-nocard">No credit card required</p>
-              </div>
-            </div>
-
+          <div className="price-grid price-grid-single">
             <div className="price-card price-card-pro">
-              <h2>Pro</h2>
-              <p className="price-sub">For teams hiring on several roles at once.</p>
-
-              <div className="price-amount">
-                <span className="amount">${PLANS.pro[billing]}</span>
-                <span className="per">/ month</span>
-              </div>
-              <p className="price-billed">
-                {billing === "annual" ? "Billed annually" : "Billed monthly"}
+              <h2>Azerit</h2>
+              <p className="price-sub">
+                Source engineers from what they've built, and reach them with a message
+                they'll actually answer.
               </p>
 
+              <div className="price-amount">
+                <span className="amount">{PRICE_EUR_MONTHLY} €</span>
+                <span className="per">/ month</span>
+              </div>
+              <p className="price-billed">Billed monthly · cancel anytime · VAT not applicable</p>
+
               <ul className="price-features">
-                <li>Up to 4 open roles, matched across 70M+ GitHub profiles</li>
-                <li>200 personalised candidate emails</li>
-                <li>Ranked shortlists with verified emails</li>
+                <li>Up to 10 open roles per month, with at least 20 candidates each</li>
+                <li>Candidates matched across 145M+ GitHub developers on the code they write</li>
+                <li>Ranked shortlists, with the projects and contributions behind each score</li>
+                <li>Verified professional emails</li>
+                <li>A personalized first email for every candidate, opening on their own work</li>
+                <li>Direct support from the founders</li>
               </ul>
 
               <div className="price-cta">
-                <Link to="/try" className="btn-try" style={{ display: "block", textAlign: "center" }}>
-                  Find my candidates →
-                </Link>
-                <p className="price-nocard">No credit card required</p>
+                <a
+                  href={STRIPE_CHECKOUT_URL}
+                  className="btn-try"
+                  style={{ display: "block", textAlign: "center" }}
+                >
+                  Subscribe →
+                </a>
+                <p className="price-nocard">
+                  Secure payment by Stripe · or <DemoLink className="demo-link">book a demo</DemoLink>
+                </p>
+                <p className="price-nocard">
+                  By subscribing, you accept our <Link to="/terms">terms of sale</Link>.
+                </p>
               </div>
             </div>
           </div>

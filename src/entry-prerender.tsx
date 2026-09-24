@@ -4,6 +4,7 @@ import { StaticRouter } from "react-router";
 import { App } from "./App";
 import { Try } from "./pages/Try";
 import { Legal } from "./pages/Legal";
+import { Terms } from "./pages/Terms";
 import { Pricing } from "./pages/Pricing";
 
 // Built with `vite build --ssr`, then invoked by scripts/prerender.mjs to
@@ -28,6 +29,7 @@ export function render(path: string): string {
   const page = {
     "/try": <Try />,
     "/legal": <Legal />,
+    "/terms": <Terms />,
     "/pricing": <Pricing />,
   }[path];
   if (!page) throw new Error(`No prerender component for route ${path}`);

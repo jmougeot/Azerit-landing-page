@@ -5,6 +5,7 @@ import { LogoMark } from "../components/Logo";
 import { HeroGlobe } from "../components/HeroGlobe";
 import { DotGridBand } from "../components/DotGridBand";
 import { Email } from "../components/Email";
+import { DemoLink } from "../components/DemoLink";
 import { RepoFeed, type Repo } from "../components/RepoFeed";
 import { FlowStep } from "../components/FlowStep";
 import { CtaCommits } from "../components/CtaCommits";
@@ -202,16 +203,15 @@ export function Landing() {
                 Hire the engineers who actually <em>ship</em>
               </h1>
               <p className="sub">
-                Find developers on GitHub by what they've built. Get their verified emails
-                and personalized outreach.
+                Azerit finds the developers who have already built what you need, straight
+                from their GitHub. You get a ranked shortlist, verified emails and a first
+                message written around each candidate's own code.
               </p>
               <div className="hero-cta">
                 <Link to="/try" className="btn-try">
                   Find my candidates →
                 </Link>
-                <Email user="lumine.builds" domain="gmail.com" subject="Azerit demo" className="demo-link">
-                  book a demo ↗
-                </Email>
+                <DemoLink className="demo-link">book a demo ↗</DemoLink>
               </div>
             </div>
             <div className="hero-visual">
@@ -339,6 +339,36 @@ export function Landing() {
         </div>
       </section>
 
+      {/* value proposition: why teams switch from CVs and InMails */}
+      <section className="band">
+        <div className="container value">
+          <h2>Why teams hire with Azerit</h2>
+          <div className="value-grid">
+            <div className="value-item">
+              <h3>Reach engineers others miss</h3>
+              <p>
+                The best developers rarely polish a LinkedIn profile. Their proof is on
+                GitHub, and that is where Azerit looks.
+              </p>
+            </div>
+            <div className="value-item">
+              <h3>Skills you can verify</h3>
+              <p>
+                Every match comes with the repositories and pull requests behind it. No
+                keyword-stuffed CVs, no guessing.
+              </p>
+            </div>
+            <div className="value-item">
+              <h3>Messages that get replies</h3>
+              <p>
+                Outreach opens on a project the candidate actually built. It reads like a
+                peer, not a recruiter blast.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* how it works */}
       <section className="band">
         <div className="container how-title">
@@ -399,12 +429,11 @@ export function Landing() {
       </section>
 
 
-      {/* linkedin vs azerit — the same candidate, two channels. Léa ignores
-          the recruiter blasts on the left; she answers the email that read
-          her code on the right. */}
+      {/* linkedin vs azerit — generic outreach versus a project connected
+          to the candidate's work */}
       <section className="band">
         <div className="container how-title">
-          <h2>Give them a reason to reply</h2>
+          <h2>A relevant project. A personalized message.</h2>
         </div>
       </section>
       <section className="band">
@@ -468,14 +497,13 @@ export function Landing() {
                       <span className="vs-replied">replied ✓</span>
                     </div>
                     <p className="msg">
-                      Ha, journal.rs took a while to get right, you're the first person to
-                      actually read it. We hit exactly the backpressure issue you mention.
-                      What are you building? I'm free Thursday.
+                      Low-latency systems are exactly what I want to keep working on.
+                      What throughput are you targeting? Happy to talk Thursday.
                     </p>
                     <div className="vs-quote">
-                      &gt; Just went through rt-order-matching. The way you handle partial
-                      fills under contention is really clean, and the replay log in
-                      journal.rs? Smart.
+                      &gt; Your lock-free matching engine caught my eye. We're building a
+                      trading system with similar latency challenges and looking for a
+                      Rust engineer. Interested?
                     </div>
                   </div>
                 </div>
@@ -491,9 +519,7 @@ export function Landing() {
         <div className="container demo-band">
           <h2>See Azerit work on your open role</h2>
           <p>A 30-minute live session with the founders.</p>
-          <Email user="lumine.builds" domain="gmail.com" subject="Azerit demo" className="btn-try">
-            book a demo →
-          </Email>
+          <DemoLink className="btn-try">book a demo →</DemoLink>
         </div>
       </section>
 

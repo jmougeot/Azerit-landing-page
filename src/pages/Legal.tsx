@@ -18,8 +18,14 @@ export function Legal() {
 
         <h2>Legal notice</h2>
         <p>
-          This website, azerit.tech, is published by the co-founders of Azerit: Lumine
-          Trentelivres and Jacques Mougeot. Director of publication: Jacques Mougeot.
+          This website, azerit.tech, and the Azerit service are published by Lumine Trentelivres,
+          individual entrepreneur (entrepreneur individuel, micro-entreprise), 7 allée des
+          Dahlias, 92320 Châtillon, France. SIRET: 991 317 892 00016. VAT not applicable, art.
+          293 B of the French Tax Code.
+        </p>
+        <p>
+          Azerit is co-founded by Lumine Trentelivres and Jacques Mougeot. Director of
+          publication: Lumine Trentelivres.
         </p>
         <p>
           Contact: <Email user="jacques.mougeot" domain="centrale-med.fr" />
@@ -37,6 +43,15 @@ export function Legal() {
           When you request access on the <a href="/try">try page</a>, we collect the email address
           and the website or product description you submit, along with the date of your request.
           We collect nothing else: no account, no advertising trackers.
+        </p>
+
+        <p>
+          When you subscribe, we also keep your name, email address, company and billing details
+          to manage your subscription and invoices. Payments are processed by Stripe, which
+          collects your card details directly under its own{" "}
+          <a href="https://stripe.com/privacy" target="_blank" rel="noreferrer">privacy policy</a>;
+          we never see or store them. Billing records are kept for 10 years, as French accounting
+          law requires.
         </p>
 
         <h3>Why we collect it</h3>

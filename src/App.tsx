@@ -9,6 +9,7 @@ const NotFound = lazy(() =>
   import("./pages/NotFound").then((m) => ({ default: m.NotFound }))
 );
 const Legal = lazy(() => import("./pages/Legal").then((m) => ({ default: m.Legal })));
+const Terms = lazy(() => import("./pages/Terms").then((m) => ({ default: m.Terms })));
 const Pricing = lazy(() =>
   import("./pages/Pricing").then((m) => ({ default: m.Pricing }))
 );
@@ -42,6 +43,7 @@ export function App() {
           <Route path="/try" element={<Try />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/legal" element={<Legal />} />
+          <Route path="/terms" element={<Terms />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

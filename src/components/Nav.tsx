@@ -33,6 +33,9 @@ export function Footer() {
         <Link to="/pricing" style={{ marginLeft: "auto", color: "inherit" }}>
           pricing
         </Link>
+        <Link to="/terms" style={{ color: "inherit" }}>
+          terms
+        </Link>
         <Link to="/legal" style={{ color: "inherit" }}>
           legal &amp; privacy
         </Link>

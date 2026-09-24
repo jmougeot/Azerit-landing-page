@@ -16,7 +16,8 @@ const ROUTES = [
     title: "Try Azerit on Your Role · Recruit Engineers from GitHub",
   },
   { path: "/legal", out: "legal.html", title: "Legal Notice & Privacy Policy · Azerit" },
-  { path: "/pricing", out: "pricing.html", title: "Pricing · Azerit — $20 / month, everything included" },
+  { path: "/terms", out: "terms.html", title: "Terms of Sale · Azerit" },
+  { path: "/pricing", out: "pricing.html", title: "Pricing · Azerit · 300 € / month" },
 ];
 
 // Azerit used to ship a lead-generation product alongside sourcing, on its own
