@@ -87,7 +87,7 @@ export function DemoPlayer() {
             <span className="demo-preview-score">#1 · match 94</span>
           </div>
           <p>Built a real-time matching engine in Rust, with a lock-free hot path.</p>
-          <span className="demo-preview-repo">↗ lea-fabre/rt-order-matching</span>
+          <span className="demo-preview-repo">lea-fabre/rt-order-matching</span>
         </div>
         <button ref={triggerRef} type="button" className="btn-try" onClick={() => setIsOpen(true)} aria-haspopup="dialog">
           <span aria-hidden="true">▶ </span>Watch the full demo

@@ -1,0 +1,14 @@
+<!-- Source: https://www.raglogic.com/ — header brand mark, including its container. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <defs>
+    <linearGradient id="navy" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1F3A"/>
+      <stop offset="1" stop-color="#061327"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="6" fill="url(#navy)"/>
+  <svg x="6.4" y="6.4" width="19.2" height="19.2" viewBox="0 0 24 24" fill="none">
+    <path d="M7 5v14M7 5h6a4 4 0 0 1 0 8H7M13 13l4 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="18.5" cy="6.5" r="2" fill="#C8A25A"/>
+  </svg>
+</svg>

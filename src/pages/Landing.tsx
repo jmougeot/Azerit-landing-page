@@ -167,8 +167,13 @@ const INMAILS = [
   },
 ];
 
-// Teams already sourcing with Azerit; shown as a text strip until we have logos.
-const CLIENTS = ["Aurel BGC", "Iterate.inc", "Raglogic"];
+// Local brand assets. Aurel source: https://www.agilitesolutions.com/projects/a-multi-purpose-space-for-aurel-bgc/
+// Iterate and RAGLogic marks come from https://iterate.inc/ and https://www.raglogic.com/.
+const CLIENTS = [
+  { name: "Aurel BGC", logo: "/clients/aurel-bgc.png", id: "aurel", width: 140, height: 50, wordmark: true },
+  { name: "Iterate.inc", logo: "/clients/iterate.png", id: "iterate", width: 48, height: 21, wordmark: false },
+  { name: "RAGLogic", logo: "/clients/raglogic.svg", id: "raglogic", width: 32, height: 32, wordmark: false },
+];
 
 export function Landing() {
   const videoWrapRef = useRef<HTMLDivElement>(null);
@@ -206,15 +211,25 @@ export function Landing() {
                 Hire the engineers who actually <em>ship</em>
               </h1>
               <p className="sub">
-                Azerit finds the developers who have already built what you need, straight
-                from their GitHub. You get a ranked shortlist, verified emails and a first
-                message written around each candidate's own code.
+                Find engineers who have already built what you need on GitHub.
+                Get a ranked shortlist, verified emails and outreach grounded in their code.
               </p>
               <div className="hero-cta">
                 <Link to="/try" className="btn-try">
-                  Find my candidates →
+                  Find my candidates
                 </Link>
-                <DemoLink className="demo-link">book a demo ↗</DemoLink>
+                <DemoLink className="demo-link">book a demo</DemoLink>
+              </div>
+              <div className="hero-trust">
+                <p>Trusted by teams at</p>
+                <ul>
+                  {CLIENTS.map((client) => (
+                    <li key={client.name} className={`client-${client.id}`}>
+                      <img src={client.logo} alt={client.wordmark ? client.name : ""} width={client.width} height={client.height} />
+                      {!client.wordmark && <span>{client.name}</span>}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
             <div className="hero-visual">
@@ -239,18 +254,6 @@ export function Landing() {
         </DotGridBand>
       </div>
 
-      {/* clients: a quiet trust strip between the demo and the first feature;
-          the GitHub numbers hang directly under it as one panel */}
-      <section className="band band-head">
-        <div className="container clients">
-          <p className="clients-label">They trust us</p>
-          <ul className="clients-list">
-            {CLIENTS.map((c) => (
-              <li key={c}>{c}</li>
-            ))}
-          </ul>
-        </div>
-      </section>
       {/* the database: GitHub itself */}
       <section className="band">
         <div className="container stats">
@@ -351,36 +354,6 @@ export function Landing() {
             </div>
           </div>
         </div>
-        </div>
-      </section>
-
-      {/* value proposition: why teams switch from CVs and InMails */}
-      <section className="band">
-        <div className="container value">
-          <h2>Why teams hire with Azerit</h2>
-          <div className="value-grid">
-            <div className="value-item">
-              <h3>Reach engineers others miss</h3>
-              <p>
-                The best developers rarely polish a LinkedIn profile. Their proof is on
-                GitHub, and that is where Azerit looks.
-              </p>
-            </div>
-            <div className="value-item">
-              <h3>Skills you can verify</h3>
-              <p>
-                Every match comes with the repositories and pull requests behind it. No
-                keyword-stuffed CVs, no guessing.
-              </p>
-            </div>
-            <div className="value-item">
-              <h3>Messages that get replies</h3>
-              <p>
-                Outreach opens on a project the candidate actually built. It reads like a
-                peer, not a recruiter blast.
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -539,12 +512,12 @@ export function Landing() {
         <div className="container demo-band">
           <h2>See Azerit work on your open role</h2>
           <p>A 30-minute live session with the founders.</p>
-          <DemoLink className="btn-try">book a demo →</DemoLink>
+          <DemoLink className="btn-try">book a demo</DemoLink>
         </div>
       </section>
 
       {/* team */}
-      <section className="band">
+      <section className="band band-open">
         <div className="container team">
         <h2>The team</h2>
         <div className="team-grid">
@@ -580,7 +553,7 @@ export function Landing() {
           <div className="cta-row">
             <span aria-hidden />
             <Link to="/try" className="cta-link">
-              Turn GitHub into your recruiting engine ↗
+              Turn GitHub into your recruiting engine
             </Link>
             <span aria-hidden />
           </div>

@@ -115,8 +115,7 @@ button {
   color: var(--text);
   font-weight: 600;
 }
-/* four links + logo won't fit a phone width at 14px mono: tighten first,
-   then drop the secondary link (pricing stays reachable via the footer) */
+/* Keep both navigation links accessible on small screens. */
 @media (max-width: 620px) {
   .topbar-inner {
     padding: 14px 18px;
@@ -124,11 +123,6 @@ button {
   .topbar-nav {
     gap: 13px;
     font-size: 12.5px;
-  }
-}
-@media (max-width: 420px) {
-  .topbar .nav-secondary {
-    display: none;
   }
 }
 .topbar .try-link {
@@ -185,6 +179,14 @@ button {
 /* ---- hero zone : GitHub logo pattern behind title + demo video ---- */
 .hero-zone {
   position: relative;
+  /* solid base: the hero draws its own interactive dots over this */
+  background: var(--bg);
+}
+/* the hero's dot grid carries on down the page: it shows through the air
+   between panels, so the gaps read as the same backdrop rather than nothing */
+main {
+  background-image: radial-gradient(circle at center, rgba(89, 99, 110, 0.16) 1px, transparent 1.4px);
+  background-size: 24px 24px;
 }
 .hero-zone > .container {
   position: relative;
@@ -342,18 +344,19 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 48px;
-  /* shallow bottom padding: the demo window hugs the hero, linear.app-style */
-  padding: 140px 0 72px;
+  gap: 40px;
+  padding: 72px 32px 48px;
 }
 .hero-copy {
-  flex: 1 1 0;
+  flex: 1.2 1 0;
+  min-width: 0;
   max-width: 640px;
 }
 .hero-visual {
   flex: 1 1 0;
   align-self: stretch;
-  min-height: 420px;
+  min-width: 0;
+  min-height: 360px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -361,18 +364,11 @@ button {
 /* github.com-style dot globe (three.js canvas injected by HeroGlobe) */
 .hero-globe {
   position: relative;
-  /* the camera leaves ~28% padding around the sphere so tall arcs don't clip.
-     the box is wider than the hero column and bleeds into the right page
-     margin (html{overflow-x:clip} eats any viewport overflow) so the sphere
-     itself stays big instead of shrinking to fit the column. the negative
-     vertical margins stop the oversized canvas from stretching the hero. */
-  width: min(50vw, 680px);
-  max-width: none;
+  width: 100%;
+  max-width: 480px;
   aspect-ratio: 1;
   cursor: grab;
-  /* the container is near full-bleed now: only bleed through the 24px gutter
-     so the sphere never slips off the right edge of the screen */
-  margin: -70px -24px -70px 0;
+  flex-shrink: 0;
 }
 .hero-globe.dragging {
   cursor: grabbing;
@@ -401,8 +397,8 @@ button {
     flex-direction: column;
     align-items: stretch; /* column flex: stretch = children fill width & wrap.
                              flex-start sized them to content width -> overflow. */
-    gap: 24px;
-    padding: 44px 24px 32px;
+    gap: 12px;
+    padding: 36px 24px 24px;
   }
   .hero-copy {
     max-width: 100%;
@@ -415,7 +411,7 @@ button {
     justify-content: center;
   }
   .hero-globe {
-    width: min(72vw, 300px);
+    width: min(40vw, 200px);
     margin: 0;
   }
   .hero .btn-try {
@@ -461,13 +457,77 @@ button {
   gap: 16px;
   flex-wrap: wrap;
 }
-/* Keep the primary action separate from the supporting GitHub count. */
+.hero-trust {
+  margin-top: 24px;
+  color: var(--text-dim);
+  font-size: 12px;
+}
+.hero-trust ul {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 28px;
+  margin-top: 12px;
+  list-style: none;
+  color: var(--text);
+  font-size: 20px;
+  font-weight: 600;
+}
+.hero-trust li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.hero-trust img {
+  display: block;
+  object-fit: contain;
+}
+.hero-trust .client-iterate img {
+  filter: brightness(0);
+}
+@media (max-width: 560px) {
+  .hero-trust ul {
+    gap: 12px;
+    font-size: 16px;
+  }
+  .hero-trust .client-aurel img {
+    width: 104px;
+    height: auto;
+  }
+  .hero-trust .client-iterate img {
+    width: 28px;
+    height: auto;
+  }
+  .hero-trust .client-raglogic img {
+    width: 24px;
+    height: 24px;
+  }
+}
+/* Flat teal action, matching the hero's restrained technical styling. */
 .hero-cta .btn-try {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   height: 48px;
-  padding: 0 26px;
+  padding: 0 24px;
+  background: var(--green);
+  border-color: var(--green-dim);
+  border-radius: 6px;
+  box-shadow: none;
+  font-size: 14px;
+  font-weight: 600;
   line-height: 1;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.hero-cta .btn-try:hover {
+  background: var(--green-dim);
+  border-color: var(--green-dim);
+  transform: none;
+}
+.hero-cta .btn-try:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 4px;
 }
 /* Quiet supporting mention below the actions. */
 .gh-users {
@@ -1876,7 +1936,7 @@ button {
   }
 }
 @media (max-width: 800px) {
-  /* stacked: each phone becomes its own framed card, like the repo feed */
+  /* Readable message excerpts replace the tall phone shells on mobile. */
   .vs {
     grid-template-columns: 1fr;
     gap: 24px;
@@ -1890,19 +1950,58 @@ button {
   .vs-cell,
   .vs-cell + .vs-cell {
     border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .vs-info {
+    padding: 20px 20px 16px;
+  }
+  .vs-foot {
+    padding-top: 8px;
   }
   .vs-stage {
-    height: 380px;
-    padding-top: 26px;
+    height: auto;
+    padding: 0 16px 16px;
+  }
+  .vs-stage::before {
+    display: none;
   }
   .phone {
-    width: 276px;
-    height: 570px;
-    border-radius: 42px;
-    padding: 8px;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0;
+    background: var(--bg);
+    box-shadow: none;
   }
   .phone-screen {
-    border-radius: 35px;
+    border-radius: 8px;
+  }
+  .phone-island,
+  .li-search,
+  .vs-row:nth-child(n + 3) {
+    display: none;
+  }
+  .vs-row:nth-child(2) {
+    border-bottom: none;
+  }
+  .vs-prev {
+    font-size: 13px;
+    -webkit-line-clamp: 3;
+  }
+  .vs-mail {
+    padding: 16px;
+  }
+  .vs-mail .msg {
+    font-size: 14px;
+  }
+  .vs-quote {
+    display: block;
+    font-size: 13px;
+  }
+  .vs-from {
+    flex-wrap: wrap;
   }
 }
 
@@ -2190,7 +2289,13 @@ button {
 .try-card .sub {
   color: var(--text-dim);
   font-size: 15px;
-  margin-bottom: 30px;
+  margin-bottom: 16px;
+}
+.try-benefit {
+  color: var(--green);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 28px;
 }
 .field {
   margin-bottom: 18px;
@@ -2218,6 +2323,8 @@ button {
 .field input:focus,
 .field textarea:focus {
   border-color: var(--green-dim);
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
 }
 .field .hint {
   font-size: 12.5px;
@@ -2442,6 +2549,16 @@ button {
   color: var(--text-dim);
   margin-bottom: 6px;
 }
+.price-included {
+  display: grid;
+  gap: 4px;
+  margin: 18px 0 14px;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+.price-included strong {
+  color: var(--green-dim);
+}
 .price-features {
   list-style: none;
   margin: 24px 0 28px;
@@ -2508,45 +2625,6 @@ button {
   justify-content: center;
 }
 
-/* ---- value proposition: three reasons, one line of proof each ---- */
-.value {
-  padding-top: 64px;
-  padding-bottom: 64px;
-}
-.value h2 {
-  font-family: var(--font-mono);
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  text-align: center;
-  margin-bottom: 32px;
-}
-.value-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 28px;
-}
-.value-item h3 {
-  font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 8px;
-  color: var(--text);
-}
-.value-item p {
-  font-size: 14.5px;
-  line-height: 1.55;
-  color: var(--text-dim);
-}
-@media (max-width: 800px) {
-  .value {
-    padding-top: 44px;
-    padding-bottom: 44px;
-  }
-  .value-grid {
-    grid-template-columns: 1fr;
-    gap: 22px;
-  }
-}
 
 /* ---- clients strip ---- */
 /* sits under the demo window: one dim label, then the names in a row. Text
@@ -2614,7 +2692,9 @@ button {
    page colour so the tint never fights the content. Panels that paint their
    own cells (features, vs, how-title) keep their stronger tints on top. */
 .band > .container {
-  background: linear-gradient(var(--panel-angle, 160deg), var(--panel-tint, transparent), transparent 72%);
+  /* opaque page colour under the wash: panels sit on top of the dot grid */
+  background: linear-gradient(var(--panel-angle, 160deg), var(--panel-tint, transparent), transparent 72%),
+    var(--bg);
 }
 main > .band:nth-of-type(4n + 1) {
   --panel-tint: rgba(15, 118, 110, 0.07);
@@ -2631,4 +2711,17 @@ main > .band:nth-of-type(4n + 3) {
 main > .band:nth-of-type(4n + 4) {
   --panel-tint: rgba(48, 161, 78, 0.07);
   --panel-angle: 200deg;
+}
+
+/* Leave editorial sections open; frames emphasize the product examples. */
+.band.band-open,
+.band.band-open > .container {
+  border-color: transparent;
+  background: none;
+}
+.band.band-open::before,
+.band.band-open::after,
+.band.band-open > .container::before,
+.band.band-open > .container::after {
+  content: none;
 }

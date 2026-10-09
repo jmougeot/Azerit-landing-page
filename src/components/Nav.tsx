@@ -16,7 +16,7 @@ export function TopBar() {
             pricing
           </NavLink>
           <Link to="/try" className="try-link">
-            try it →
+            try it
           </Link>
         </div>
       </div>

@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { TopBar, Footer } from "../components/Nav";
-import { saveLead, getLeads } from "../leads";
+import { saveLead } from "../leads";
 
 export function Try() {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
-  const [position, setPosition] = useState(0);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,7 +15,6 @@ export function Try() {
     setSubmitting(true);
     await saveLead({ email, role, event: "try_requested" });
     await new Promise((r) => setTimeout(r, 700));
-    setPosition(42 + (getLeads().length % 30));
     setDone(true);
     setSubmitting(false);
   };
@@ -28,27 +26,27 @@ export function Try() {
         {done ? (
           <div className="confirm">
             <div className="check">✓ request received</div>
-            <h1>You're in the queue.</h1>
+            <h1>Your first shortlist starts here.</h1>
             <p>
               We're onboarding teams one by one so every search gets set up properly. You'll get an
               email at <strong style={{ color: "var(--text)" }}>{email}</strong> when your dashboard
               is ready.
             </p>
-            <div className="pos">position #{position} in line</div>
             <p style={{ fontSize: 13.5 }}>
               Early users get their first candidate batch free. We'll run your role as the test.
             </p>
             <Link to="/" className="btn-ghost" style={{ display: "inline-block", marginTop: 20 }}>
-              ← back
+              back
             </Link>
           </div>
         ) : (
           <div className="try-card">
             <h1>Try Azerit on your role</h1>
             <p className="sub">
-              Drop your email and the role you're hiring for: we'll set up your scan and open your
-              dashboard.
+              Tell us who you're hiring. We're onboarding teams one by one and will email you
+              when your search and dashboard are ready.
             </p>
+            <p className="try-benefit">Your first candidate batch is free.</p>
             <form onSubmit={submit}>
               <div className="field">
                 <label htmlFor="email">work email</label>
@@ -78,7 +76,7 @@ export function Try() {
                 style={{ width: "100%" }}
                 disabled={submitting}
               >
-                {submitting ? "setting up your scan…" : "Open my dashboard →"}
+                {submitting ? "sending your request…" : "Request my shortlist"}
               </button>
             </form>
           </div>

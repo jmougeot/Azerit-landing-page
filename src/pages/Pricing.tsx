@@ -41,10 +41,13 @@ export function Pricing() {
                 <span className="amount">{PRICE_EUR_MONTHLY} €</span>
                 <span className="per">/ month</span>
               </div>
+              <div className="price-included">
+                <p><strong>Up to 10</strong> open roles / month</p>
+                <p><strong>20+ candidates</strong> per role</p>
+              </div>
               <p className="price-billed">Billed monthly · cancel anytime · VAT not applicable</p>
 
               <ul className="price-features">
-                <li>Up to 10 open roles per month, with at least 20 candidates each</li>
                 <li>Candidates matched across 145M+ GitHub developers on the code they write</li>
                 <li>Ranked shortlists, with the projects and contributions behind each score</li>
                 <li>Verified professional emails</li>
@@ -58,7 +61,7 @@ export function Pricing() {
                   className="btn-try"
                   style={{ display: "block", textAlign: "center" }}
                 >
-                  Subscribe →
+                  Subscribe
                 </a>
                 <p className="price-nocard">
                   Secure payment by Stripe · or <DemoLink className="demo-link">book a demo</DemoLink>

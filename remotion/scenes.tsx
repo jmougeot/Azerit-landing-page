@@ -185,7 +185,7 @@ export const SceneDescribe: React.FC = () => {
               transform: `scale(${pressed ? 0.94 : 1})`,
             }}
           >
-            Find my candidates →
+            Find my candidates
           </div>
           <div
             style={{
@@ -414,7 +414,7 @@ export const SceneWhy: React.FC = () => {
     <AbsoluteFill>
       <DashFrame active="rank">
         <div style={{ fontFamily: T.mono, fontSize: 16, color: T.dim, marginBottom: 20 }}>
-          ← Ranked candidates
+          Ranked candidates
         </div>
         <div
           style={{
@@ -760,7 +760,7 @@ export const SceneOutro: React.FC = () => {
             fontWeight: 700,
           }}
         >
-          Try it →
+          Try it
         </div>
       </Pop>
     </AbsoluteFill>
