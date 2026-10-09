@@ -519,7 +519,7 @@ export function Landing() {
       {/* team */}
       <section className="band band-open">
         <div className="container team">
-        <h2>The team</h2>
+        <h2>Meet the founders</h2>
         <div className="team-grid">
           <div className="member">
             <img src={luminePhoto} alt="Lumine Trentelivres" width="84" height="84" loading="lazy" />

@@ -23,6 +23,8 @@
   --blue-on-dark: #6cb6ff;
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+  /* one size for every section title (features, how it works, demo, founders) */
+  --h2-size: clamp(22px, 2.4vw, 28px);
 }
 
 * {
@@ -313,10 +315,8 @@ main {
   /* faint resting dots */
   background-image: radial-gradient(circle at center, rgba(89, 99, 110, 0.16) 1px, transparent 1.4px);
   background-size: var(--dot-gap) var(--dot-gap);
-  /* the band now spans hero + demo window: keep dots crisp through the hero,
-     dissolve them behind the window's lower half */
-  -webkit-mask-image: linear-gradient(to bottom, #000 52%, transparent 88%);
-  mask-image: linear-gradient(to bottom, #000 52%, transparent 88%);
+  /* no fade at the bottom: the same grid carries on under the rest of the
+     page (see `main`), so the hero's dots must run straight into it */
 }
 /* bigger green dots near the cursor — no background haze, just the dots */
 .dot-grid::after {
@@ -883,7 +883,7 @@ main {
 .how-title h2 {
   /* same face as the hero h1; mono only ships 400/500/700 so cap at 700 */
   font-family: var(--font-mono);
-  font-size: clamp(26px, 3.5vw, 34px);
+  font-size: var(--h2-size);
   font-weight: 700;
   letter-spacing: -0.03em;
 }
@@ -1246,7 +1246,7 @@ main {
 }
 .f-copy h2 {
   font-family: var(--font-mono);
-  font-size: clamp(24px, 3vw, 32px);
+  font-size: var(--h2-size);
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.2;
@@ -2013,7 +2013,7 @@ main {
 }
 .demo-band h2 {
   font-family: var(--font-mono);
-  font-size: 22px;
+  font-size: var(--h2-size);
   font-weight: 700;
   letter-spacing: -0.03em;
   margin-bottom: 8px;
@@ -2041,7 +2041,7 @@ main {
 }
 .team h2 {
   font-family: var(--font-mono);
-  font-size: 22px;
+  font-size: var(--h2-size);
   font-weight: 700;
   letter-spacing: -0.03em;
   margin-bottom: 32px;
