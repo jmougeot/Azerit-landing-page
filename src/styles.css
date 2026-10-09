@@ -68,7 +68,7 @@ button {
 }
 
 .container {
-  max-width: 1060px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 24px;
 }
@@ -82,7 +82,7 @@ button {
   border-bottom: 1px solid var(--border);
 }
 .topbar-inner {
-  max-width: 1060px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 16px 24px;
   display: flex;
@@ -336,6 +336,9 @@ button {
 
 /* ---- hero : copy + CTA left, 3D graph right ---- */
 .hero {
+  /* narrower than the panels below so the copy and globe sit toward the
+     middle of the screen instead of hugging the viewport edges */
+  max-width: 1260px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -345,7 +348,7 @@ button {
 }
 .hero-copy {
   flex: 1 1 0;
-  max-width: 560px;
+  max-width: 640px;
 }
 .hero-visual {
   flex: 1 1 0;
@@ -363,11 +366,13 @@ button {
      margin (html{overflow-x:clip} eats any viewport overflow) so the sphere
      itself stays big instead of shrinking to fit the column. the negative
      vertical margins stop the oversized canvas from stretching the hero. */
-  width: min(58vw, 620px);
+  width: min(50vw, 680px);
   max-width: none;
   aspect-ratio: 1;
   cursor: grab;
-  margin: -70px -90px -70px 0;
+  /* the container is near full-bleed now: only bleed through the 24px gutter
+     so the sphere never slips off the right edge of the screen */
+  margin: -70px -24px -70px 0;
 }
 .hero-globe.dragging {
   cursor: grabbing;
@@ -728,16 +733,62 @@ button {
    edges and a small teal square centered on each line crossing. Bands stack
    with no margins so the verticals read as one continuous line. */
 .band {
+  position: relative;
   border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
-@media (min-width: 1140px) {
+/* each band is a panel between two page-wide hairlines, with clear air before
+   the next one. A `band-head` (a title cell) stays glued to the band below it
+   so the pair reads as one panel and shares its rules; `band-bleed` panels run
+   to the viewport edge and draw their own bottom rule; the footer ends the
+   page without one. */
+.band + .band {
+  margin-top: 72px;
+}
+.band.band-head + .band {
+  margin-top: 0;
+}
+.band.band-head,
+.band.band-bleed,
+.footer.band {
+  border-bottom: none;
+}
+@media (min-width: 801px) {
   .band > .container {
     position: relative;
+    /* always inset from the viewport so the rails never touch the screen edge */
+    width: min(100% - 48px, 1400px);
     border-left: 1px solid var(--border);
     border-right: 1px solid var(--border);
     /* extra air so content never sits against the rules */
     padding-left: 36px;
     padding-right: 36px;
+  }
+  /* bottom crossings: the band draws the two squares where its bottom hairline
+     meets the container's rails (the container's own pseudos hold the top pair) */
+  .band::before,
+  .band::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    width: 7px;
+    height: 7px;
+    background: var(--green);
+    z-index: 1;
+  }
+  .band::before {
+    left: calc(50% - min(50% - 24px, 700px) - 4px);
+  }
+  .band::after {
+    right: calc(50% - min(50% - 24px, 700px) - 4px);
+  }
+  .band.band-head::before,
+  .band.band-head::after,
+  .band.band-bleed::before,
+  .band.band-bleed::after,
+  .footer.band::before,
+  .footer.band::after {
+    content: none;
   }
   .band > .container::before,
   .band > .container::after {
@@ -1110,7 +1161,7 @@ button {
   background: linear-gradient(135deg, rgba(15, 118, 110, 0.15), rgba(15, 118, 110, 0) 70%),
     var(--bg-soft);
 }
-@media (min-width: 1140px) {
+@media (min-width: 801px) {
   /* the container gutter grows to 36px here and gains its side borders: the
      tint now meets the band's vertical rule exactly */
   .f-visual {
@@ -1322,22 +1373,23 @@ button {
   text-align: center;
 }
 .stat {
-  padding: 44px 16px 40px;
+  /* a compact strip: the numbers are a footnote to the page, not a feature */
+  padding: 22px 16px 20px;
 }
 .stat + .stat {
   border-left: 1px solid var(--border);
 }
 .stat-num {
   font-family: var(--font-mono);
-  font-size: clamp(34px, 4.5vw, 46px);
+  font-size: clamp(24px, 2.6vw, 30px);
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.1;
   color: var(--green);
 }
 .stat-label {
-  margin-top: 6px;
-  font-size: 13.5px;
+  margin-top: 4px;
+  font-size: 13px;
   color: var(--text-dim);
 }
 @media (max-width: 800px) {
@@ -1522,11 +1574,17 @@ button {
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
+/* each cell: the facts on the left, the phone on the right, on one tinted floor */
 .vs-cell {
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  background: var(--bg);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  background: var(--bg-soft);
+}
+.vs-azerit.vs-cell {
+  background: linear-gradient(225deg, rgba(15, 118, 110, 0.13), rgba(15, 118, 110, 0) 70%),
+    var(--bg-soft);
 }
 .vs-cell + .vs-cell {
   border-left: 1px solid var(--border);
@@ -1537,7 +1595,7 @@ button {
 .vs > .vs-cell:last-child {
   margin-right: -24px;
 }
-@media (min-width: 1140px) {
+@media (min-width: 801px) {
   .vs > .vs-cell:first-child {
     margin-left: -36px;
   }
@@ -1545,24 +1603,32 @@ button {
     margin-right: -36px;
   }
 }
-.vs-head {
+.vs-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  padding: 32px 16px 32px 36px;
+}
+.vs-title {
   display: flex;
   align-items: center;
   gap: 8px;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--text-dim);
-  padding: 12px 24px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-soft);
 }
-.vs-head .vs-stat {
-  margin-left: auto;
-  white-space: nowrap;
-}
-.vs-azerit .vs-head .vs-stat {
-  color: var(--green);
+.vs-stat {
+  font-family: var(--font-mono);
+  font-size: clamp(18px, 1.5vw, 22px);
   font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--text);
+}
+.vs-azerit .vs-stat {
+  color: var(--green);
 }
 .li-mark {
   display: inline-flex;
@@ -1585,12 +1651,7 @@ button {
   overflow: hidden;
   display: flex;
   justify-content: center;
-  padding-top: 32px;
-  background: var(--bg-soft);
-}
-.vs-azerit .vs-stage {
-  background: linear-gradient(225deg, rgba(15, 118, 110, 0.13), rgba(15, 118, 110, 0) 70%),
-    var(--bg-soft);
+  padding: 32px 36px 0 16px;
 }
 /* teal halo rising behind the phone that got the reply */
 .vs-azerit .vs-stage::before {
@@ -1781,9 +1842,9 @@ button {
 }
 /* one telemetry line pinned to each cell's floor, like the flow cards */
 .vs-foot {
-  margin-top: auto;
+  margin-top: 4px;
   border-top: 1px dashed var(--border);
-  padding: 12px 24px;
+  padding-top: 12px;
   font-family: var(--font-mono);
   font-size: 11.5px;
   color: var(--text-dim);
@@ -1801,6 +1862,18 @@ button {
 }
 .vs-azerit .vs-foot::before {
   color: var(--green);
+}
+@media (max-width: 1100px) {
+  /* the facts move above the phone when a half-cell can't fit both side by side */
+  .vs-cell {
+    grid-template-columns: 1fr;
+  }
+  .vs-info {
+    padding: 28px 24px 8px;
+  }
+  .vs-stage {
+    padding: 16px 24px 0;
+  }
 }
 @media (max-width: 800px) {
   /* stacked: each phone becomes its own framed card, like the repo feed */
@@ -2473,4 +2546,89 @@ button {
     grid-template-columns: 1fr;
     gap: 22px;
   }
+}
+
+/* ---- clients strip ---- */
+/* sits under the demo window: one dim label, then the names in a row. Text
+   only for now (no logos yet); the mono face ties it to the section titles.
+   Vertical padding longhands only — see the banded-cells note above. */
+.clients {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  /* wide column gap: the label needs clear air before the first name */
+  gap: 14px 88px;
+  padding-top: 28px;
+  padding-bottom: 28px;
+}
+.clients-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.clients-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 40px;
+  list-style: none;
+}
+.clients-list li {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+@media (max-width: 800px) {
+  .clients {
+    flex-direction: column;
+    gap: 18px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+  .clients-list {
+    gap: 8px 28px;
+  }
+  .clients-list li {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 800px) {
+  .band + .band {
+    margin-top: 48px;
+  }
+  .band.band-head + .band {
+    margin-top: 0;
+  }
+}
+
+/* ---- panel tints ---- */
+/* every panel carries a barely-there green wash so the stack reads as a set
+   of cards rather than bare outlines. Four greens from the palette rotate
+   down the page (teal, lime, bright teal, GitHub green), each fading to the
+   page colour so the tint never fights the content. Panels that paint their
+   own cells (features, vs, how-title) keep their stronger tints on top. */
+.band > .container {
+  background: linear-gradient(var(--panel-angle, 160deg), var(--panel-tint, transparent), transparent 72%);
+}
+main > .band:nth-of-type(4n + 1) {
+  --panel-tint: rgba(15, 118, 110, 0.07);
+  --panel-angle: 160deg;
+}
+main > .band:nth-of-type(4n + 2) {
+  --panel-tint: rgba(122, 138, 31, 0.07);
+  --panel-angle: 200deg;
+}
+main > .band:nth-of-type(4n + 3) {
+  --panel-tint: rgba(82, 208, 189, 0.12);
+  --panel-angle: 160deg;
+}
+main > .band:nth-of-type(4n + 4) {
+  --panel-tint: rgba(48, 161, 78, 0.07);
+  --panel-angle: 200deg;
 }

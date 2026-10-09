@@ -167,6 +167,9 @@ const INMAILS = [
   },
 ];
 
+// Teams already sourcing with Azerit; shown as a text strip until we have logos.
+const CLIENTS = ["Aurel BGC", "Iterate.inc", "Raglogic"];
+
 export function Landing() {
   const videoWrapRef = useRef<HTMLDivElement>(null);
   const [showPlayer, setShowPlayer] = useState(false);
@@ -235,6 +238,36 @@ export function Landing() {
           </div>
         </DotGridBand>
       </div>
+
+      {/* clients: a quiet trust strip between the demo and the first feature;
+          the GitHub numbers hang directly under it as one panel */}
+      <section className="band band-head">
+        <div className="container clients">
+          <p className="clients-label">They trust us</p>
+          <ul className="clients-list">
+            {CLIENTS.map((c) => (
+              <li key={c}>{c}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
+      {/* the database: GitHub itself */}
+      <section className="band">
+        <div className="container stats">
+          <div className="stat">
+            <div className="stat-num">145M+</div>
+            <div className="stat-label">developers on GitHub</div>
+          </div>
+          <div className="stat">
+            <div className="stat-num">400M+</div>
+            <div className="stat-label">public repositories read</div>
+          </div>
+          <div className="stat">
+            <div className="stat-num">200K+</div>
+            <div className="stat-label">commits &amp; repos analyzed daily</div>
+          </div>
+        </div>
+      </section>
 
       {/* feature: code as the résumé */}
       <section className="band">
@@ -321,24 +354,6 @@ export function Landing() {
         </div>
       </section>
 
-      {/* the database: GitHub itself */}
-      <section className="band">
-        <div className="container stats">
-          <div className="stat">
-            <div className="stat-num">145M+</div>
-            <div className="stat-label">developers on GitHub</div>
-          </div>
-          <div className="stat">
-            <div className="stat-num">400M+</div>
-            <div className="stat-label">public repositories read</div>
-          </div>
-          <div className="stat">
-            <div className="stat-num">200K+</div>
-            <div className="stat-label">commits &amp; repos analyzed daily</div>
-          </div>
-        </div>
-      </section>
-
       {/* value proposition: why teams switch from CVs and InMails */}
       <section className="band">
         <div className="container value">
@@ -370,7 +385,7 @@ export function Landing() {
       </section>
 
       {/* how it works */}
-      <section className="band">
+      <section className="band band-head">
         <div className="container how-title">
           <h2>How it works</h2>
         </div>
@@ -431,7 +446,7 @@ export function Landing() {
 
       {/* linkedin vs azerit — generic outreach versus a project connected
           to the candidate's work */}
-      <section className="band">
+      <section className="band band-head">
         <div className="container how-title">
           <h2>A relevant project. A personalized message.</h2>
         </div>
@@ -439,12 +454,16 @@ export function Landing() {
       <section className="band">
         <div className="container vs">
           <div className="vs-cell vs-linkedin">
-            <div className="vs-head">
-              <span className="li-mark">in</span>
-              linkedin: léa's inbox
-              <span className="vs-stat">5 InMails · 0 replies</span>
+            {/* the facts sit beside her phone, which is cropped at the cell
+                floor like vamo's panels */}
+            <div className="vs-info">
+              <div className="vs-title">
+                <span className="li-mark">in</span>
+                linkedin: léa's inbox
+              </div>
+              <div className="vs-stat">5 InMails · 0 replies</div>
+              <div className="vs-foot">response rate: 1–3%</div>
             </div>
-            {/* her phone, cropped at the cell floor like vamo's panels */}
             <div className="vs-stage" aria-hidden="true">
               <div className="phone">
                 <div className="phone-screen">
@@ -472,13 +491,15 @@ export function Landing() {
                 </div>
               </div>
             </div>
-            <div className="vs-foot">response rate: 1–3%</div>
           </div>
           <div className="vs-cell vs-azerit">
-            <div className="vs-head">
-              <LogoMark size={14} />
-              azerit: léa's inbox
-              <span className="vs-stat">1 email · 1 reply</span>
+            <div className="vs-info">
+              <div className="vs-title">
+                <LogoMark size={14} />
+                azerit: léa's inbox
+              </div>
+              <div className="vs-stat">1 email · 1 reply</div>
+              <div className="vs-foot">response rate: 30%+</div>
             </div>
             <div className="vs-stage" aria-hidden="true">
               <div className="phone">
@@ -509,7 +530,6 @@ export function Landing() {
                 </div>
               </div>
             </div>
-            <div className="vs-foot">response rate: 30%+</div>
           </div>
         </div>
       </section>
@@ -555,7 +575,7 @@ export function Landing() {
       </section>
 
       {/* final CTA */}
-      <section className="band">
+      <section className="band band-bleed">
         <div className="container cta-final">
           <div className="cta-row">
             <span aria-hidden />
