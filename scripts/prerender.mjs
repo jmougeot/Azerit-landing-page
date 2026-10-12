@@ -14,16 +14,34 @@ const ROUTES = [
     path: "/try",
     out: "try.html",
     title: "Try Azerit on Your Role · Recruit Engineers from GitHub",
+    desc: "Tell us the role you're hiring for and get a shortlist of GitHub engineers who have already built it. Your first candidate batch is free.",
   },
-  { path: "/legal", out: "legal.html", title: "Legal Notice & Privacy Policy · Azerit" },
-  { path: "/terms", out: "terms.html", title: "Terms of Sale · Azerit" },
-  { path: "/pricing", out: "pricing.html", title: "Pricing · Azerit · 300 € / month" },
+  {
+    path: "/legal",
+    out: "legal.html",
+    title: "Legal Notice & Privacy Policy · Azerit",
+    desc: "Legal notice and privacy policy for Azerit: who publishes the service, what data we collect, why we collect it, how long we keep it and your rights.",
+  },
+  {
+    path: "/terms",
+    out: "terms.html",
+    title: "Terms of Sale · Azerit",
+    desc: "Terms of sale for Azerit subscriptions: what the service includes, price and payment, term and cancellation, liability and use of candidate data.",
+  },
+  {
+    path: "/pricing",
+    out: "pricing.html",
+    title: "Pricing · Azerit · 300 € / month",
+    desc: "Azerit costs 300 € a month: up to 10 open roles, 20+ ranked GitHub candidates per role, verified emails and a personalized first email for each one.",
+  },
 ];
 
 // Azerit used to ship a lead-generation product alongside sourcing, on its own
 // page; both product URLs now fold into "/". GitHub Pages can't return a 301,
 // so each old path keeps a file whose only job is to send visitors and crawlers
 // home — canonical + meta-refresh is what Google reads as a redirect here.
+// No robots noindex on these: Google obeys it over the refresh and drops the
+// URL ("Excluded by noindex") instead of folding it into "/".
 const REDIRECTS = ["/prospection", "/hiring"];
 
 const base = readFileSync(new URL("../dist/index.html", import.meta.url), "utf8");
@@ -66,7 +84,6 @@ for (const path of REDIRECTS) {
     <meta charset="UTF-8" />
     <meta http-equiv="refresh" content="0; url=https://www.azerit.tech/" />
     <link rel="canonical" href="https://www.azerit.tech/" />
-    <meta name="robots" content="noindex, follow" />
     <title>Azerit</title>
   </head>
   <body>
