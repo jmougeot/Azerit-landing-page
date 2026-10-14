@@ -168,11 +168,12 @@ const INMAILS = [
 ];
 
 // Local brand assets. Aurel source: https://www.agilitesolutions.com/projects/a-multi-purpose-space-for-aurel-bgc/
-// Iterate and RAGLogic marks come from https://iterate.inc/ and https://www.raglogic.com/.
+// Iterate, RAGLogic and Auditoo marks come from https://iterate.inc/, https://www.raglogic.com/ and https://www.auditoo.eco/.
 const CLIENTS = [
   { name: "Aurel BGC", logo: "/clients/aurel-bgc.png", id: "aurel", width: 140, height: 50, wordmark: true },
   { name: "Iterate.inc", logo: "/clients/iterate.png", id: "iterate", width: 48, height: 21, wordmark: false },
   { name: "RAGLogic", logo: "/clients/raglogic.svg", id: "raglogic", width: 32, height: 32, wordmark: false },
+  { name: "Auditoo", logo: "/clients/auditoo.svg", id: "auditoo", width: 103, height: 23, wordmark: true },
 ];
 
 export function Landing() {

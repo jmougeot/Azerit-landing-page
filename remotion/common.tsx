@@ -1,16 +1,17 @@
 import React from "react";
 import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig, spring } from "remotion";
-import { T } from "./theme";
+import { L } from "./theme";
 
 export const SceneBg: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <AbsoluteFill
     style={{
-      background: T.bg,
-      /* même grille de points que le hero de la landing (.dot-grid), version sombre */
-      backgroundImage: `radial-gradient(circle at center, rgba(34,48,64,0.9) 2px, transparent 2.5px)`,
+      background: L.bg,
+      /* même grille de points que la landing (.dot-grid), à l'échelle de la
+         vidéo : affichée à ~1325px de large, 34px ici ≈ les 24px de la page */
+      backgroundImage: `radial-gradient(circle at center, ${L.dot} 1.5px, transparent 2px)`,
       backgroundSize: "34px 34px",
-      fontFamily: T.sans,
-      color: T.text,
+      fontFamily: L.sans,
+      color: L.text,
     }}
   >
     {children}
@@ -73,7 +74,7 @@ export const TypeText: React.FC<{
     <span style={style}>
       {shown}
       {cursor && (!done || blink) && chars > 0 && (
-        <span style={{ color: T.green }}>▌</span>
+        <span style={{ color: L.green }}>▌</span>
       )}
     </span>
   );
@@ -99,18 +100,18 @@ export const StepTag: React.FC<{ num: string; label: string }> = ({ num, label }
           display: "flex",
           alignItems: "center",
           gap: 18,
-          fontFamily: T.mono,
-          background: "rgba(10, 15, 22, 0.94)",
-          border: `1px solid ${T.border}`,
-          borderRadius: 99,
-          padding: "14px 30px",
-          boxShadow: "0 16px 50px rgba(0,0,0,0.55)",
+          fontFamily: L.mono,
+          background: L.bg,
+          border: `1px solid ${L.border}`,
+          /* mêmes cartes que les [ step n ] du "How it works" de la landing */
+          borderRadius: 8,
+          padding: "14px 28px",
+          boxShadow: "0 12px 32px rgba(31, 35, 40, 0.1)",
         }}
       >
-        {/* même idiome que les tags [ step n ] des sections de la landing */}
         <div
           style={{
-            color: T.green,
+            color: L.green,
             fontSize: 20,
             fontWeight: 700,
             whiteSpace: "nowrap",
@@ -118,7 +119,7 @@ export const StepTag: React.FC<{ num: string; label: string }> = ({ num, label }
         >
           [ step {num} ]
         </div>
-        <div style={{ fontSize: 22, color: T.text }}>{label}</div>
+        <div style={{ fontFamily: L.sans, fontSize: 22, fontWeight: 600, color: L.text }}>{label}</div>
       </div>
     </div>
   );

@@ -6,13 +6,14 @@ import {
   useVideoConfig,
   spring,
 } from "remotion";
-import { T } from "./theme";
+import { L } from "./theme";
 import { Pop, TypeText, StepTag } from "./common";
 import { LogoMark } from "../src/components/Logo";
 
 /* ============ Dashboard shell : full-screen app (sidebar + content) ============ */
-/* The landing page wraps the Player in an "app.azerit.com" browser frame,
-   so the video itself IS the app — no window chrome inside. */
+/* The video IS the app — no window chrome inside. It borrows the landing
+   page's vocabulary: light surfaces, hairline panels with teal corner squares,
+   square tags and avatars, mono titles. Nothing pill-shaped. */
 const NAV = [
   { id: "describe", label: "1 · Your role" },
   { id: "rank", label: "2 · Ranked candidates" },
@@ -24,14 +25,14 @@ const DashFrame: React.FC<{
   active: string;
   children: React.ReactNode;
 }> = ({ active, children }) => (
-  <AbsoluteFill style={{ flexDirection: "row", background: "#010409" }}>
+  <AbsoluteFill style={{ flexDirection: "row" }}>
     <div
       style={{
         width: 320,
         flexShrink: 0,
-        borderRight: `1px solid ${T.border}`,
-        padding: "44px 24px",
-        background: T.bgSoft,
+        borderRight: `1px solid ${L.border}`,
+        padding: "44px 0",
+        background: L.bgSoft,
       }}
     >
       <div
@@ -39,33 +40,35 @@ const DashFrame: React.FC<{
           display: "flex",
           alignItems: "center",
           gap: 14,
-          fontFamily: T.mono,
+          fontFamily: L.mono,
           fontSize: 23,
           fontWeight: 700,
-          padding: "0 14px",
+          padding: "0 38px",
           marginBottom: 40,
         }}
       >
-        <LogoMark size={34} /> azerit
+        <LogoMark size={30} /> azerit
       </div>
-      {NAV.map((n) => (
-        <div
-          key={n.id}
-          style={{
-            fontFamily: T.mono,
-            fontSize: 18,
-            padding: "15px 18px",
-            borderRadius: 16,
-            marginBottom: 8,
-            color: n.id === active ? T.green : T.dim,
-            background: n.id === active ? T.greenSoft : "transparent",
-            border: n.id === active ? "1px solid rgba(82,208,189,0.5)" : "1px solid transparent",
-            fontWeight: n.id === active ? 700 : 400,
-          }}
-        >
-          {n.label}
-        </div>
-      ))}
+      {NAV.map((n) => {
+        const on = n.id === active;
+        return (
+          <div
+            key={n.id}
+            style={{
+              fontFamily: L.mono,
+              fontSize: 18,
+              padding: "15px 38px",
+              color: on ? L.green : L.dim,
+              background: on ? L.greenSoft : "transparent",
+              /* même marque que les lignes .repo-row.hit de la landing */
+              boxShadow: on ? `inset 3px 0 0 ${L.green}` : "none",
+              fontWeight: on ? 700 : 400,
+            }}
+          >
+            {n.label}
+          </div>
+        );
+      })}
     </div>
     <div
       style={{
@@ -91,8 +94,119 @@ const PageTitle: React.FC<{ title: string; right?: React.ReactNode }> = ({ title
       marginBottom: 26,
     }}
   >
-    <div style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.01em" }}>{title}</div>
+    <div style={{ fontFamily: L.mono, fontSize: 30, fontWeight: 700, letterSpacing: "-0.03em" }}>
+      {title}
+    </div>
     {right}
+  </div>
+);
+
+/* Teal squares where the panel's hairlines cross, like the landing's bands */
+const Corner: React.FC<{ pos: React.CSSProperties }> = ({ pos }) => (
+  <div style={{ position: "absolute", width: 10, height: 10, background: L.green, ...pos }} />
+);
+
+const Panel: React.FC<{
+  head?: React.ReactNode;
+  children: React.ReactNode;
+  style?: React.CSSProperties;
+}> = ({ head, children, style }) => (
+  <div style={{ position: "relative", background: L.bg, border: `1px solid ${L.border}`, ...style }}>
+    {head && (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 20,
+          padding: "14px 26px",
+          background: L.bgSoft,
+          borderBottom: `1px solid ${L.border}`,
+          fontFamily: L.mono,
+          fontSize: 16,
+          color: L.dim,
+        }}
+      >
+        {head}
+      </div>
+    )}
+    {children}
+    <Corner pos={{ top: -6, left: -6 }} />
+    <Corner pos={{ top: -6, right: -6 }} />
+    <Corner pos={{ bottom: -6, left: -6 }} />
+    <Corner pos={{ bottom: -6, right: -6 }} />
+  </div>
+);
+
+/* "■ label" status line, as in the landing's "■ scanning github…" feed head */
+const Status: React.FC<{ children: React.ReactNode; color?: string }> = ({ children, color = L.green }) => (
+  <span style={{ display: "inline-flex", alignItems: "center", gap: 12, color }}>
+    <span style={{ width: 10, height: 10, background: color, flexShrink: 0 }} />
+    {children}
+  </span>
+);
+
+const Tag: React.FC<{ color?: string; solid?: boolean; children: React.ReactNode }> = ({
+  color = L.green,
+  solid = false,
+  children,
+}) => (
+  <div
+    style={{
+      fontFamily: L.mono,
+      fontSize: 15,
+      fontWeight: 700,
+      color: solid ? "#ffffff" : color,
+      background: solid ? color : L.bg,
+      border: `1px solid ${color}`,
+      borderRadius: 4,
+      padding: "5px 14px",
+      whiteSpace: "nowrap",
+    }}
+  >
+    {children}
+  </div>
+);
+
+/* GitHub-style square avatar: tinted tile, initials in the accent */
+const Avatar: React.FC<{ initials: string; color: string; size: number }> = ({ initials, color, size }) => (
+  <div
+    style={{
+      width: size,
+      height: size,
+      borderRadius: 8,
+      flexShrink: 0,
+      background: `color-mix(in srgb, ${color} 12%, #ffffff)`,
+      border: `1px solid color-mix(in srgb, ${color} 35%, #ffffff)`,
+      color,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontFamily: L.mono,
+      fontSize: Math.round(size * 0.33),
+      fontWeight: 700,
+    }}
+  >
+    {initials}
+  </div>
+);
+
+const Button: React.FC<{ children: React.ReactNode; style?: React.CSSProperties }> = ({ children, style }) => (
+  <div
+    style={{
+      display: "inline-block",
+      fontFamily: L.mono,
+      fontSize: 20,
+      fontWeight: 700,
+      /* même recette que le .hero-cta .btn-try de la landing : teal plat */
+      color: "#ffffff",
+      background: L.green,
+      borderRadius: 8,
+      padding: "17px 36px",
+      ...style,
+    }}
+  >
+    {children}
   </div>
 );
 
@@ -112,14 +226,14 @@ const Cursor: React.FC<{ x: number; y: number; down?: boolean; opacity?: number 
       transform: `scale(${down ? 0.82 : 1})`,
       transformOrigin: "top left",
       zIndex: 20,
-      filter: "drop-shadow(0 4px 10px rgba(0,0,0,0.6))",
+      filter: "drop-shadow(0 4px 8px rgba(31,35,40,0.3))",
     }}
   >
     <svg width="42" height="42" viewBox="0 0 24 24">
       <path
         d="M4 1 L4 20 L8.5 15.7 L11.5 22 L14.4 20.6 L11.5 14.5 L18 14.5 Z"
-        fill="#ffffff"
-        stroke="#000000"
+        fill={L.text}
+        stroke="#ffffff"
         strokeWidth="1.4"
       />
     </svg>
@@ -131,11 +245,11 @@ const ROLE_TEXT = "Senior backend engineer, real-time systems (Rust or Go).";
 
 export const SceneDescribe: React.FC = () => {
   const frame = useCurrentFrame();
-  const cx = interpolate(frame, [72, 100], [1350, 620], {
+  const cx = interpolate(frame, [72, 100], [1350, 640], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
-  const cy = interpolate(frame, [72, 100], [835, 595], {
+  const cy = interpolate(frame, [72, 100], [835, 600], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -150,56 +264,49 @@ export const SceneDescribe: React.FC = () => {
       extrapolateRight: "clamp",
     }),
   );
+  const focused = frame < 80;
   return (
     <AbsoluteFill>
       <DashFrame active="describe">
         <PageTitle title="Your role" />
-        <div style={{ fontSize: 21, color: T.dim, marginBottom: 16 }}>Who are you hiring?</div>
-        <div
-          style={{
-            background: T.bgSoft,
-            border: `1px solid ${frame < 80 ? T.green : T.border}`,
-            borderRadius: 18,
-            padding: "26px 30px",
-            fontSize: 23,
-            minHeight: 96,
-            marginBottom: 30,
-          }}
-        >
-          <TypeText text={ROLE_TEXT} startFrame={20} charsPerFrame={1.2} />
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 28 }}>
-          <div
-            style={{
-              display: "inline-block",
-              fontFamily: T.mono,
-              fontSize: 20,
-              fontWeight: 700,
-              /* même recette que le .btn-try de la landing */
-              color: "#ffffff",
-              background: "linear-gradient(180deg, #128379, #115e59)",
-              border: "1px solid #000000",
-              borderRadius: 12,
-              padding: "16px 36px",
-              /* visible dès la frame 0 : elle sert de poster au player */
-              transform: `scale(${pressed ? 0.94 : 1})`,
-            }}
-          >
-            Find my candidates
+        <Panel head={<span style={{ color: L.green }}>[ input ]</span>} style={{ padding: 0 }}>
+          <div style={{ padding: "30px 36px 36px" }}>
+            <div style={{ fontSize: 21, color: L.dim, marginBottom: 16 }}>Who are you hiring?</div>
+            <div
+              style={{
+                background: L.bg,
+                border: `1px solid ${focused ? L.green : L.border}`,
+                boxShadow: focused ? `0 0 0 4px ${L.greenSoft}` : "none",
+                borderRadius: 8,
+                padding: "26px 30px",
+                fontSize: 23,
+                minHeight: 96,
+                marginBottom: 30,
+              }}
+            >
+              <TypeText text={ROLE_TEXT} startFrame={20} charsPerFrame={1.2} />
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 28 }}>
+              {/* visible dès la frame 0 : elle sert de poster au player */}
+              <Button style={{ transform: `scale(${pressed ? 0.94 : 1})` }}>Find my candidates</Button>
+              <div
+                style={{
+                  fontFamily: L.mono,
+                  fontSize: 18,
+                  opacity: frame >= 118 ? 1 : 0,
+                }}
+              >
+                {frame < 168 ? (
+                  <Status color={L.dim}>
+                    scanning github… {scanCount.toLocaleString("en-US")} profiles
+                  </Status>
+                ) : (
+                  <Status>27 devs matched · ranked on shipped work</Status>
+                )}
+              </div>
+            </div>
           </div>
-          <div
-            style={{
-              fontFamily: T.mono,
-              fontSize: 18,
-              color: frame >= 168 ? T.green : T.dim,
-              opacity: frame >= 118 ? 1 : 0,
-            }}
-          >
-            {frame < 168
-              ? `⟳ scanning GitHub… ${scanCount.toLocaleString("en-US")} profiles`
-              : "✓ 27 devs matched · ranked on shipped work"}
-          </div>
-        </div>
+        </Panel>
       </DashFrame>
       <Cursor x={cx} y={cy} down={pressed} opacity={cursorOpacity} />
       <StepTag num="1" label="Describe the role you're hiring for" />
@@ -215,7 +322,7 @@ const CANDIDATES = [
     role: "Staff SWE · rt-order-matching",
     signal: "lock-free hot path · Rust",
     score: 94,
-    grad: [T.purple, T.blue],
+    color: L.purple,
   },
   {
     initials: "SB",
@@ -223,7 +330,7 @@ const CANDIDATES = [
     role: "Backend eng · distributed-kv",
     signal: "Raft from scratch · Go",
     score: 87,
-    grad: [T.blue, T.green],
+    color: L.blue,
   },
   {
     initials: "NT",
@@ -231,7 +338,7 @@ const CANDIDATES = [
     role: "Infra eng · ws-gateway",
     signal: "50k conns per node",
     score: 81,
-    grad: [T.orange, T.red],
+    color: L.orange,
   },
   {
     initials: "MO",
@@ -239,18 +346,18 @@ const CANDIDATES = [
     role: "Systems eng · lockfree-queue",
     signal: "MPMC queue + benchmarks",
     score: 74,
-    grad: [T.green, T.blue],
+    color: L.green,
   },
 ];
 
 export const SceneRank: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const cx = interpolate(frame, [115, 150], [1400, 700], {
+  const cx = interpolate(frame, [115, 150], [1400, 720], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
-  const cy = interpolate(frame, [115, 150], [855, 285], {
+  const cy = interpolate(frame, [115, 150], [855, 362], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -262,110 +369,58 @@ export const SceneRank: React.FC = () => {
   return (
     <AbsoluteFill>
       <DashFrame active="rank">
-        <PageTitle
-          title="Ranked candidates"
-          right={
-            <div
-              style={{
-                fontFamily: T.mono,
-                fontSize: 16,
-                color: T.green,
-                background: T.greenSoft,
-                border: "1px solid rgba(82,208,189,0.5)",
-                borderRadius: 99,
-                padding: "7px 20px",
-              }}
-            >
-              sorted by match ▾
-            </div>
+        <PageTitle title="Ranked candidates" right={<Tag>sorted by match ▾</Tag>} />
+        <Panel
+          head={
+            <>
+              <Status>27 devs matched</Status>
+              <span>ranked on shipped work</span>
+            </>
           }
-        />
-        {CANDIDATES.map((l, i) => {
-          const delay = 15 + i * 14;
-          const p = spring({ frame: frame - delay, fps, config: { damping: 16 } });
-          const top = i === 0;
-          const lit = top && clicked;
-          return (
-            <div
-              key={l.name}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 24,
-                padding: "18px 24px",
-                borderRadius: 16,
-                marginTop: 12,
-                opacity: p,
-                transform: `translateY(${interpolate(p, [0, 1], [24, 0])}px) scale(${lit ? 1.015 : 1})`,
-                background: lit ? "rgba(82,208,189,0.22)" : top ? T.greenSoft : T.bgSoft,
-                border: `1px solid ${lit ? T.green : top ? "rgba(82,208,189,0.6)" : T.border}`,
-              }}
-            >
-              <div style={{ fontFamily: T.mono, fontSize: 18, color: T.dim, width: 34 }}>
-                #{i + 1}
-              </div>
+        >
+          {CANDIDATES.map((l, i) => {
+            const delay = 15 + i * 14;
+            const p = spring({ frame: frame - delay, fps, config: { damping: 16 } });
+            const top = i === 0;
+            const lit = top && clicked;
+            return (
               <div
+                key={l.name}
                 style={{
-                  width: 58,
-                  height: 58,
-                  borderRadius: 99,
-                  flexShrink: 0,
-                  background: `linear-gradient(135deg, ${l.grad[0]}, ${l.grad[1]})`,
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 19,
-                  fontWeight: 800,
+                  gap: 24,
+                  padding: "20px 26px",
+                  borderTop: i === 0 ? "none" : `1px solid ${L.border}`,
+                  opacity: p,
+                  transform: `translateY(${interpolate(p, [0, 1], [24, 0])}px)`,
+                  background: lit ? "rgba(15, 118, 110, 0.14)" : top ? L.greenSoft : L.bg,
+                  boxShadow: top ? `inset 3px 0 0 ${L.green}` : "none",
                 }}
               >
-                {l.initials}
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 21, fontWeight: 700 }}>{l.name}</div>
-                <div style={{ fontFamily: T.mono, fontSize: 15, color: T.dim, marginTop: 2 }}>
-                  {l.role}
+                <div style={{ fontFamily: L.mono, fontSize: 18, color: L.dim, width: 34 }}>
+                  #{i + 1}
+                </div>
+                <Avatar initials={l.initials} color={l.color} size={56} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 21, fontWeight: 700 }}>{l.name}</div>
+                  <div style={{ fontFamily: L.mono, fontSize: 15, color: L.dim, marginTop: 2 }}>
+                    {l.role}
+                  </div>
+                </div>
+                <Tag color={L.blue}>{l.signal}</Tag>
+                <div style={{ width: 130, textAlign: "right" }}>
+                  <div style={{ fontFamily: L.mono, fontSize: 33, fontWeight: 700, color: L.green }}>
+                    {Math.round(p * l.score)}
+                  </div>
+                  <div style={{ height: 6, background: L.track, marginTop: 4 }}>
+                    <div style={{ height: "100%", width: `${p * l.score}%`, background: L.green }} />
+                  </div>
                 </div>
               </div>
-              <div
-                style={{
-                  fontFamily: T.mono,
-                  fontSize: 15,
-                  color: T.blue,
-                  background: "rgba(108,182,255,0.1)",
-                  border: "1px solid rgba(108,182,255,0.35)",
-                  borderRadius: 99,
-                  padding: "5px 16px",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {l.signal}
-              </div>
-              <div style={{ width: 130, textAlign: "right" }}>
-                <div style={{ fontFamily: T.mono, fontSize: 33, fontWeight: 800, color: T.green }}>
-                  {Math.round(p * l.score)}
-                </div>
-                <div
-                  style={{
-                    height: 8,
-                    borderRadius: 99,
-                    background: T.bg,
-                    overflow: "hidden",
-                    marginTop: 4,
-                  }}
-                >
-                  <div
-                    style={{
-                      height: "100%",
-                      width: `${p * l.score}%`,
-                      borderRadius: 99,
-                      background: T.green,
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </Panel>
       </DashFrame>
       <Cursor x={cx} y={cy} down={frame >= 158 && frame <= 168} opacity={cursorOpacity} />
       <StepTag num="2" label="Your candidates, ranked on shipped work" />
@@ -377,26 +432,22 @@ export const SceneRank: React.FC = () => {
 const WHY = [
   {
     badge: "built it already",
-    color: T.green,
-    soft: "rgba(82,208,189,0.14)",
+    color: L.green,
     text: "rt-order-matching: a real-time matching engine, lock-free hot path",
   },
   {
     badge: "ships daily",
-    color: T.blue,
-    soft: "rgba(108,182,255,0.12)",
+    color: L.blue,
     text: "3,669 contributions and 212 pull requests reviewed this year",
   },
   {
     badge: "stack match",
-    color: T.purple,
-    soft: "rgba(188,140,255,0.12)",
+    color: L.purple,
     text: "Rust 52% · Go 26% · TypeScript 14% — exactly your stack",
   },
   {
     badge: "reachable",
-    color: T.orange,
-    soft: "rgba(210,153,34,0.12)",
+    color: L.orange,
     text: "lea.fabre@… found in commit metadata",
   },
 ];
@@ -413,90 +464,73 @@ export const SceneWhy: React.FC = () => {
   return (
     <AbsoluteFill>
       <DashFrame active="rank">
-        <div style={{ fontFamily: T.mono, fontSize: 16, color: T.dim, marginBottom: 20 }}>
-          Ranked candidates
+        <div style={{ fontFamily: L.mono, fontSize: 16, color: L.dim, marginBottom: 20 }}>
+          Ranked candidates <span style={{ color: L.border }}>/</span>{" "}
+          <span style={{ color: L.text }}>Léa Fabre</span>
         </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 26,
-            paddingBottom: 28,
-            borderBottom: `1px solid ${T.border}`,
-            marginBottom: 30,
-          }}
-        >
-          <div
-            style={{
-              width: 76,
-              height: 76,
-              borderRadius: 99,
-              flexShrink: 0,
-              background: `linear-gradient(135deg, ${T.purple}, ${T.blue})`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 25,
-              fontWeight: 800,
-            }}
-          >
-            LF
-          </div>
-          <div>
-            <div style={{ fontSize: 28, fontWeight: 800 }}>Léa Fabre</div>
-            <div style={{ fontFamily: T.mono, fontSize: 16, color: T.dim, marginTop: 3 }}>
-              Staff SWE · lea-fabre/rt-order-matching
-            </div>
-          </div>
-          <div style={{ marginLeft: "auto", textAlign: "center" }}>
-            <div style={{ fontFamily: T.mono, fontSize: 51, fontWeight: 800, color: T.green }}>
-              {score}
-            </div>
-            <div style={{ fontFamily: T.mono, fontSize: 15, color: T.dim }}>match score</div>
-          </div>
-        </div>
-        <div style={{ fontSize: 21, fontWeight: 700, marginBottom: 18 }}>
-          Why she&rsquo;s a fit
-        </div>
-        {WHY.map((w, i) => {
-          const delay = 30 + i * 16;
-          const p = spring({ frame: frame - delay, fps, config: { damping: 16 } });
-          return (
-            <div
-              key={w.badge}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 22,
-                padding: "18px 24px",
-                borderRadius: 16,
-                marginTop: 12,
-                background: T.bgSoft,
-                border: `1px solid ${T.border}`,
-                opacity: p,
-                transform: `translateY(${interpolate(p, [0, 1], [20, 0])}px)`,
-              }}
-            >
-              <div style={{ fontFamily: T.mono, fontSize: 20, color: w.color }}>✓</div>
-              <div style={{ flex: 1, fontSize: 19 }}>{w.text}</div>
-              <div
-                style={{
-                  fontFamily: T.mono,
-                  fontSize: 15,
-                  fontWeight: 700,
-                  color: w.color,
-                  background: w.soft,
-                  border: `1px solid ${w.color}`,
-                  borderRadius: 99,
-                  padding: "5px 18px",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {w.badge}
+        <Panel>
+          <div style={{ display: "flex", alignItems: "stretch", borderBottom: `1px solid ${L.border}` }}>
+            <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 26, padding: "28px 30px" }}>
+              <Avatar initials="LF" color={L.purple} size={76} />
+              <div>
+                <div style={{ fontSize: 28, fontWeight: 700 }}>Léa Fabre</div>
+                <div style={{ fontFamily: L.mono, fontSize: 16, color: L.dim, marginTop: 3 }}>
+                  Staff SWE · lea-fabre/rt-order-matching
+                </div>
               </div>
             </div>
-          );
-        })}
+            <div
+              style={{
+                width: 220,
+                borderLeft: `1px solid ${L.border}`,
+                background: L.greenSoft,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <div style={{ fontFamily: L.mono, fontSize: 51, fontWeight: 700, color: L.green, lineHeight: 1.1 }}>
+                {score}
+              </div>
+              <div style={{ fontFamily: L.mono, fontSize: 15, color: L.dim }}>match score</div>
+            </div>
+          </div>
+          <div
+            style={{
+              padding: "14px 30px",
+              background: L.bgSoft,
+              borderBottom: `1px solid ${L.border}`,
+              fontFamily: L.mono,
+              fontSize: 17,
+              fontWeight: 700,
+            }}
+          >
+            Why she&rsquo;s a fit
+          </div>
+          {WHY.map((w, i) => {
+            const delay = 30 + i * 16;
+            const p = spring({ frame: frame - delay, fps, config: { damping: 16 } });
+            return (
+              <div
+                key={w.badge}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 22,
+                  padding: "19px 30px",
+                  borderTop: i === 0 ? "none" : `1px solid ${L.border}`,
+                  opacity: p,
+                  transform: `translateY(${interpolate(p, [0, 1], [20, 0])}px)`,
+                }}
+              >
+                <div style={{ fontFamily: L.mono, fontSize: 20, fontWeight: 700, color: w.color }}>✓</div>
+                <div style={{ flex: 1, fontSize: 19 }}>{w.text}</div>
+                <Tag color={w.color}>{w.badge}</Tag>
+              </div>
+            );
+          })}
+        </Panel>
       </DashFrame>
       <StepTag num="3" label="Why she’s a fit — the proof behind the score" />
     </AbsoluteFill>
@@ -521,41 +555,25 @@ export const SceneMessage: React.FC = () => {
   return (
     <AbsoluteFill>
       <DashFrame active="outreach">
-          <PageTitle
-            title="Outreach · Léa Fabre"
-            right={
-              <div
-                style={{
-                  fontFamily: T.mono,
-                  fontSize: 16,
-                  color: T.green,
-                  background: T.greenSoft,
-                  border: "1px solid rgba(82,208,189,0.5)",
-                  borderRadius: 99,
-                  padding: "7px 20px",
-                }}
-              >
-                match score: 94
-              </div>
-            }
-          />
+        <PageTitle title="Outreach · Léa Fabre" right={<Tag>match score: 94</Tag>} />
+        <Panel>
           <div
             style={{
-              fontFamily: T.mono,
+              fontFamily: L.mono,
               fontSize: 16,
-              color: T.dim,
-              paddingBottom: 18,
-              borderBottom: `1px solid ${T.border}`,
-              marginBottom: 22,
+              color: L.dim,
+              padding: "14px 30px",
+              background: L.bgSoft,
+              borderBottom: `1px solid ${L.border}`,
               lineHeight: 1.7,
             }}
           >
             <div>
-              To: <span style={{ color: T.text }}>lea.fabre@…</span>
+              To: <span style={{ color: L.text }}>lea.fabre@…</span>
             </div>
             <div>
               Subject:{" "}
-              <span style={{ color: T.text }}>
+              <span style={{ color: L.text }}>
                 <TypeText
                   text="your matching engine in rt-order-matching"
                   startFrame={20}
@@ -570,7 +588,8 @@ export const SceneMessage: React.FC = () => {
               fontSize: 21,
               lineHeight: 1.6,
               whiteSpace: "pre-wrap",
-              minHeight: 400,
+              minHeight: 390,
+              padding: "24px 30px",
             }}
           >
             <TypeText text={EMAIL_TEXT} startFrame={45} charsPerFrame={2.4} />
@@ -579,27 +598,16 @@ export const SceneMessage: React.FC = () => {
             style={{
               display: "flex",
               gap: 14,
-              marginTop: 14,
+              padding: "16px 30px",
+              borderTop: `1px solid ${L.border}`,
               opacity: frame >= 200 ? 1 : 0,
             }}
           >
             {["real repo cited", "her code read", "zero templates"].map((t) => (
-              <div
-                key={t}
-                style={{
-                  fontFamily: T.mono,
-                  fontSize: 15,
-                  color: T.green,
-                  background: T.greenSoft,
-                  border: `1px solid rgba(82,208,189,0.5)`,
-                  borderRadius: 99,
-                  padding: "6px 18px",
-                }}
-              >
-              ✓ {t}
-              </div>
+              <Tag key={t}>✓ {t}</Tag>
             ))}
           </div>
+        </Panel>
       </DashFrame>
       <StepTag num="4" label="The email reads her code — nothing like a recruiter blast" />
     </AbsoluteFill>
@@ -613,14 +621,14 @@ const REPLIES = [
     name: "Léa Fabre",
     text: "You're the first person to actually read journal.rs. I'm free Thursday.",
     when: "2m ago",
-    grad: [T.purple, T.blue],
+    color: L.purple,
   },
   {
     initials: "SB",
     name: "Sami Benali",
     text: "Not looking, but this one's different. What's the team like?",
     when: "1h ago",
-    grad: [T.blue, T.green],
+    color: L.blue,
   },
 ];
 
@@ -635,33 +643,36 @@ export const SceneResults: React.FC = () => {
   return (
     <AbsoluteFill>
       <DashFrame active="inbox">
-          <PageTitle title="Inbox" />
-          <div style={{ display: "flex", gap: 20, marginBottom: 28 }}>
-            {stats.map((s, i) => {
-              const delay = 20 + i * 12;
-              const p = spring({ frame: frame - delay, fps, config: { damping: 15 } });
-              return (
-                <div
-                  key={s.label}
-                  style={{
-                    flex: 1,
-                    background: T.bgSoft,
-                    border: `1px solid ${T.border}`,
-                    borderRadius: 16,
-                    padding: "26px 24px",
-                    textAlign: "center",
-                    opacity: p,
-                    transform: `translateY(${interpolate(p, [0, 1], [20, 0])}px)`,
-                  }}
-                >
-                  <div style={{ fontFamily: T.mono, fontSize: 43, fontWeight: 800, color: T.green }}>
-                    {Math.round(p * s.n)}
-                  </div>
-                  <div style={{ fontSize: 16, color: T.dim, marginTop: 4 }}>{s.label}</div>
+        <PageTitle title="Inbox" />
+        {/* stats share hairlines, like the landing's numbers strip */}
+        <Pop delay={14}>
+        <Panel style={{ display: "flex", marginBottom: 36 }}>
+          {stats.map((s, i) => {
+            const delay = 20 + i * 12;
+            const p = spring({ frame: frame - delay, fps, config: { damping: 15 } });
+            return (
+              <div
+                key={s.label}
+                style={{
+                  flex: 1,
+                  padding: "26px 24px",
+                  textAlign: "center",
+                  borderLeft: i === 0 ? "none" : `1px solid ${L.border}`,
+                  opacity: p,
+                  transform: `translateY(${interpolate(p, [0, 1], [20, 0])}px)`,
+                }}
+              >
+                <div style={{ fontFamily: L.mono, fontSize: 43, fontWeight: 700, color: L.green }}>
+                  {Math.round(p * s.n)}
                 </div>
-              );
-            })}
-          </div>
+                <div style={{ fontSize: 16, color: L.dim, marginTop: 4 }}>{s.label}</div>
+              </div>
+            );
+          })}
+        </Panel>
+        </Pop>
+        <Pop delay={62}>
+        <Panel head={<Status>2 new replies</Status>}>
           {REPLIES.map((r, i) => {
             const delay = 70 + i * 20;
             const p = spring({ frame: frame - delay, fps, config: { damping: 16 } });
@@ -672,39 +683,24 @@ export const SceneResults: React.FC = () => {
                   display: "flex",
                   alignItems: "center",
                   gap: 20,
-                  padding: "18px 24px",
-                  borderRadius: 16,
-                  marginTop: 12,
-                  background: T.greenSoft,
-                  border: "1px solid rgba(82,208,189,0.4)",
+                  padding: "20px 26px",
+                  borderTop: i === 0 ? "none" : `1px solid ${L.border}`,
+                  boxShadow: `inset 3px 0 0 ${L.green}`,
                   opacity: p,
                   transform: `translateY(${interpolate(p, [0, 1], [20, 0])}px)`,
                 }}
               >
-                <div
-                  style={{
-                    width: 52,
-                    height: 52,
-                    borderRadius: 99,
-                    flexShrink: 0,
-                    background: `linear-gradient(135deg, ${r.grad[0]}, ${r.grad[1]})`,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 17,
-                    fontWeight: 800,
-                  }}
-                >
-                  {r.initials}
-                </div>
+                <Avatar initials={r.initials} color={r.color} size={52} />
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 19, fontWeight: 700 }}>{r.name}</div>
-                  <div style={{ fontSize: 16, color: T.dim, marginTop: 2 }}>“{r.text}”</div>
+                  <div style={{ fontSize: 17, color: L.dim, marginTop: 2 }}>“{r.text}”</div>
                 </div>
-                <div style={{ fontFamily: T.mono, fontSize: 15, color: T.dim }}>{r.when}</div>
+                <div style={{ fontFamily: L.mono, fontSize: 15, color: L.dim }}>{r.when}</div>
               </div>
             );
           })}
+        </Panel>
+        </Pop>
       </DashFrame>
       <StepTag num="5" label="You just book the calls" />
     </AbsoluteFill>
@@ -718,7 +714,7 @@ export const SceneOutro: React.FC = () => {
       <Pop delay={5}>
         <div
           style={{
-            fontFamily: T.mono,
+            fontFamily: L.mono,
             fontSize: 46,
             fontWeight: 700,
             display: "flex",
@@ -726,42 +722,29 @@ export const SceneOutro: React.FC = () => {
             gap: 24,
           }}
         >
-          <LogoMark size={64} /> azerit
+          <LogoMark size={56} /> azerit
         </div>
       </Pop>
       <Pop delay={25}>
         <div
           style={{
-            fontSize: 36,
+            fontFamily: L.mono,
+            fontSize: 40,
             fontWeight: 700,
-            marginTop: 36,
+            letterSpacing: "-0.03em",
+            marginTop: 40,
             textAlign: "center",
             maxWidth: 1300,
-            lineHeight: 1.35,
+            lineHeight: 1.3,
           }}
         >
           Find them. Rank them. Hire them.
           <br />
-          <span style={{ color: T.green }}>The proof is already on GitHub.</span>
+          <span style={{ color: L.green }}>The proof is already on GitHub.</span>
         </div>
       </Pop>
       <Pop delay={55}>
-        <div
-          style={{
-            marginTop: 48,
-            fontFamily: T.mono,
-            fontSize: 21,
-            /* même recette que le .btn-try de la landing */
-            color: "#ffffff",
-            background: "linear-gradient(180deg, #128379, #115e59)",
-            border: "1px solid #000000",
-            padding: "16px 44px",
-            borderRadius: 12,
-            fontWeight: 700,
-          }}
-        >
-          Try it
-        </div>
+        <Button style={{ marginTop: 48, fontSize: 21, padding: "17px 44px" }}>Try it</Button>
       </Pop>
     </AbsoluteFill>
   );
