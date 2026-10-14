@@ -238,11 +238,23 @@ export function Landing() {
             </div>
           </header>
 
-          {/* demo video — Linear-style: the app window sits tight under the
-              hero copy, on the same dot-grid backdrop, lifted by a soft teal
-              glow instead of floating on an empty white band */}
+          {/* demo video — the real app in a browser window, tight under the
+              hero copy, lifted off the dot grid by its shadow */}
           <div className="video-wrap" id="demo" ref={videoWrapRef}>
-            <div className="video-stage">
+            <div className="video-window">
+              <div className="video-chrome" aria-hidden="true">
+                <span className="video-chrome-dots">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <span className="video-chrome-url">
+                  <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                    <path d="M4 7V5a4 4 0 1 1 8 0v2h.5A1.5 1.5 0 0 1 14 8.5v5A1.5 1.5 0 0 1 12.5 15h-9A1.5 1.5 0 0 1 2 13.5v-5A1.5 1.5 0 0 1 3.5 7H4Zm1.5 0h5V5a2.5 2.5 0 0 0-5 0v2Z" />
+                  </svg>
+                  app.azerit.tech
+                </span>
+              </div>
               {showPlayer ? (
                 <Suspense fallback={<div className="app-frame demo-placeholder" />}>
                   <DemoPlayer />

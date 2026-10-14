@@ -1,708 +1,451 @@
 import React from "react";
-import {
-  AbsoluteFill,
-  interpolate,
-  useCurrentFrame,
-  useVideoConfig,
-  spring,
-} from "remotion";
+import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { L } from "./theme";
-import { Pop, TypeText, StepTag } from "./common";
+import { Pop, TypeText, StepTag, typedCount } from "./common";
 import { LogoMark } from "../src/components/Logo";
+import {
+  AppWindow,
+  BackLink,
+  PanelTitle,
+  JobHead,
+  JobProgress,
+  OutreachStats,
+  CandTable,
+  Candidate,
+  Drawer,
+  DrawerHead,
+  FeedbackBar,
+  Tabs,
+  DetailLabel,
+  FitRow,
+  MsgBtn,
+  Icon,
+  RepliedBadge,
+  Cursor,
+  glide,
+  fadeIn,
+} from "./app";
 
-/* ============ Dashboard shell : full-screen app (sidebar + content) ============ */
-/* The video IS the app — no window chrome inside. It borrows the landing
-   page's vocabulary: light surfaces, hairline panels with teal corner squares,
-   square tags and avatars, mono titles. Nothing pill-shaped. */
-const NAV = [
-  { id: "describe", label: "1 · Your role" },
-  { id: "rank", label: "2 · Ranked candidates" },
-  { id: "outreach", label: "3 · Outreach" },
-  { id: "inbox", label: "Inbox" },
+/* The demo walks through the real app (app.azerit.tech): open a position
+   from a job offer, watch the candidates land, open the top one, read why
+   she fits, copy the email written from her code, see the replies. */
+
+const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
+const hair = `1px solid ${L.border}`;
+
+const JOB = { title: "Senior Backend Engineer", company: "Kestrel Markets" };
+
+const ROWS: Candidate[] = [
+  { initials: "LF", color: L.purple, name: "Léa Fabre", role: "Staff Software Engineer", company: "Orbital Pay", location: "Paris, France", inArea: true, exp: "9 yrs" },
+  { initials: "SB", color: L.blue, name: "Sami Benali", role: "Backend Engineer, Payments", company: "Lumen Cloud", location: "Paris, France", inArea: true, exp: "7 yrs" },
+  { initials: "NT", color: L.orange, name: "Nina Torres", role: "Infrastructure Engineer", company: "Quantis", location: "Lyon, France", exp: "6 yrs" },
+  { initials: "MO", color: L.green, name: "Marc Olivier", role: "Systems Engineer", company: "Halden", location: "Paris, France", inArea: true, exp: "11 yrs" },
+  { initials: "AS", color: L.red, name: "Ana Sousa", role: "Senior Backend Engineer", company: "Brisa Labs", location: "Lisbon", exp: "8 yrs" },
+  { initials: "TR", color: L.lime, name: "Tomás Reyes", role: "Software Engineer, Trading Systems", company: "Marelle", location: "Amsterdam", exp: "5 yrs" },
+  { initials: "YT", color: L.blue, name: "Yuki Tanaka", role: "Platform Engineer", company: "Ponto", location: "Paris, France", inArea: true, exp: "6 yrs" },
 ];
 
-const DashFrame: React.FC<{
-  active: string;
-  children: React.ReactNode;
-}> = ({ active, children }) => (
-  <AbsoluteFill style={{ flexDirection: "row" }}>
-    <div
-      style={{
-        width: 320,
-        flexShrink: 0,
-        borderRight: `1px solid ${L.border}`,
-        padding: "44px 0",
-        background: L.bgSoft,
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 14,
-          fontFamily: L.mono,
-          fontSize: 23,
-          fontWeight: 700,
-          padding: "0 38px",
-          marginBottom: 40,
-        }}
-      >
-        <LogoMark size={30} /> azerit
-      </div>
-      {NAV.map((n) => {
-        const on = n.id === active;
-        return (
-          <div
-            key={n.id}
-            style={{
-              fontFamily: L.mono,
-              fontSize: 18,
-              padding: "15px 38px",
-              color: on ? L.green : L.dim,
-              background: on ? L.greenSoft : "transparent",
-              /* même marque que les lignes .repo-row.hit de la landing */
-              boxShadow: on ? `inset 3px 0 0 ${L.green}` : "none",
-              fontWeight: on ? 700 : 400,
-            }}
-          >
-            {n.label}
-          </div>
-        );
-      })}
-    </div>
-    <div
-      style={{
-        flex: 1,
-        padding: "52px 72px 120px",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-      }}
-    >
-      <div style={{ maxWidth: 1340, width: "100%", margin: "0 auto" }}>{children}</div>
-    </div>
-  </AbsoluteFill>
-);
+const LEA = { initials: "LF", color: L.purple };
+const LEA_META = ["Orbital Pay · 9 years of experience · Paris, France", "Tech 94/100 · Track record 9/10"];
+const LEA_EMAIL = "lea.fabre@orbitalpay.io";
 
-const PageTitle: React.FC<{ title: string; right?: React.ReactNode }> = ({ title, right }) => (
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      marginBottom: 26,
-    }}
-  >
-    <div style={{ fontFamily: L.mono, fontSize: 30, fontWeight: 700, letterSpacing: "-0.03em" }}>
-      {title}
-    </div>
-    {right}
-  </div>
-);
-
-/* Teal squares where the panel's hairlines cross, like the landing's bands */
-const Corner: React.FC<{ pos: React.CSSProperties }> = ({ pos }) => (
-  <div style={{ position: "absolute", width: 10, height: 10, background: L.green, ...pos }} />
-);
-
-const Panel: React.FC<{
-  head?: React.ReactNode;
-  children: React.ReactNode;
-  style?: React.CSSProperties;
-}> = ({ head, children, style }) => (
-  <div style={{ position: "relative", background: L.bg, border: `1px solid ${L.border}`, ...style }}>
-    {head && (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 20,
-          padding: "14px 26px",
-          background: L.bgSoft,
-          borderBottom: `1px solid ${L.border}`,
-          fontFamily: L.mono,
-          fontSize: 16,
-          color: L.dim,
-        }}
-      >
-        {head}
-      </div>
-    )}
-    {children}
-    <Corner pos={{ top: -6, left: -6 }} />
-    <Corner pos={{ top: -6, right: -6 }} />
-    <Corner pos={{ bottom: -6, left: -6 }} />
-    <Corner pos={{ bottom: -6, right: -6 }} />
-  </div>
-);
-
-/* "■ label" status line, as in the landing's "■ scanning github…" feed head */
-const Status: React.FC<{ children: React.ReactNode; color?: string }> = ({ children, color = L.green }) => (
-  <span style={{ display: "inline-flex", alignItems: "center", gap: 12, color }}>
-    <span style={{ width: 10, height: 10, background: color, flexShrink: 0 }} />
-    {children}
-  </span>
-);
-
-const Tag: React.FC<{ color?: string; solid?: boolean; children: React.ReactNode }> = ({
-  color = L.green,
-  solid = false,
+/* The job page everything else sits on */
+const JobPage: React.FC<{ state: "open" | "running"; selected?: number; children?: React.ReactNode }> = ({
+  state,
+  selected,
   children,
 }) => (
-  <div
-    style={{
-      fontFamily: L.mono,
-      fontSize: 15,
-      fontWeight: 700,
-      color: solid ? "#ffffff" : color,
-      background: solid ? color : L.bg,
-      border: `1px solid ${color}`,
-      borderRadius: 4,
-      padding: "5px 14px",
-      whiteSpace: "nowrap",
-    }}
-  >
-    {children}
-  </div>
+  <>
+    <JobHead title={JOB.title} company={JOB.company} state={state}>
+      {children}
+    </JobHead>
+    <CandTable rows={ROWS} selected={selected} />
+  </>
 );
 
-/* GitHub-style square avatar: tinted tile, initials in the accent */
-const Avatar: React.FC<{ initials: string; color: string; size: number }> = ({ initials, color, size }) => (
-  <div
-    style={{
-      width: size,
-      height: size,
-      borderRadius: 8,
-      flexShrink: 0,
-      background: `color-mix(in srgb, ${color} 12%, #ffffff)`,
-      border: `1px solid color-mix(in srgb, ${color} 35%, #ffffff)`,
-      color,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      fontFamily: L.mono,
-      fontSize: Math.round(size * 0.33),
-      fontWeight: 700,
-    }}
-  >
-    {initials}
-  </div>
-);
+/* ============ Scene 1 — New position : paste the job offer, run ============ */
+const OFFER = `Senior Backend Engineer — real-time systems
+Kestrel Markets · Paris or remote
 
-const Button: React.FC<{ children: React.ReactNode; style?: React.CSSProperties }> = ({ children, style }) => (
-  <div
-    style={{
-      display: "inline-block",
-      fontFamily: L.mono,
-      fontSize: 20,
-      fontWeight: 700,
-      /* même recette que le .hero-cta .btn-try de la landing : teal plat */
-      color: "#ffffff",
-      background: L.green,
-      borderRadius: 8,
-      padding: "17px 36px",
-      ...style,
-    }}
-  >
-    {children}
-  </div>
-);
+We're building the matching engine behind a new exchange. You'll own the hot path: Rust or Go, lock-free data structures, backpressure under load. 5+ years shipping production systems.`;
 
-/* Simulated mouse cursor */
-const Cursor: React.FC<{ x: number; y: number; down?: boolean; opacity?: number }> = ({
-  x,
-  y,
-  down = false,
-  opacity = 1,
-}) => (
-  <div
-    style={{
-      position: "absolute",
-      left: x,
-      top: y,
-      opacity,
-      transform: `scale(${down ? 0.82 : 1})`,
-      transformOrigin: "top left",
-      zIndex: 20,
-      filter: "drop-shadow(0 4px 8px rgba(31,35,40,0.3))",
-    }}
-  >
-    <svg width="42" height="42" viewBox="0 0 24 24">
-      <path
-        d="M4 1 L4 20 L8.5 15.7 L11.5 22 L14.4 20.6 L11.5 14.5 L18 14.5 Z"
-        fill={L.text}
-        stroke="#ffffff"
-        strokeWidth="1.4"
-      />
-    </svg>
-  </div>
-);
-
-/* ============ Scene 1 — Describe : the client types the role they're hiring for ============ */
-const ROLE_TEXT = "Senior backend engineer, real-time systems (Rust or Go).";
-
-export const SceneDescribe: React.FC = () => {
+export const SceneNewPosition: React.FC = () => {
   const frame = useCurrentFrame();
-  const cx = interpolate(frame, [72, 100], [1350, 640], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const cy = interpolate(frame, [72, 100], [835, 600], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const cursorOpacity = interpolate(frame, [65, 75], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const pressed = frame >= 105 && frame <= 114;
-  const scanCount = Math.round(
-    interpolate(frame, [118, 162], [0, 2148302], {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-    }),
-  );
-  const focused = frame < 80;
+  const typed = typedCount(frame, OFFER, 10, 3);
+  const focused = frame >= 6 && typed < OFFER.length + 12;
+  const cur = glide(frame, [112, 980, 600], [146, 646, 492]);
+  const pressed = frame >= 152 && frame <= 160;
+  const launched = frame >= 156;
   return (
     <AbsoluteFill>
-      <DashFrame active="describe">
-        <PageTitle title="Your role" />
-        <Panel head={<span style={{ color: L.green }}>[ input ]</span>} style={{ padding: 0 }}>
-          <div style={{ padding: "30px 36px 36px" }}>
-            <div style={{ fontSize: 21, color: L.dim, marginBottom: 16 }}>Who are you hiring?</div>
-            <div
+      <AppWindow
+        nav="search"
+        searching={launched}
+        overlay={<Cursor x={cur.x} y={cur.y} down={pressed} opacity={fadeIn(frame, 108)} />}
+      >
+        <BackLink />
+        <div style={{ fontSize: 42, fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.08, margin: "0 0 32px" }}>
+          New position
+        </div>
+        <div style={{ margin: "0 0 32px", padding: "0 0 28px", borderBottom: `1px dashed ${L.border}` }}>
+          <div style={{ marginBottom: 18 }}>
+            <PanelTitle>Job offer</PanelTitle>
+          </div>
+          <div
+            style={{
+              minHeight: 190,
+              padding: "14px 16px",
+              borderRadius: 10,
+              border: `1px solid ${focused ? L.green : L.border}`,
+              boxShadow: focused ? `0 0 0 3px ${L.greenSoft}` : "none",
+              background: L.bg,
+              fontSize: 14.5,
+              lineHeight: 1.55,
+              whiteSpace: "pre-wrap",
+            }}
+          >
+            {frame < 10 ? (
+              <span style={{ color: L.dim }}>Paste the full job offer here…</span>
+            ) : (
+              <TypeText text={OFFER} startFrame={10} charsPerFrame={3} />
+            )}
+          </div>
+        </div>
+        {/* .launch-row : taille de recherche + Run + Manually review */}
+        <div style={{ display: "flex", alignItems: "flex-end", gap: 16 }}>
+          <div>
+            <span
               style={{
-                background: L.bg,
-                border: `1px solid ${focused ? L.green : L.border}`,
-                boxShadow: focused ? `0 0 0 4px ${L.greenSoft}` : "none",
-                borderRadius: 8,
-                padding: "26px 30px",
-                fontSize: 23,
-                minHeight: 96,
-                marginBottom: 30,
+                display: "block",
+                fontFamily: L.mono,
+                fontSize: 11,
+                letterSpacing: "0.03em",
+                textTransform: "uppercase",
+                color: L.dim,
+                marginBottom: 4,
+                lineHeight: 1.6,
               }}
             >
-              <TypeText text={ROLE_TEXT} startFrame={20} charsPerFrame={1.2} />
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 28 }}>
-              {/* visible dès la frame 0 : elle sert de poster au player */}
-              <Button style={{ transform: `scale(${pressed ? 0.94 : 1})` }}>Find my candidates</Button>
-              <div
-                style={{
-                  fontFamily: L.mono,
-                  fontSize: 18,
-                  opacity: frame >= 118 ? 1 : 0,
-                }}
-              >
-                {frame < 168 ? (
-                  <Status color={L.dim}>
-                    scanning github… {scanCount.toLocaleString("en-US")} profiles
-                  </Status>
-                ) : (
-                  <Status>27 devs matched · ranked on shipped work</Status>
-                )}
-              </div>
+              Search size
+            </span>
+            <div style={{ display: "inline-flex", height: 48, border: hair, borderRadius: 8, overflow: "hidden", background: L.bgSoft }}>
+              {["Small", "Medium", "Large"].map((s, i) => {
+                const on = s === "Medium";
+                return (
+                  <div
+                    key={s}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "0 18px",
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: on ? "#ffffff" : L.dim,
+                      background: on ? L.green : "transparent",
+                      borderRight: i < 2 ? hair : "none",
+                    }}
+                  >
+                    {s}
+                  </div>
+                );
+              })}
             </div>
           </div>
-        </Panel>
-      </DashFrame>
-      <Cursor x={cx} y={cy} down={pressed} opacity={cursorOpacity} />
-      <StepTag num="1" label="Describe the role you're hiring for" />
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              height: 48,
+              padding: "0 28px",
+              fontFamily: L.mono,
+              fontSize: 15,
+              fontWeight: 700,
+              color: "#ffffff",
+              background: pressed ? L.greenDim : L.green,
+              border: "1px solid #000000",
+              borderRadius: 8,
+              boxShadow: "0 1px 3px rgba(31, 35, 40, 0.12)",
+              transform: pressed ? "scale(0.96)" : "none",
+            }}
+          >
+            Run
+          </div>
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              height: 48,
+              padding: "0 20px",
+              fontFamily: L.mono,
+              fontSize: 14,
+              fontWeight: 700,
+              color: L.text,
+              border: hair,
+              borderRadius: 8,
+            }}
+          >
+            Manually review
+          </div>
+        </div>
+      </AppWindow>
+      <StepTag num="1" label="Paste the job offer. That's the whole brief." />
     </AbsoluteFill>
   );
 };
 
-/* ============ Scene 2 — Rank : candidates sorted by match, click the top one ============ */
-const CANDIDATES = [
-  {
-    initials: "LF",
-    name: "Léa Fabre",
-    role: "Staff SWE · rt-order-matching",
-    signal: "lock-free hot path · Rust",
-    score: 94,
-    color: L.purple,
-  },
-  {
-    initials: "SB",
-    name: "Sami Benali",
-    role: "Backend eng · distributed-kv",
-    signal: "Raft from scratch · Go",
-    score: 87,
-    color: L.blue,
-  },
-  {
-    initials: "NT",
-    name: "Nina Torres",
-    role: "Infra eng · ws-gateway",
-    signal: "50k conns per node",
-    score: 81,
-    color: L.orange,
-  },
-  {
-    initials: "MO",
-    name: "Marc Olivier",
-    role: "Systems eng · lockfree-queue",
-    signal: "MPMC queue + benchmarks",
-    score: 74,
-    color: L.green,
-  },
-];
-
-export const SceneRank: React.FC = () => {
+/* ============ Scene 2 — Candidates land on the position, ranked ============ */
+export const SceneCandidates: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const cx = interpolate(frame, [115, 150], [1400, 720], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const cy = interpolate(frame, [115, 150], [855, 362], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const cursorOpacity = interpolate(frame, [108, 118], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const clicked = frame >= 158;
+  const done = Math.round(interpolate(frame, [10, 150], [3, 40], clamp));
+  const cur = glide(frame, [150, 1000, 600], [186, 640, 257]);
+  const pressed = frame >= 194 && frame <= 202;
   return (
     <AbsoluteFill>
-      <DashFrame active="rank">
-        <PageTitle title="Ranked candidates" right={<Tag>sorted by match ▾</Tag>} />
-        <Panel
-          head={
-            <>
-              <Status>27 devs matched</Status>
-              <span>ranked on shipped work</span>
-            </>
-          }
-        >
-          {CANDIDATES.map((l, i) => {
-            const delay = 15 + i * 14;
-            const p = spring({ frame: frame - delay, fps, config: { damping: 16 } });
-            const top = i === 0;
-            const lit = top && clicked;
-            return (
-              <div
-                key={l.name}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 24,
-                  padding: "20px 26px",
-                  borderTop: i === 0 ? "none" : `1px solid ${L.border}`,
-                  opacity: p,
-                  transform: `translateY(${interpolate(p, [0, 1], [24, 0])}px)`,
-                  background: lit ? "rgba(15, 118, 110, 0.14)" : top ? L.greenSoft : L.bg,
-                  boxShadow: top ? `inset 3px 0 0 ${L.green}` : "none",
-                }}
-              >
-                <div style={{ fontFamily: L.mono, fontSize: 18, color: L.dim, width: 34 }}>
-                  #{i + 1}
-                </div>
-                <Avatar initials={l.initials} color={l.color} size={56} />
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 21, fontWeight: 700 }}>{l.name}</div>
-                  <div style={{ fontFamily: L.mono, fontSize: 15, color: L.dim, marginTop: 2 }}>
-                    {l.role}
-                  </div>
-                </div>
-                <Tag color={L.blue}>{l.signal}</Tag>
-                <div style={{ width: 130, textAlign: "right" }}>
-                  <div style={{ fontFamily: L.mono, fontSize: 33, fontWeight: 700, color: L.green }}>
-                    {Math.round(p * l.score)}
-                  </div>
-                  <div style={{ height: 6, background: L.track, marginTop: 4 }}>
-                    <div style={{ height: "100%", width: `${p * l.score}%`, background: L.green }} />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </Panel>
-      </DashFrame>
-      <Cursor x={cx} y={cy} down={frame >= 158 && frame <= 168} opacity={cursorOpacity} />
-      <StepTag num="2" label="Your candidates, ranked on shipped work" />
+      <AppWindow
+        nav="jobs"
+        searching
+        jobCount={5}
+        overlay={<Cursor x={cur.x} y={cur.y} down={pressed} opacity={fadeIn(frame, 146)} />}
+      >
+        <JobHead title={JOB.title} company={JOB.company} state="running">
+          <JobProgress text={`reading code ${done}/40`} />
+        </JobHead>
+        <CandTable
+          rows={ROWS}
+          selected={frame >= 198 ? 0 : -1}
+          rowStyle={(i) => {
+            const p = spring({ frame: frame - (18 + i * 13), fps, config: { damping: 16 } });
+            return { opacity: p, transform: `translateY(${interpolate(p, [0, 1], [10, 0])}px)` };
+          }}
+        />
+      </AppWindow>
+      <StepTag num="2" label="Candidates found and ranked on the code they shipped" />
     </AbsoluteFill>
   );
 };
 
-/* ============ Scene 3 — Why : the proof behind the score ============ */
-const WHY = [
+/* ============ Scene 3 — Why she fits : proof from her repos ============ */
+const BRIEF =
+  "Built rt-order-matching, a real-time matching engine in Rust with a lock-free hot path (2024–2026), and journal.rs, the replay log it ships with. 3,669 contributions this year, 212 pull requests reviewed. Staff engineer at Orbital Pay since 2023.";
+
+const SKILLS: { mark: "ok" | "partiel"; label: string; link?: string; proof?: string }[] = [
   {
-    badge: "built it already",
-    color: L.green,
-    text: "rt-order-matching: a real-time matching engine, lock-free hot path",
+    mark: "ok",
+    label: "Real-time systems in Rust or Go",
+    link: "lea-fabre/rt-order-matching",
+    proof:
+      "Lock-free MPSC queue on the hot path (hot_path.rs, 2025); partial fills under contention handled in matcher.rs; benchmarks against crossbeam in the README (Jan 2026).",
   },
+  { mark: "ok", label: "Lock-free data structures", link: "lea-fabre/lockfree-ring" },
   {
-    badge: "ships daily",
-    color: L.blue,
-    text: "3,669 contributions and 212 pull requests reviewed this year",
-  },
-  {
-    badge: "stack match",
-    color: L.purple,
-    text: "Rust 52% · Go 26% · TypeScript 14% — exactly your stack",
-  },
-  {
-    badge: "reachable",
-    color: L.orange,
-    text: "lea.fabre@… found in commit metadata",
+    mark: "partiel",
+    label: "Backpressure under load",
+    link: "PR #612 · ws-gateway",
+    proof: "Bounded channels in the gateway (2025); not applied in the matcher itself yet.",
   },
 ];
+
+const DrawerTop: React.FC<{ tab: string }> = ({ tab }) => (
+  <>
+    <DrawerHead face={LEA} name="Léa Fabre" meta={LEA_META} email={LEA_EMAIL} />
+    <FeedbackBar />
+    <Tabs active={tab} />
+  </>
+);
 
 export const SceneWhy: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const score = Math.round(
-    interpolate(frame, [20, 75], [0, 94], {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-    }),
-  );
+  const slide = spring({ frame, fps, config: { damping: 18, mass: 0.8 } });
+  const open = spring({ frame: frame - 120, fps, config: { damping: 16 } });
+  const toRow = glide(frame, [88, 1000, 560], [112, 900, 410]);
+  const toTab = glide(frame, [168, 900, 410], [198, 930, 206]);
+  const cur = frame < 168 ? toRow : toTab;
+  const pressed = (frame >= 116 && frame <= 124) || (frame >= 204 && frame <= 212);
   return (
     <AbsoluteFill>
-      <DashFrame active="rank">
-        <div style={{ fontFamily: L.mono, fontSize: 16, color: L.dim, marginBottom: 20 }}>
-          Ranked candidates <span style={{ color: L.border }}>/</span>{" "}
-          <span style={{ color: L.text }}>Léa Fabre</span>
-        </div>
-        <Panel>
-          <div style={{ display: "flex", alignItems: "stretch", borderBottom: `1px solid ${L.border}` }}>
-            <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 26, padding: "28px 30px" }}>
-              <Avatar initials="LF" color={L.purple} size={76} />
-              <div>
-                <div style={{ fontSize: 28, fontWeight: 700 }}>Léa Fabre</div>
-                <div style={{ fontFamily: L.mono, fontSize: 16, color: L.dim, marginTop: 3 }}>
-                  Staff SWE · lea-fabre/rt-order-matching
+      <AppWindow
+        nav="jobs"
+        jobCount={5}
+        overlay={
+          <>
+            <Drawer offset={interpolate(slide, [0, 1], [680, 0])} backdrop={slide}>
+              <DrawerTop tab="Why" />
+              <Pop delay={26} distance={10}>
+                <div style={{ padding: "18px 0 6px" }}>
+                  <DetailLabel>In brief</DetailLabel>
+                  <div style={{ margin: 0, fontSize: 14.5, lineHeight: 1.6 }}>{BRIEF}</div>
+                </div>
+              </Pop>
+              <div style={{ padding: "18px 0 6px" }}>
+                <Pop delay={44} distance={10}>
+                  <DetailLabel>Skills from the job offer</DetailLabel>
+                </Pop>
+                <div style={{ borderTop: hair }}>
+                  {SKILLS.map((s, i) => {
+                    const p = spring({ frame: frame - (52 + i * 12), fps, config: { damping: 16 } });
+                    return (
+                      <FitRow
+                        key={s.label}
+                        {...s}
+                        open={i === 0 ? open : 0}
+                        style={{ opacity: p, transform: `translateY(${interpolate(p, [0, 1], [8, 0])}px)` }}
+                      />
+                    );
+                  })}
                 </div>
               </div>
-            </div>
-            <div
-              style={{
-                width: 220,
-                borderLeft: `1px solid ${L.border}`,
-                background: L.greenSoft,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <div style={{ fontFamily: L.mono, fontSize: 51, fontWeight: 700, color: L.green, lineHeight: 1.1 }}>
-                {score}
-              </div>
-              <div style={{ fontFamily: L.mono, fontSize: 15, color: L.dim }}>match score</div>
-            </div>
-          </div>
-          <div
-            style={{
-              padding: "14px 30px",
-              background: L.bgSoft,
-              borderBottom: `1px solid ${L.border}`,
-              fontFamily: L.mono,
-              fontSize: 17,
-              fontWeight: 700,
-            }}
-          >
-            Why she&rsquo;s a fit
-          </div>
-          {WHY.map((w, i) => {
-            const delay = 30 + i * 16;
-            const p = spring({ frame: frame - delay, fps, config: { damping: 16 } });
-            return (
-              <div
-                key={w.badge}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 22,
-                  padding: "19px 30px",
-                  borderTop: i === 0 ? "none" : `1px solid ${L.border}`,
-                  opacity: p,
-                  transform: `translateY(${interpolate(p, [0, 1], [20, 0])}px)`,
-                }}
-              >
-                <div style={{ fontFamily: L.mono, fontSize: 20, fontWeight: 700, color: w.color }}>✓</div>
-                <div style={{ flex: 1, fontSize: 19 }}>{w.text}</div>
-                <Tag color={w.color}>{w.badge}</Tag>
-              </div>
-            );
-          })}
-        </Panel>
-      </DashFrame>
-      <StepTag num="3" label="Why she’s a fit — the proof behind the score" />
+            </Drawer>
+            <Cursor x={cur.x} y={cur.y} down={pressed} opacity={fadeIn(frame, 84)} />
+          </>
+        }
+      >
+        <JobPage state="open" selected={0} />
+      </AppWindow>
+      <StepTag num="3" label="Why she's a fit — proof from her repos, not her résumé" />
     </AbsoluteFill>
   );
 };
 
-/* ============ Scene 4 — Personalize : the email cites their code ============ */
-const EMAIL_TEXT = `Hi Léa,
+/* ============ Scene 4 — The email, written from her code ============ */
+const SUBJECT = "your matching engine in rt-order-matching";
+const EMAIL = `Hi Léa,
 
-Just went through rt-order-matching. The way you
-handle partial fills under contention is really
-clean, and the replay log in journal.rs? Smart.
+Just went through rt-order-matching. The way you handle partial fills under contention is really clean, and the replay log in journal.rs? Smart.
 
-We're building the matching engine behind a new
-exchange, and we hit the exact backpressure issue
-your README calls out.
-
-Worth a chat? I'm free Thursday.`;
+We're building the matching engine behind a new exchange, and we hit the exact backpressure issue your README calls out. Worth a chat? I'm free Thursday.`;
 
 export const SceneMessage: React.FC = () => {
   const frame = useCurrentFrame();
+  const count = typedCount(frame, EMAIL, 40, 2.6);
+  const cur = glide(frame, [205, 1000, 640], [240, 1206, 565]);
+  const pressed = frame >= 246 && frame <= 254;
+  const copied = frame >= 250;
   return (
     <AbsoluteFill>
-      <DashFrame active="outreach">
-        <PageTitle title="Outreach · Léa Fabre" right={<Tag>match score: 94</Tag>} />
-        <Panel>
-          <div
-            style={{
-              fontFamily: L.mono,
-              fontSize: 16,
-              color: L.dim,
-              padding: "14px 30px",
-              background: L.bgSoft,
-              borderBottom: `1px solid ${L.border}`,
-              lineHeight: 1.7,
-            }}
-          >
-            <div>
-              To: <span style={{ color: L.text }}>lea.fabre@…</span>
-            </div>
-            <div>
-              Subject:{" "}
-              <span style={{ color: L.text }}>
-                <TypeText
-                  text="your matching engine in rt-order-matching"
-                  startFrame={20}
-                  charsPerFrame={1.4}
-                  cursor={false}
-                />
-              </span>
-            </div>
-          </div>
-          <div
-            style={{
-              fontSize: 21,
-              lineHeight: 1.6,
-              whiteSpace: "pre-wrap",
-              minHeight: 390,
-              padding: "24px 30px",
-            }}
-          >
-            <TypeText text={EMAIL_TEXT} startFrame={45} charsPerFrame={2.4} />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              gap: 14,
-              padding: "16px 30px",
-              borderTop: `1px solid ${L.border}`,
-              opacity: frame >= 200 ? 1 : 0,
-            }}
-          >
-            {["real repo cited", "her code read", "zero templates"].map((t) => (
-              <Tag key={t}>✓ {t}</Tag>
-            ))}
-          </div>
-        </Panel>
-      </DashFrame>
-      <StepTag num="4" label="The email reads her code — nothing like a recruiter blast" />
+      <AppWindow
+        nav="jobs"
+        jobCount={5}
+        overlay={
+          <>
+            <Drawer>
+              <DrawerTop tab="Message" />
+              <div style={{ padding: "18px 0 8px" }}>
+                <div
+                  style={{
+                    border: hair,
+                    borderRadius: 12,
+                    background: L.bg,
+                    boxShadow: "0 1px 3px rgba(31, 35, 40, 0.06)",
+                    overflow: "hidden",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: 12,
+                      padding: "10px 16px",
+                      borderBottom: hair,
+                      fontSize: 12.5,
+                      color: L.dim,
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 7, fontWeight: 600, color: L.text }}>
+                      <Icon name="mail" size={14} color={L.linkedin} />
+                      Email
+                    </span>
+                    <span>to Léa Fabre</span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "baseline",
+                      gap: 10,
+                      padding: "10px 16px",
+                      borderBottom: hair,
+                      fontSize: 14,
+                      fontWeight: 600,
+                      lineHeight: 1.6,
+                      minHeight: 43,
+                    }}
+                  >
+                    <span style={{ flexShrink: 0, fontSize: 12, fontWeight: 400, color: L.dim }}>Subject</span>
+                    <TypeText text={SUBJECT} startFrame={14} charsPerFrame={1.6} cursor={false} />
+                  </div>
+                  <div
+                    style={{
+                      margin: 0,
+                      padding: "16px 16px 18px",
+                      fontSize: 15,
+                      lineHeight: 1.65,
+                      whiteSpace: "pre-wrap",
+                      minHeight: 209,
+                    }}
+                  >
+                    <TypeText text={EMAIL} startFrame={40} charsPerFrame={2.6} />
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: 10,
+                      padding: "10px 12px 10px 16px",
+                      borderTop: hair,
+                      background: L.bgSoft,
+                    }}
+                  >
+                    <span style={{ fontFamily: L.mono, fontSize: 11.5, color: L.dim }}>{count} characters</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <MsgBtn>Open in email</MsgBtn>
+                      <MsgBtn>Send on LinkedIn</MsgBtn>
+                      <MsgBtn primary done={copied}>
+                        {copied ? "✓ Copied" : "Copy"}
+                      </MsgBtn>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Drawer>
+            <Cursor x={cur.x} y={cur.y} down={pressed} opacity={fadeIn(frame, 200)} />
+          </>
+        }
+      >
+        <JobPage state="open" selected={0} />
+      </AppWindow>
+      <StepTag num="4" label="An email that reads her code, not a template" />
     </AbsoluteFill>
   );
 };
 
-/* ============ Scene 5 — Inbox : replies come back ============ */
-const REPLIES = [
-  {
-    initials: "LF",
-    name: "Léa Fabre",
-    text: "You're the first person to actually read journal.rs. I'm free Thursday.",
-    when: "2m ago",
-    color: L.purple,
-  },
-  {
-    initials: "SB",
-    name: "Sami Benali",
-    text: "Not looking, but this one's different. What's the team like?",
-    when: "1h ago",
-    color: L.blue,
-  },
-];
+/* ============ Scene 5 — Replies come back ============ */
+const REPLIED = [0, 1, 4];
 
-export const SceneResults: React.FC = () => {
+export const SceneReplies: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const stats = [
-    { n: 27, label: "devs matched & ranked" },
-    { n: 27, label: "personalized emails" },
-    { n: 9, label: "replies" },
-  ];
+  const n = (to: number) => Math.round(interpolate(frame, [12, 70], [0, to], clamp));
   return (
     <AbsoluteFill>
-      <DashFrame active="inbox">
-        <PageTitle title="Inbox" />
-        {/* stats share hairlines, like the landing's numbers strip */}
-        <Pop delay={14}>
-        <Panel style={{ display: "flex", marginBottom: 36 }}>
-          {stats.map((s, i) => {
-            const delay = 20 + i * 12;
-            const p = spring({ frame: frame - delay, fps, config: { damping: 15 } });
-            return (
-              <div
-                key={s.label}
-                style={{
-                  flex: 1,
-                  padding: "26px 24px",
-                  textAlign: "center",
-                  borderLeft: i === 0 ? "none" : `1px solid ${L.border}`,
-                  opacity: p,
-                  transform: `translateY(${interpolate(p, [0, 1], [20, 0])}px)`,
-                }}
-              >
-                <div style={{ fontFamily: L.mono, fontSize: 43, fontWeight: 700, color: L.green }}>
-                  {Math.round(p * s.n)}
-                </div>
-                <div style={{ fontSize: 16, color: L.dim, marginTop: 4 }}>{s.label}</div>
-              </div>
-            );
-          })}
-        </Panel>
-        </Pop>
-        <Pop delay={62}>
-        <Panel head={<Status>2 new replies</Status>}>
-          {REPLIES.map((r, i) => {
-            const delay = 70 + i * 20;
-            const p = spring({ frame: frame - delay, fps, config: { damping: 16 } });
-            return (
-              <div
-                key={r.name}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 20,
-                  padding: "20px 26px",
-                  borderTop: i === 0 ? "none" : `1px solid ${L.border}`,
-                  boxShadow: `inset 3px 0 0 ${L.green}`,
-                  opacity: p,
-                  transform: `translateY(${interpolate(p, [0, 1], [20, 0])}px)`,
-                }}
-              >
-                <Avatar initials={r.initials} color={r.color} size={52} />
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 19, fontWeight: 700 }}>{r.name}</div>
-                  <div style={{ fontSize: 17, color: L.dim, marginTop: 2 }}>“{r.text}”</div>
-                </div>
-                <div style={{ fontFamily: L.mono, fontSize: 15, color: L.dim }}>{r.when}</div>
-              </div>
-            );
-          })}
-        </Panel>
-        </Pop>
-      </DashFrame>
-      <StepTag num="5" label="You just book the calls" />
+      <AppWindow nav="jobs" jobCount={5}>
+        <JobHead title={JOB.title} company={JOB.company} state="open">
+          <OutreachStats contacted={n(27)} invited={27} accepted={n(21)} replied={n(9)} />
+        </JobHead>
+        <CandTable
+          rows={ROWS}
+          decorate={(i) => {
+            const k = REPLIED.indexOf(i);
+            if (k < 0) return null;
+            const p = spring({ frame: frame - (66 + k * 22), fps, config: { damping: 12 } });
+            return <RepliedBadge style={{ opacity: p, transform: `scale(${interpolate(p, [0, 1], [0.6, 1])})` }} />;
+          }}
+        />
+      </AppWindow>
+      <StepTag num="5" label="9 replies in 3 days. You just book the calls." />
     </AbsoluteFill>
   );
 };
@@ -744,7 +487,23 @@ export const SceneOutro: React.FC = () => {
         </div>
       </Pop>
       <Pop delay={55}>
-        <Button style={{ marginTop: 48, fontSize: 21, padding: "17px 44px" }}>Try it</Button>
+        {/* même bouton que « + New position » dans l'app, à l'échelle du canvas */}
+        <div
+          style={{
+            marginTop: 48,
+            display: "inline-block",
+            fontFamily: L.mono,
+            fontSize: 20,
+            fontWeight: 700,
+            color: "#ffffff",
+            background: L.green,
+            border: `1px solid ${L.green}`,
+            borderRadius: 12,
+            padding: "15px 30px",
+          }}
+        >
+          Try it
+        </div>
       </Pop>
     </AbsoluteFill>
   );

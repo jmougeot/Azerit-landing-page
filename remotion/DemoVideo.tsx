@@ -2,29 +2,29 @@ import React from "react";
 import { Sequence } from "remotion";
 import { SceneBg, FadeScene } from "./common";
 import {
-  SceneDescribe,
-  SceneRank,
+  SceneNewPosition,
+  SceneCandidates,
   SceneWhy,
   SceneMessage,
-  SceneResults,
+  SceneReplies,
   SceneOutro,
 } from "./scenes";
 
 // 30 fps
 const SCENES: { comp: React.FC; duration: number }[] = [
-  { comp: SceneDescribe, duration: 210 }, // 7 s — type the role you're hiring for
-  { comp: SceneRank, duration: 200 }, // ~7 s — ranked candidates, click #1
-  { comp: SceneWhy, duration: 200 }, // ~7 s — why she's a fit
-  { comp: SceneMessage, duration: 280 }, // ~9 s — personalized email
-  { comp: SceneResults, duration: 160 }, // ~5 s — inbox
+  { comp: SceneNewPosition, duration: 180 }, // 6 s — paste the job offer, run
+  { comp: SceneCandidates, duration: 230 }, // ~8 s — candidates land, open #1
+  { comp: SceneWhy, duration: 230 }, // ~8 s — why she fits, proof from her code
+  { comp: SceneMessage, duration: 290 }, // ~10 s — the email, copied
+  { comp: SceneReplies, duration: 180 }, // 6 s — replies on the position
   { comp: SceneOutro, duration: 130 }, // ~4 s
 ];
 
 export const DEMO_DURATION = SCENES.reduce((acc, s) => acc + s.duration, 0);
 export const DEMO_FPS = 30;
-// ~1.94:1, linear.app window proportions — wider than 16:9 without being taller.
-// Scene content is vertically centered, so vs the old 1080p canvas everything
-// sits 45px higher; hardcoded cursor targets in scenes.tsx account for this.
+// ~1.94:1, linear.app window proportions — wider than 16:9 without being
+// taller. The app inside is laid out at 1280×660 and scaled ×1.5 (see
+// remotion/app.tsx), so it shows at its real size on the landing page.
 export const DEMO_WIDTH = 1920;
 export const DEMO_HEIGHT = 990;
 

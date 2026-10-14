@@ -15,8 +15,8 @@ export const T = {
   sans: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
 };
 
-// Light palette for the demo video, mirroring :root in src/styles.css so the
-// video reads as part of the landing page rather than a dark inset.
+// Light palette for the demo video: the :root tokens of the real app
+// (App/ui/src/App.css), which are the landing's own. The video is the app.
 export const L = {
   bg: "#ffffff",
   bgSoft: "#f6f8fa",
@@ -25,12 +25,15 @@ export const L = {
   text: "#1f2328",
   dim: "#59636e",
   green: "#0f766e",
+  greenDim: "#115e59",
   greenSoft: "rgba(15, 118, 110, 0.08)",
-  greenLine: "rgba(15, 118, 110, 0.4)",
+  greenLine: "rgba(15, 118, 110, 0.35)",
   blue: "#0969da",
   purple: "#8250df",
   orange: "#9a6700",
   red: "#cf222e",
+  lime: "#7a8a1f",
+  linkedin: "#0a66c2",
   dot: "rgba(89, 99, 110, 0.16)",
   mono: T.mono,
   sans: T.sans,

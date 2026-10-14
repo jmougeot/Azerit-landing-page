@@ -2,18 +2,10 @@ import React from "react";
 import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { L } from "./theme";
 
+// Plain white, like the app's own canvas: the window chrome around the video
+// on the landing page does the framing, the video just shows the app.
 export const SceneBg: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <AbsoluteFill
-    style={{
-      background: L.bg,
-      /* même grille de points que la landing (.dot-grid), à l'échelle de la
-         vidéo : affichée à ~1325px de large, 34px ici ≈ les 24px de la page */
-      backgroundImage: `radial-gradient(circle at center, ${L.dot} 1.5px, transparent 2px)`,
-      backgroundSize: "34px 34px",
-      fontFamily: L.sans,
-      color: L.text,
-    }}
-  >
+  <AbsoluteFill style={{ background: L.bg, fontFamily: L.sans, color: L.text }}>
     {children}
   </AbsoluteFill>
 );
@@ -38,13 +30,13 @@ export const FadeScene: React.FC<{
   return <AbsoluteFill style={{ opacity }}>{children}</AbsoluteFill>;
 };
 
-export const usePop = (delay: number) => {
+export const usePop = (delay: number, distance = 14) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const s = spring({ frame: frame - delay, fps, config: { damping: 14, mass: 0.6 } });
   return {
     opacity: interpolate(s, [0, 1], [0, 1]),
-    transform: `translateY(${interpolate(s, [0, 1], [26, 0])}px) scale(${interpolate(s, [0, 1], [0.96, 1])})`,
+    transform: `translateY(${interpolate(s, [0, 1], [distance, 0])}px)`,
   };
 };
 
@@ -52,8 +44,9 @@ export const Pop: React.FC<{
   delay: number;
   children: React.ReactNode;
   style?: React.CSSProperties;
-}> = ({ delay, children, style }) => {
-  const pop = usePop(delay);
+  distance?: number;
+}> = ({ delay, children, style, distance }) => {
+  const pop = usePop(delay, distance);
   return <div style={{ ...pop, ...style }}>{children}</div>;
 };
 
@@ -80,14 +73,19 @@ export const TypeText: React.FC<{
   );
 };
 
-// Légende flottante en bas de l'écran, par-dessus le dashboard
+// Number of characters TypeText shows at this frame (for live counters)
+export const typedCount = (frame: number, text: string, startFrame: number, charsPerFrame: number) =>
+  Math.min(text.length, Math.max(0, Math.floor((frame - startFrame) * charsPerFrame)));
+
+// Légende flottante en bas de l'écran, par-dessus l'app. Même recette que
+// les titres de panneau de l'app (.panel-title : mono, capitales, filet teal).
 export const StepTag: React.FC<{ num: string; label: string }> = ({ num, label }) => {
-  const pop = usePop(10);
+  const pop = usePop(10, 22);
   return (
     <div
       style={{
         position: "absolute",
-        bottom: 48,
+        bottom: 44,
         left: 0,
         right: 0,
         display: "flex",
@@ -99,27 +97,33 @@ export const StepTag: React.FC<{ num: string; label: string }> = ({ num, label }
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 18,
-          fontFamily: L.mono,
+          gap: 24,
           background: L.bg,
           border: `1px solid ${L.border}`,
-          /* mêmes cartes que les [ step n ] du "How it works" de la landing */
-          borderRadius: 8,
-          padding: "14px 28px",
-          boxShadow: "0 12px 32px rgba(31, 35, 40, 0.1)",
+          borderRadius: 12,
+          padding: "16px 30px 16px 26px",
+          boxShadow: "0 16px 40px rgba(31, 35, 40, 0.16)",
         }}
       >
         <div
           style={{
-            color: L.green,
-            fontSize: 20,
+            fontFamily: L.mono,
+            fontSize: 17,
             fontWeight: 700,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            color: L.green,
+            paddingLeft: 16,
+            borderLeft: `4px solid ${L.green}`,
+            lineHeight: 1.25,
             whiteSpace: "nowrap",
           }}
         >
-          [ step {num} ]
+          step {num}
         </div>
-        <div style={{ fontFamily: L.sans, fontSize: 22, fontWeight: 600, color: L.text }}>{label}</div>
+        <div style={{ fontFamily: L.sans, fontSize: 23, fontWeight: 600, color: L.text, lineHeight: 1.3 }}>
+          {label}
+        </div>
       </div>
     </div>
   );

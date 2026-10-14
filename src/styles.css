@@ -627,31 +627,77 @@ main {
   color: var(--text-dim);
 }
 
-/* ---- app window chrome (video) : dashboard preview, light like the page ---- */
+/* ---- demo window : the real app in a browser frame, lifted off the dots ---- */
 .app-frame {
-  position: relative; /* paints above the .video-stage glow */
+  position: relative;
   background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-  /* nearly flat, linear.app-style: the stage plate does the lifting, the
-     window just needs a hairline ring and a whisper of depth */
-  box-shadow:
-    0 0 0 1px rgba(15, 23, 42, 0.05),
-    0 2px 6px rgba(15, 23, 42, 0.12),
-    0 18px 44px -20px rgba(15, 23, 42, 0.3);
 }
 .video-wrap {
   /* the video is ~1.94:1 (1920x990), so at 92vw the window is no taller than
      a 16:9 one at 84vw — wide like linear.app without gaining height. The
      bottom padding matches the side gaps so the air around the window reads
-     evenly against the page-wide stage light */
+     evenly against the dot grid */
   width: min(92vw, 1560px);
   margin: 0 auto;
   padding: 0 0 min(4vw, 64px);
 }
-.video-stage {
+/* browser window: a slim title bar with the app's address, a hairline ring
+   and a deep, slightly teal shadow so the demo lifts off the page without a
+   plate behind it */
+.video-window {
   position: relative;
+  background: var(--bg);
+  border: 1px solid #c6ced6;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.06),
+    0 24px 48px -16px rgba(15, 23, 42, 0.24),
+    0 56px 110px -28px rgba(15, 118, 110, 0.2);
+}
+.video-chrome {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 14px;
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--border);
+}
+.video-chrome-dots {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  display: flex;
+  gap: 6px;
+  transform: translateY(-50%);
+}
+.video-chrome-dots i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid #b9c2cb;
+  background: #e7ebef;
+}
+.video-chrome-url {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 260px;
+  justify-content: center;
+  padding: 3px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.video-chrome-url svg {
+  width: 11px;
+  height: 11px;
+  color: var(--green);
 }
 .demo-placeholder {
   aspect-ratio: 1920 / 990;
@@ -720,8 +766,16 @@ main {
   .video-wrap {
     padding: 0 0 40px;
   }
-  .app-frame {
-    border-radius: 6px;
+  /* the mobile preview card draws its own frame */
+  .video-window {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    overflow: visible;
+  }
+  .video-chrome {
+    display: none;
   }
   .demo-placeholder {
     aspect-ratio: auto;
