@@ -856,24 +856,51 @@ main {
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
 }
-/* each band is a panel between two page-wide hairlines, with clear air before
-   the next one. A `band-head` (a title cell) stays glued to the band below it
-   so the pair reads as one panel and shares its rules; `band-bleed` panels run
-   to the viewport edge and draw their own bottom rule; the footer ends the
-   page without one. */
-.band + .band {
-  margin-top: 72px;
-}
-.band.band-head + .band {
-  margin-top: 0;
-}
+/* each band is a panel between two page-wide hairlines. Panels never touch:
+   a `.seam` (see below) sits between them and carries the rails across the
+   gap. A `band-head` (a title cell) stays glued to the band below it so the
+   pair reads as one panel and shares its rules; `band-bleed` panels run to
+   the viewport edge and draw their own bottom rule; the footer ends the page
+   without one. */
 .band.band-head,
 .band.band-bleed,
 .footer.band {
   border-bottom: none;
 }
+
+/* ---- seams : the gaps between panels, drawn as cells of the same grid ---- */
+/* a plain seam is air with the rails running through it, so the dot grid
+   shows through a framed cell rather than an unframed hole. A hatched seam is
+   a chapter break: full-width 45° hatching (lemlist's device, in our palette)
+   over an opaque floor so the dots don't fight the stripes. */
+.seam {
+  position: relative;
+  height: 56px;
+}
+.seam-hatch {
+  height: 64px;
+  /* brand teal, light enough to stay a texture: rhymes with the squares at
+     the crossings and the [ eyebrows ] without competing with the content */
+  background:
+    repeating-linear-gradient(-45deg, rgba(15, 118, 110, 0.18) 0 8px, transparent 8px 16px),
+    var(--bg);
+}
+/* the first seam has no panel above it to draw its top rule */
+.seam-open {
+  border-top: 1px solid var(--border);
+}
 @media (min-width: 801px) {
-  .band > .container {
+  /* gutters: hairlines are solid across the panel and turn dashed outside the
+     rails, so the grid visibly carries on past the frame to the screen edge */
+  .band {
+    border-top-style: dashed;
+    border-bottom-style: dashed;
+  }
+  .seam-open {
+    border-top-style: dashed;
+  }
+  .band > .container,
+  .seam > .container {
     position: relative;
     /* always inset from the viewport so the rails never touch the screen edge */
     width: min(100% - 48px, 1400px);
@@ -882,6 +909,25 @@ main {
     /* extra air so content never sits against the rules */
     padding-left: 36px;
     padding-right: 36px;
+  }
+  .seam > .container {
+    height: 100%;
+  }
+  /* the solid part of each hairline: the container redraws the band's dashed
+     rule as a solid one over its own width (negative margins keep it on the
+     same pixel, so the layout doesn't move) */
+  .band > .container,
+  .seam-open > .container {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin: -1px auto;
+  }
+  .band.band-head > .container,
+  .band.band-bleed > .container,
+  .footer.band > .container,
+  .seam-open > .container {
+    border-bottom: none;
+    margin-bottom: 0;
   }
   /* bottom crossings: the band draws the two squares where its bottom hairline
      meets the container's rails (the container's own pseudos hold the top pair) */
@@ -910,7 +956,9 @@ main {
     content: none;
   }
   .band > .container::before,
-  .band > .container::after {
+  .band > .container::after,
+  .seam-open > .container::before,
+  .seam-open > .container::after {
     content: "";
     position: absolute;
     top: -4px;
@@ -918,12 +966,41 @@ main {
     height: 7px;
     background: var(--green);
   }
-  .band > .container::before {
+  .band > .container::before,
+  .seam-open > .container::before {
     left: -4px;
   }
-  .band > .container::after {
+  .band > .container::after,
+  .seam-open > .container::after {
     right: -4px;
   }
+}
+@media (max-width: 800px) {
+  .seam {
+    height: 40px;
+  }
+  .seam-hatch {
+    height: 36px;
+  }
+}
+
+/* ---- mono bracket label : [ step 1 ], [ how it works ] ---- */
+/* one voice for every caption on the page, lowercase like the nav. As an
+   `eyebrow` it sits on its own line above a section title. */
+.tag {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--green);
+}
+.tag::before {
+  content: "[ ";
+}
+.tag::after {
+  content: " ]";
+}
+.eyebrow {
+  display: block;
+  margin-bottom: 10px;
 }
 
 /* ---- how it works : title cell + 3 short steps ---- */
@@ -1133,20 +1210,7 @@ main {
 .fstep .tag,
 .flow-merge .tag,
 .flow-input .tag {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--green);
   margin-bottom: 12px;
-}
-.fstep .tag::before,
-.flow-merge .tag::before,
-.flow-input .tag::before {
-  content: "[ ";
-}
-.fstep .tag::after,
-.flow-merge .tag::after,
-.flow-input .tag::after {
-  content: " ]";
 }
 .flow-input .tag {
   display: inline-block;
@@ -2328,10 +2392,15 @@ main {
 /* ---- footer ---- */
 /* the top hairline + crosses come from .band (see section bands) */
 .footer {
-  padding: 24px 0 38px;
   font-family: var(--font-mono);
   font-size: 12.5px;
   color: var(--text-dim);
+}
+/* vertical padding lives on the container so its top rule (and the squares)
+   sit on the band's hairline instead of floating 24px below it */
+.footer > .container {
+  padding-top: 24px;
+  padding-bottom: 38px;
 }
 
 /* ---- try page ---- */
@@ -2732,15 +2801,6 @@ main {
   }
   .clients-list li {
     font-size: 15px;
-  }
-}
-
-@media (max-width: 800px) {
-  .band + .band {
-    margin-top: 48px;
-  }
-  .band.band-head + .band {
-    margin-top: 0;
   }
 }
 

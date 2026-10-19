@@ -9,6 +9,7 @@ import { DemoLink } from "../components/DemoLink";
 import { RepoFeed, type Repo } from "../components/RepoFeed";
 import { FlowStep } from "../components/FlowStep";
 import { CtaCommits } from "../components/CtaCommits";
+import { Seam } from "../components/Seam";
 
 // The Remotion player + demo scenes are the heaviest dependency and sit below
 // the fold. lazy() defers the download until the component renders, so we also
@@ -267,6 +268,10 @@ export function Landing() {
         </DotGridBand>
       </div>
 
+      {/* the rule grid starts here: a hatched chapter break closes the hero,
+          and from this line down the rails run unbroken to the footer */}
+      <Seam hatch open />
+
       {/* the database: GitHub itself */}
       <section className="band">
         <div className="container stats">
@@ -285,10 +290,13 @@ export function Landing() {
         </div>
       </section>
 
+      <Seam />
+
       {/* feature: code as the résumé */}
       <section className="band">
         <div className="container feature">
         <div className="f-copy">
+          <span className="tag eyebrow">matching</span>
           <h2>Read the work, not the CV</h2>
           <p>
             Match on <b>repository topics, languages and dependencies</b>.
@@ -300,10 +308,13 @@ export function Landing() {
         </div>
       </section>
 
+      <Seam />
+
       {/* feature: the deliverable — a scored candidate, not a pile of CVs */}
       <section className="band">
         <div className="container feature rev">
         <div className="f-copy">
+          <span className="tag eyebrow">shortlist</span>
           <h2>Your ranked shortlist</h2>
           <p>
             See the projects and contributions behind each score.
@@ -370,9 +381,12 @@ export function Landing() {
         </div>
       </section>
 
+      <Seam hatch />
+
       {/* how it works */}
       <section className="band band-head">
         <div className="container how-title">
+          <span className="tag eyebrow">pipeline</span>
           <h2>How it works</h2>
         </div>
       </section>
@@ -429,11 +443,13 @@ export function Landing() {
         </div>
       </section>
 
+      <Seam hatch />
 
       {/* linkedin vs azerit — generic outreach versus a project connected
           to the candidate's work */}
       <section className="band band-head">
         <div className="container how-title">
+          <span className="tag eyebrow">outreach</span>
           <h2>A relevant project. A personalized message.</h2>
         </div>
       </section>
@@ -520,18 +536,24 @@ export function Landing() {
         </div>
       </section>
 
+      <Seam hatch />
+
       {/* book a demo — vamo-style: a live run on a real search, zero friction */}
       <section className="band">
         <div className="container demo-band">
+          <span className="tag eyebrow">live demo</span>
           <h2>See Azerit work on your open role</h2>
           <p>A 30-minute live session with the founders.</p>
           <DemoLink className="btn-try">book a demo</DemoLink>
         </div>
       </section>
 
-      {/* team */}
-      <section className="band band-open">
+      <Seam hatch />
+
+      {/* team — framed like every other panel so the rails stay unbroken */}
+      <section className="band">
         <div className="container team">
+        <span className="tag eyebrow">team</span>
         <h2>Meet the founders</h2>
         <div className="team-grid">
           <div className="member">
@@ -559,6 +581,8 @@ export function Landing() {
         </div>
         </div>
       </section>
+
+      <Seam />
 
       {/* final CTA */}
       <section className="band band-bleed">
