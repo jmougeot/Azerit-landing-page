@@ -115,7 +115,7 @@ export function About() {
             <p>Questions, partnerships, or an open role you'd like us to try.</p>
             <div className="page-ctas">
               <DemoLink className="btn-try">book a demo</DemoLink>
-              <Email user="jacques.mougeot" domain="centrale-med.fr" className="demo-link">
+              <Email user="jacques" domain="azerit.tech" className="demo-link">
                 or email us
               </Email>
             </div>

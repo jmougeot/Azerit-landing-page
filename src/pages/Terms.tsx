@@ -81,7 +81,7 @@ export function Terms() {
         <p>
           The subscription has no minimum commitment. It renews automatically every month until
           you cancel. You can cancel at any time by emailing{" "}
-          <Email user="lumine.builds" domain="gmail.com" subject="Azerit cancellation" />; the
+          <Email user="lumine" domain="azerit.tech" subject="Azerit cancellation" />; the
           cancellation takes effect at the end of the current billing period, and you keep access
           until then. Periods already started are not refunded, except where the law requires it.
         </p>
@@ -149,7 +149,7 @@ export function Terms() {
         <h2>Contact</h2>
         <p>
           Questions about your subscription or these terms:{" "}
-          <Email user="lumine.builds" domain="gmail.com" />.
+          <Email user="lumine" domain="azerit.tech" />.
         </p>
       </main>
       <Footer />

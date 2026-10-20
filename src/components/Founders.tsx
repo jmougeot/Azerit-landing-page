@@ -14,7 +14,7 @@ export function Founders() {
           <a href="https://www.linkedin.com/in/lumine-trentelivres/" target="_blank" rel="noreferrer">
             linkedin
           </a>{" "}
-          · <Email user="lumine.builds" domain="gmail.com">email</Email>
+          · <Email user="lumine" domain="azerit.tech">email</Email>
         </div>
       </div>
       <div className="member">
@@ -25,7 +25,7 @@ export function Founders() {
           <a href="https://www.linkedin.com/in/jacquesmougeot/" target="_blank" rel="noreferrer">
             linkedin
           </a>{" "}
-          · <Email user="jacques.mougeot" domain="centrale-med.fr">email</Email>
+          · <Email user="jacques" domain="azerit.tech">email</Email>
         </div>
       </div>
     </div>

@@ -13,7 +13,7 @@ export function DemoLink({ className, children }: { className?: string; children
     );
   }
   return (
-    <Email user="lumine.builds" domain="gmail.com" subject="Azerit demo" className={className}>
+    <Email user="lumine" domain="azerit.tech" subject="Azerit demo" className={className}>
       {children}
     </Email>
   );

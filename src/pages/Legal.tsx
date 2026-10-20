@@ -28,7 +28,7 @@ export function Legal() {
           publication: Lumine Trentelivres.
         </p>
         <p>
-          Contact: <Email user="jacques.mougeot" domain="centrale-med.fr" />
+          Contact: <Email user="jacques" domain="azerit.tech" />
         </p>
         <p>
           Hosting: GitHub, Inc. (GitHub Pages), 88 Colin P. Kelly Jr. Street, San Francisco, CA
@@ -79,7 +79,7 @@ export function Legal() {
         <p>
           Under the GDPR you can access, correct, delete, or export the data we hold about you,
           and withdraw your consent at any time. Email{" "}
-          <Email user="jacques.mougeot" domain="centrale-med.fr" /> and
+          <Email user="jacques" domain="azerit.tech" /> and
           we will act on it within 30 days. You may also lodge a complaint with your local data
           protection authority (in France, the CNIL).
         </p>
