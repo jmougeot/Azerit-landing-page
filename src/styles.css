@@ -2937,17 +2937,88 @@ main > .band:nth-of-type(4n + 4) {
   line-height: 1.65;
 }
 
-/* ---- blog index : one row per post ---- */
+/* ---- blog : EN | FR switch, top right of the page head ---- */
+.page-head,
+.post-head {
+  position: relative;
+}
+.lang-switch {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--bg);
+}
+.page-head > .lang-switch {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+}
+.lang-switch button {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: none;
+  padding: 4px 10px;
+}
+.lang-switch button + button {
+  border-left: 1px solid var(--border);
+}
+.lang-switch button[aria-pressed="true"] {
+  color: var(--green);
+  background: var(--green-soft);
+  font-weight: 700;
+}
+
+/* ---- blog index : category filters, then one row per post ---- */
+.blog-filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+.blog-filters button {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-dim);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  transition: color 0.12s ease, border-color 0.12s ease;
+}
+.blog-filters button span {
+  margin-left: 4px;
+  opacity: 0.6;
+}
+.blog-filters button:hover {
+  color: var(--text);
+}
+.blog-filters button[aria-pressed="true"] {
+  color: var(--green);
+  border-color: var(--green);
+  background: var(--green-soft);
+  font-weight: 700;
+}
 .post-list {
   padding-top: 8px;
   padding-bottom: 8px;
 }
+.post-empty {
+  padding: 40px 0;
+  text-align: center;
+  color: var(--text-dim);
+}
 .post-row {
   display: grid;
-  grid-template-columns: 170px minmax(0, 1fr) auto;
+  grid-template-columns: 170px minmax(0, 1fr) 200px;
   gap: 32px;
-  align-items: baseline;
-  padding: 30px 0;
+  align-items: start;
+  padding: 28px 0;
 }
 .post-row + .post-row {
   border-top: 1px dashed var(--border);
@@ -2959,6 +3030,10 @@ main > .band:nth-of-type(4n + 4) {
   font-family: var(--font-mono);
   font-size: 12.5px;
   color: var(--text-dim);
+}
+.post-row-cat {
+  color: var(--green);
+  margin-bottom: 4px;
 }
 .post-row-main {
   display: flex;
@@ -2978,16 +3053,15 @@ main > .band:nth-of-type(4n + 4) {
   font-size: 15px;
   max-width: 680px;
 }
-.post-row-arrow {
-  font-family: var(--font-mono);
-  color: var(--green);
-  transition: transform 0.12s ease;
+.post-row-thumb {
+  display: block;
+  transition: transform 0.2s ease;
 }
 .post-row:hover .post-row-title {
   color: var(--green);
 }
-.post-row:hover .post-row-arrow {
-  transform: translateX(4px);
+.post-row:hover .post-row-thumb {
+  transform: translateY(-2px);
 }
 
 /* ---- blog post ---- */
@@ -2996,12 +3070,20 @@ main > .band:nth-of-type(4n + 4) {
   padding-bottom: 44px;
   text-align: center;
 }
+.post-head-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 780px;
+  margin: 0 auto 28px;
+}
 .post-back {
-  display: inline-block;
   font-family: var(--font-mono);
   font-size: 12.5px;
   color: var(--text-dim);
-  margin-bottom: 28px;
+}
+.post-head .eyebrow a:hover {
+  text-decoration: underline;
 }
 .post-back:hover {
   color: var(--green);
@@ -3046,8 +3128,148 @@ main > .band:nth-of-type(4n + 4) {
   margin-top: 44px;
   margin-bottom: 12px;
 }
-.post-body ul {
+.post-body ul,
+.post-body ol {
   padding-left: 22px;
+}
+.post-body ol {
+  margin-bottom: 20px;
+}
+.post-figure {
+  margin-bottom: 40px;
+}
+
+/* ---- blog cover : the article's key figure on a dark terminal tile ---- */
+/* sizes are container units (cqw), so one design serves the 200px index
+   thumbnail and the full-width cover on the post. Each category tints the
+   hatched band and the figure with one of the palette's greens. */
+.cover {
+  --cover-accent: var(--teal-bright);
+  --cover-hatch: rgba(82, 208, 189, 0.22);
+  container-type: inline-size;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid var(--dark-border);
+  color: var(--dark-text);
+  font-family: var(--font-mono);
+  background:
+    radial-gradient(circle at center, rgba(132, 148, 165, 0.22) 1px, transparent 1.4px) 0 0 / 4.5cqw 4.5cqw,
+    radial-gradient(ellipse 80% 70% at 85% 100%, color-mix(in srgb, var(--cover-accent) 16%, transparent), transparent 70%),
+    var(--dark);
+}
+.cover-thumb {
+  aspect-ratio: 4 / 3;
+  border-radius: 6px;
+}
+.cover-interviews {
+  --cover-accent: #c6d36a;
+  --cover-hatch: rgba(198, 211, 106, 0.2);
+}
+.cover-ai-teams {
+  --cover-accent: var(--blue-on-dark);
+  --cover-hatch: rgba(108, 182, 255, 0.2);
+}
+.cover-sourcing {
+  --cover-accent: #56d364;
+  --cover-hatch: rgba(86, 211, 100, 0.2);
+}
+.cover-top {
+  display: flex;
+  align-items: center;
+  height: 13cqw;
+  max-height: 64px;
+  padding: 0 5cqw;
+  border-bottom: 1px solid var(--dark-border);
+  background: repeating-linear-gradient(-45deg, var(--cover-hatch) 0 1.4cqw, transparent 1.4cqw 2.8cqw);
+}
+.cover-tag {
+  font-size: max(9px, 2.6cqw);
+  color: var(--cover-accent);
+  background: var(--dark);
+  padding: 0.4cqw 1.4cqw;
+  white-space: nowrap;
+}
+.cover-tag::before {
+  content: "[ ";
+}
+.cover-tag::after {
+  content: " ]";
+}
+.cover-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.6cqw;
+  padding: 0 5cqw;
+}
+.cover-figure {
+  /* a mono glyph is ~0.6em wide: cap the size so the figure fits the tile */
+  font-size: min(15cqw, calc(140cqw / var(--len, 4)));
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--cover-accent);
+  white-space: nowrap;
+}
+.cover-caption {
+  font-size: max(10px, 3.4cqw);
+  line-height: 1.35;
+  color: var(--dark-text);
+  max-width: 80%;
+}
+.cover-foot {
+  display: flex;
+  align-items: center;
+  gap: 1.2cqw;
+  padding: 0 5cqw 4cqw;
+  font-size: max(9px, 2.4cqw);
+  font-weight: 700;
+  color: var(--dark-dim);
+}
+/* the thumbnail is small: bigger figure, caption kept, footer dropped */
+.cover-thumb .cover-figure {
+  font-size: min(19cqw, calc(138cqw / var(--len, 4)));
+}
+.cover-thumb .cover-caption {
+  font-size: max(9.5px, 5.4cqw);
+  max-width: none;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.cover-thumb .cover-tag,
+.cover-thumb .cover-foot {
+  display: none;
+}
+.cover-thumb .cover-top {
+  height: 9cqw;
+}
+.cover-thumb .cover-main {
+  gap: 2.5cqw;
+  padding: 0 7cqw;
+}
+/* sources : a footnote block under the article, quieter than the body */
+.post-body .post-sources {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px dashed var(--border);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.post-body .post-sources h2 {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-dim);
+  margin: 0 0 8px;
+}
+.post-body .post-sources ul {
+  margin: 0;
 }
 .post-body li + li {
   margin-top: 8px;
@@ -3103,16 +3325,40 @@ main > .band:nth-of-type(4n + 4) {
     border-top: 1px dashed var(--border);
   }
   .post-row {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 10px;
-    padding: 24px 0;
+    grid-template-columns: minmax(0, 1fr) 96px;
+    gap: 10px 16px;
+    padding: 22px 0;
   }
   .post-row-meta {
+    grid-column: 1 / -1;
     flex-direction: row;
-    gap: 12px;
+    flex-wrap: wrap;
+    gap: 2px 12px;
   }
-  .post-row-arrow {
-    display: none;
+  .post-row-cat {
+    margin-bottom: 0;
+  }
+  .post-row-desc {
+    font-size: 14px;
+  }
+  .page-head > .lang-switch {
+    top: 14px;
+    right: 18px;
+  }
+  .page-head {
+    padding-top: 60px;
+  }
+  .blog-filters {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .blog-filters button {
+    flex: none;
+  }
+  .post-head-bar {
+    margin-bottom: 20px;
   }
   .post-row-title {
     font-size: 18px;
@@ -3120,9 +3366,6 @@ main > .band:nth-of-type(4n + 4) {
   .post-head {
     padding-top: 32px;
     padding-bottom: 32px;
-  }
-  .post-back {
-    margin-bottom: 20px;
   }
   .post-body {
     padding-top: 36px;

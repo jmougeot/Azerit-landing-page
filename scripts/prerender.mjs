@@ -48,11 +48,13 @@ const ROUTES = [
     title: "Blog · Azerit",
     desc: "Notes on hiring engineers from their code: sourcing on GitHub, writing outreach engineers answer, and what public code says about a developer.",
   },
+  // the prerendered HTML is the English version; French readers get theirs
+  // in the browser (see src/blog/lang.ts)
   ...POSTS.map((post) => ({
     path: `/blog/${post.slug}`,
     out: `blog/${post.slug}.html`,
-    title: `${post.title} · Azerit`,
-    desc: post.description,
+    title: `${post.en.title} · Azerit`,
+    desc: post.en.description,
     post,
   })),
 ];
@@ -73,7 +75,14 @@ if (!base.includes(marker)) {
 
 mkdirSync(new URL("../dist/blog/", import.meta.url), { recursive: true });
 
-for (const { path, out, title, desc, post } of ROUTES) {
+// titles and descriptions land in HTML attributes: escape them, and pass the
+// replacements as functions so a "$" in the copy is never read as a pattern
+const attr = (s) =>
+  s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+for (const { path, out, title: rawTitle, desc: rawDesc, post } of ROUTES) {
+  const title = rawTitle && attr(rawTitle);
+  const desc = rawDesc && attr(rawDesc);
   let html = base.replace(marker, `<div id="root">${render(path)}</div>`);
   const url = `https://www.azerit.tech${path === "/" ? "/" : path}`;
   html = html
@@ -81,17 +90,17 @@ for (const { path, out, title, desc, post } of ROUTES) {
     .replace(/<meta property="og:url" content="[^"]*"/, `<meta property="og:url" content="${url}"`);
   if (title) {
     html = html
-      .replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
-      .replace(/<meta property="og:title" content="[^"]*"/, `<meta property="og:title" content="${title}"`)
-      .replace(/<meta name="twitter:title" content="[^"]*"/, `<meta name="twitter:title" content="${title}"`);
+      .replace(/<title>[^<]*<\/title>/, () => `<title>${title}</title>`)
+      .replace(/<meta property="og:title" content="[^"]*"/, () => `<meta property="og:title" content="${title}"`)
+      .replace(/<meta name="twitter:title" content="[^"]*"/, () => `<meta name="twitter:title" content="${title}"`);
   }
   if (desc) {
     // the three description tags span multiple lines in index.html, so the
     // pattern must cross newlines between attributes
     html = html
-      .replace(/<meta\s+name="description"\s+content="[^"]*"/, `<meta name="description" content="${desc}"`)
-      .replace(/<meta\s+property="og:description"\s+content="[^"]*"/, `<meta property="og:description" content="${desc}"`)
-      .replace(/<meta\s+name="twitter:description"\s+content="[^"]*"/, `<meta name="twitter:description" content="${desc}"`);
+      .replace(/<meta\s+name="description"\s+content="[^"]*"/, () => `<meta name="description" content="${desc}"`)
+      .replace(/<meta\s+property="og:description"\s+content="[^"]*"/, () => `<meta property="og:description" content="${desc}"`)
+      .replace(/<meta\s+name="twitter:description"\s+content="[^"]*"/, () => `<meta name="twitter:description" content="${desc}"`);
   }
   if (post) {
     // articles: og:type article + BlogPosting data so search engines can show
@@ -99,8 +108,9 @@ for (const { path, out, title, desc, post } of ROUTES) {
     const ld = {
       "@context": "https://schema.org",
       "@type": "BlogPosting",
-      headline: post.title,
-      description: post.description,
+      headline: post.en.title,
+      description: post.en.description,
+      inLanguage: "en",
       datePublished: post.date,
       author: { "@type": "Person", name: post.author },
       publisher: { "@id": "https://www.azerit.tech/#organization" },
@@ -108,7 +118,7 @@ for (const { path, out, title, desc, post } of ROUTES) {
     };
     html = html
       .replace('<meta property="og:type" content="website"', '<meta property="og:type" content="article"')
-      .replace("</head>", `  <script type="application/ld+json">${JSON.stringify(ld)}</script>\n  </head>`);
+      .replace("</head>", () => `  <script type="application/ld+json">${JSON.stringify(ld)}</script>\n  </head>`);
   }
   writeFileSync(new URL(`../dist/${out}`, import.meta.url), html);
   console.log(`Prerendered ${path} into dist/${out}`);
