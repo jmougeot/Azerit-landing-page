@@ -4,12 +4,12 @@ import { TopBar, Footer } from "../components/Nav";
 import { LogoMark } from "../components/Logo";
 import { HeroGlobe } from "../components/HeroGlobe";
 import { DotGridBand } from "../components/DotGridBand";
-import { Email } from "../components/Email";
 import { DemoLink } from "../components/DemoLink";
 import { RepoFeed, type Repo } from "../components/RepoFeed";
 import { FlowStep } from "../components/FlowStep";
 import { CtaCommits } from "../components/CtaCommits";
 import { Seam } from "../components/Seam";
+import { Founders } from "../components/Founders";
 
 // The Remotion player + demo scenes are the heaviest dependency and sit below
 // the fold. lazy() defers the download until the component renders, so we also
@@ -17,8 +17,6 @@ import { Seam } from "../components/Seam";
 const DemoPlayer = lazy(() =>
   import("../components/DemoPlayer").then((m) => ({ default: m.DemoPlayer }))
 );
-import luminePhoto from "../assets/lumine.webp";
-import jacquesPhoto from "../assets/jacques.webp";
 
 // One imaginary search traced through the page: a senior real-time-systems
 // role. The feed shows the repos that prove the skill, the email opens on the
@@ -555,30 +553,7 @@ export function Landing() {
         <div className="container team">
         <span className="tag eyebrow">team</span>
         <h2>Meet the founders</h2>
-        <div className="team-grid">
-          <div className="member">
-            <img src={luminePhoto} alt="Lumine Trentelivres" width="84" height="84" loading="lazy" />
-            <div className="name">Lumine Trentelivres</div>
-            <div className="bio">Co-founder. Centrale Supélec engineer, ex-sales.</div>
-            <div className="links">
-              <a href="https://www.linkedin.com/in/lumine-trentelivres/" target="_blank" rel="noreferrer">
-                linkedin
-              </a>{" "}
-              · <Email user="lumine.builds" domain="gmail.com">email</Email>
-            </div>
-          </div>
-          <div className="member">
-            <img src={jacquesPhoto} alt="Jacques Mougeot" width="84" height="84" loading="lazy" />
-            <div className="name">Jacques Mougeot</div>
-            <div className="bio">Co-founder. Centrale engineer, computer science research</div>
-            <div className="links">
-              <a href="https://www.linkedin.com/in/jacquesmougeot/" target="_blank" rel="noreferrer">
-                linkedin
-              </a>{" "}
-              · <Email user="jacques.mougeot" domain="centrale-med.fr">email</Email>
-            </div>
-          </div>
-        </div>
+        <Founders />
         </div>
       </section>
 

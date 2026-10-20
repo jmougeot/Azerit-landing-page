@@ -5,8 +5,8 @@
 // a real file served with HTTP 200 — required for search engines to index
 // anything beyond "/". 404.html (copied from index.html in CI) keeps
 // handling genuinely unknown paths.
-import { readFileSync, writeFileSync, rmSync } from "node:fs";
-import { render } from "../dist-ssr/entry-prerender.js";
+import { readFileSync, writeFileSync, rmSync, mkdirSync } from "node:fs";
+import { render, POSTS } from "../dist-ssr/entry-prerender.js";
 
 const ROUTES = [
   { path: "/", out: "index.html" },
@@ -34,6 +34,27 @@ const ROUTES = [
     title: "Pricing · Azerit · 300 € / month",
     desc: "Azerit costs 300 € a month: up to 10 open roles, 20+ ranked GitHub candidates per role, verified emails and a personalized first email for each one.",
   },
+  {
+    path: "/about",
+    out: "about.html",
+    title: "About · Azerit",
+    desc: "Azerit is built by two founders who think engineers should be hired on what they've built. Why we read GitHub instead of CVs, and what we believe.",
+  },
+  {
+    // a directory index, not blog.html: the posts live under blog/, and a
+    // blog.html next to a blog/ folder is ambiguous for GitHub Pages
+    path: "/blog/",
+    out: "blog/index.html",
+    title: "Blog · Azerit",
+    desc: "Notes on hiring engineers from their code: sourcing on GitHub, writing outreach engineers answer, and what public code says about a developer.",
+  },
+  ...POSTS.map((post) => ({
+    path: `/blog/${post.slug}`,
+    out: `blog/${post.slug}.html`,
+    title: `${post.title} · Azerit`,
+    desc: post.description,
+    post,
+  })),
 ];
 
 // Azerit used to ship a lead-generation product alongside sourcing, on its own
@@ -50,7 +71,9 @@ if (!base.includes(marker)) {
   throw new Error("Empty #root div not found in dist/index.html");
 }
 
-for (const { path, out, title, desc } of ROUTES) {
+mkdirSync(new URL("../dist/blog/", import.meta.url), { recursive: true });
+
+for (const { path, out, title, desc, post } of ROUTES) {
   let html = base.replace(marker, `<div id="root">${render(path)}</div>`);
   const url = `https://www.azerit.tech${path === "/" ? "/" : path}`;
   html = html
@@ -69,6 +92,23 @@ for (const { path, out, title, desc } of ROUTES) {
       .replace(/<meta\s+name="description"\s+content="[^"]*"/, `<meta name="description" content="${desc}"`)
       .replace(/<meta\s+property="og:description"\s+content="[^"]*"/, `<meta property="og:description" content="${desc}"`)
       .replace(/<meta\s+name="twitter:description"\s+content="[^"]*"/, `<meta name="twitter:description" content="${desc}"`);
+  }
+  if (post) {
+    // articles: og:type article + BlogPosting data so search engines can show
+    // the date and author
+    const ld = {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: post.title,
+      description: post.description,
+      datePublished: post.date,
+      author: { "@type": "Person", name: post.author },
+      publisher: { "@id": "https://www.azerit.tech/#organization" },
+      mainEntityOfPage: url,
+    };
+    html = html
+      .replace('<meta property="og:type" content="website"', '<meta property="og:type" content="article"')
+      .replace("</head>", `  <script type="application/ld+json">${JSON.stringify(ld)}</script>\n  </head>`);
   }
   writeFileSync(new URL(`../dist/${out}`, import.meta.url), html);
   console.log(`Prerendered ${path} into dist/${out}`);

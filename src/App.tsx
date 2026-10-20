@@ -13,6 +13,11 @@ const Terms = lazy(() => import("./pages/Terms").then((m) => ({ default: m.Terms
 const Pricing = lazy(() =>
   import("./pages/Pricing").then((m) => ({ default: m.Pricing }))
 );
+const About = lazy(() => import("./pages/About").then((m) => ({ default: m.About })));
+const Blog = lazy(() => import("./pages/Blog").then((m) => ({ default: m.Blog })));
+const BlogPost = lazy(() =>
+  import("./pages/BlogPost").then((m) => ({ default: m.BlogPost }))
+);
 
 // GitHub Pages serves the same index.html for every route (404 fallback),
 // so the canonical URL must be kept in sync with the current route.
@@ -45,6 +50,9 @@ export function App() {
           <Route path="/legal" element={<Legal />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/pricing" element={<Pricing />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

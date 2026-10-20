@@ -19,6 +19,30 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://www.azerit.tech/about</loc>
+    <lastmod>2026-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.azerit.tech/blog/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.azerit.tech/blog/first-email-engineers-answer</loc>
+    <lastmod>2026-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.azerit.tech/blog/read-the-code-not-the-cv</loc>
+    <lastmod>2026-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.azerit.tech/legal</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>yearly</changefreq>

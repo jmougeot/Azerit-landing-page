@@ -10,6 +10,18 @@ export function TopBar() {
         </Link>
         <div className="topbar-nav">
           <NavLink
+            to="/blog/"
+            className={({ isActive }) => `nav-link nav-secondary${isActive ? " active" : ""}`}
+          >
+            blog
+          </NavLink>
+          <NavLink
+            to="/about"
+            className={({ isActive }) => `nav-link nav-secondary${isActive ? " active" : ""}`}
+          >
+            about
+          </NavLink>
+          <NavLink
             to="/pricing"
             className={({ isActive }) => `nav-link nav-secondary${isActive ? " active" : ""}`}
           >
@@ -30,7 +42,13 @@ export function Footer() {
       <div className="container" style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <LogoMark size={13} /> azerit © {new Date().getFullYear()} · the proof is already on
         GitHub.
-        <Link to="/pricing" style={{ marginLeft: "auto", color: "inherit" }}>
+        <Link to="/about" style={{ marginLeft: "auto", color: "inherit" }}>
+          about
+        </Link>
+        <Link to="/blog/" style={{ color: "inherit" }}>
+          blog
+        </Link>
+        <Link to="/pricing" style={{ color: "inherit" }}>
           pricing
         </Link>
         <Link to="/terms" style={{ color: "inherit" }}>
