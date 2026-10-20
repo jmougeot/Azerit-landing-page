@@ -9,6 +9,14 @@ const post: Post = {
     figure: { en: "0", fr: "0" },
     caption: { en: "false negatives a degree filter ever sees", fr: "faux négatif vu par un filtre sur diplôme" },
   },
+  image: {
+    src: "/blog/img/degree-filters-never-see-their-mistakes.jpg",
+    width: 1200,
+    height: 675,
+    alt: { en: "The Jobs That Last, over the Las Vegas skyline", fr: "The Jobs That Last, sur fond de Las Vegas" },
+    credit: "Paul O'Brien, The Jobs That Last",
+    href: "https://paulobrien.substack.com/p/hr-tech-2026-in-las-vegas-is-where",
+  },
   sources: [
     {
       url: "https://paulobrien.substack.com/p/hr-tech-2026-in-las-vegas-is-where",

@@ -28,3 +28,40 @@ export function PostCover({ post, lang, size }: { post: Post; lang: Lang; size: 
     </div>
   );
 }
+
+// What a post shows as its picture: the source's own image when it has one
+// (credited, linking back to where it comes from), otherwise the drawn cover.
+export function PostVisual({ post, lang, size }: { post: Post; lang: Lang; size: "thumb" | "full" }) {
+  const { image } = post;
+  if (!image) return <PostCover post={post} lang={lang} size={size} />;
+  if (size === "thumb") {
+    return (
+      <img
+        className="post-photo post-photo-thumb"
+        src={image.src}
+        alt=""
+        width={image.width}
+        height={image.height}
+        style={image.focus ? { objectPosition: image.focus } : undefined}
+        loading="lazy"
+      />
+    );
+  }
+  return (
+    <figure className="post-photo-figure">
+      <img
+        className="post-photo"
+        src={image.src}
+        alt={image.alt[lang]}
+        width={image.width}
+        height={image.height}
+      />
+      <figcaption>
+        {lang === "fr" ? "Image : " : "Image: "}
+        <a href={image.href} target="_blank" rel="noreferrer">
+          {image.credit}
+        </a>
+      </figcaption>
+    </figure>
+  );
+}

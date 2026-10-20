@@ -9,6 +9,14 @@ const post: Post = {
     figure: { en: "#hiring-ideas", fr: "#hiring-ideas" },
     caption: { en: "names first, job descriptions later", fr: "des noms d'abord, la fiche de poste après" },
   },
+  image: {
+    src: "/blog/img/cursor-hires-people-not-roles.jpg",
+    width: 1200,
+    height: 600,
+    alt: { en: "Cursor's team at work in their office", fr: "L'équipe de Cursor au travail dans ses bureaux" },
+    credit: "Colossus",
+    href: "https://colossus.com/article/inside-cursor/",
+  },
   sources: [
     {
       url: "https://colossus.com/article/inside-cursor/",

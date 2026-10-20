@@ -6,8 +6,8 @@ import { DemoLink } from "../components/DemoLink";
 import { POSTS, categoryLabel, formatDate } from "../blog/posts";
 import { UI, useLang } from "../blog/lang";
 import { LangSwitch } from "../blog/LangSwitch";
-import { Prose, readingMinutes } from "../blog/Prose";
-import { PostCover } from "../blog/PostCover";
+import { Prose, readingMinutes, typo } from "../blog/Prose";
+import { PostVisual } from "../blog/PostCover";
 import { NotFound } from "./NotFound";
 
 export function BlogPost() {
@@ -45,7 +45,7 @@ export function BlogPost() {
               <span className="tag eyebrow">
                 <Link to={`/blog/?category=${post.category}`}>{categoryLabel(post.category, lang)}</Link>
               </span>
-              <h1>{v.title}</h1>
+              <h1>{typo(v.title)}</h1>
               <p className="post-author">
                 <time dateTime={post.date}>{formatDate(post.date, lang)}</time> · {readingMinutes(v.body)}{" "}
                 {t.minRead} · {t.by} {post.author}
@@ -55,7 +55,7 @@ export function BlogPost() {
           <section className="band">
             <div className="container post-body">
               <div className="post-figure">
-                <PostCover post={post} lang={lang} size="full" />
+                <PostVisual post={post} lang={lang} size="full" />
               </div>
               <Prose source={v.body} />
               {post.sources.length > 0 && (

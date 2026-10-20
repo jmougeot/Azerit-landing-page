@@ -9,6 +9,14 @@ const post: Post = {
     figure: { en: "30", fr: "30" },
     caption: { en: "portfolio companies per talent person at a16z", fr: "boîtes en portefeuille par personne de l'équipe talent d'a16z" },
   },
+  image: {
+    src: "/blog/img/your-vc-is-not-your-recruiter.jpg",
+    width: 1200,
+    height: 843,
+    alt: { en: "A telephone operator at a switchboard", fr: "Une standardiste devant un standard téléphonique" },
+    credit: "FWD Motion (Brian Fink), via Unsplash",
+    href: "https://fwdmotion.substack.com/p/the-switchboard-problem",
+  },
   sources: [
     {
       url: "https://fwdmotion.substack.com/p/the-switchboard-problem",

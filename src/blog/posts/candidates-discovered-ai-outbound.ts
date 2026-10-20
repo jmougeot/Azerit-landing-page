@@ -9,6 +9,14 @@ const post: Post = {
     figure: { en: "53%", fr: "53 %" },
     caption: { en: "of HR people annoyed by robotic AI outreach", fr: "des RH agacés par l'outreach IA robotique" },
   },
+  image: {
+    src: "/blog/img/candidates-discovered-ai-outbound.jpg",
+    width: 1200,
+    height: 675,
+    alt: { en: "An inbox flooded with identical candidate emails", fr: "Une boîte mail inondée d'emails de candidats identiques" },
+    credit: "Cutshort",
+    href: "https://newsletter.cutshort.io/p/brace-yourself-candidates-are-coming",
+  },
   sources: [
     {
       url: "https://newsletter.cutshort.io/p/brace-yourself-candidates-are-coming",

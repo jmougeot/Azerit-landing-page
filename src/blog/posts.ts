@@ -42,7 +42,19 @@ export type Post = {
   date: string; // YYYY-MM-DD
   author: string;
   category: CategoryId;
-  // drawn by PostCover: the article's key figure and what it counts
+  // a picture from the original source, shown with its credit; posts
+  // without one fall back to the drawn cover below
+  image?: {
+    src: string; // under public/blog/img/
+    width: number;
+    height: number;
+    alt: { en: string; fr: string };
+    credit: string;
+    href: string; // the source page the picture comes from
+    // what the 16:10 index thumbnail keeps when it crops (CSS object-position)
+    focus?: string;
+  };
+  // drawn by PostCover when there is no image: the key figure and what it counts
   cover: {
     figure: { en: string; fr: string };
     caption: { en: string; fr: string };

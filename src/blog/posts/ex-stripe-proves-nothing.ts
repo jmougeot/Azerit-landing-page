@@ -9,6 +9,14 @@ const post: Post = {
     figure: { en: "#112", fr: "n° 112" },
     caption: { en: "an employee number, not a proof", fr: "un matricule, pas une preuve" },
   },
+  image: {
+    src: "/blog/img/ex-stripe-proves-nothing.jpg",
+    width: 940,
+    height: 667,
+    alt: { en: "An old engraving of a scholar measuring at his desk", fr: "Une gravure ancienne d'un savant qui mesure à son bureau" },
+    credit: "next play",
+    href: "https://nextplayso.substack.com/p/how-to-assess-talent-density-at-a",
+  },
   sources: [
     {
       url: "https://nextplayso.substack.com/p/how-to-assess-talent-density-at-a",

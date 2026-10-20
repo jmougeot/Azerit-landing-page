@@ -5,8 +5,8 @@ import { Seam } from "../components/Seam";
 import { CATEGORIES, POSTS, categoryLabel, formatDate, type CategoryId } from "../blog/posts";
 import { UI, useLang } from "../blog/lang";
 import { LangSwitch } from "../blog/LangSwitch";
-import { readingMinutes } from "../blog/Prose";
-import { PostCover } from "../blog/PostCover";
+import { readingMinutes, typo } from "../blog/Prose";
+import { PostVisual } from "../blog/PostCover";
 
 export function Blog() {
   const [lang, setLang] = useLang();
@@ -74,11 +74,11 @@ export function Blog() {
                     </span>
                   </span>
                   <span className="post-row-main">
-                    <span className="post-row-title">{v.title}</span>
-                    <span className="post-row-desc">{v.description}</span>
+                    <span className="post-row-title">{typo(v.title)}</span>
+                    <span className="post-row-desc">{typo(v.description)}</span>
                   </span>
                   <span className="post-row-thumb">
-                    <PostCover post={post} lang={lang} size="thumb" />
+                    <PostVisual post={post} lang={lang} size="thumb" />
                   </span>
                 </Link>
               );

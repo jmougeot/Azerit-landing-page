@@ -116,6 +116,16 @@ for (const { path, out, title: rawTitle, desc: rawDesc, post } of ROUTES) {
       publisher: { "@id": "https://www.azerit.tech/#organization" },
       mainEntityOfPage: url,
     };
+    if (post.image) {
+      // share previews show the article's own picture instead of the site card
+      const img = `https://www.azerit.tech${post.image.src}`;
+      ld.image = img;
+      html = html
+        .replace(/<meta property="og:image" content="[^"]*"/, () => `<meta property="og:image" content="${img}"`)
+        .replace(/<meta property="og:image:width" content="[^"]*"/, () => `<meta property="og:image:width" content="${post.image.width}"`)
+        .replace(/<meta property="og:image:height" content="[^"]*"/, () => `<meta property="og:image:height" content="${post.image.height}"`)
+        .replace(/<meta name="twitter:image" content="[^"]*"/, () => `<meta name="twitter:image" content="${img}"`);
+    }
     html = html
       .replace('<meta property="og:type" content="website"', '<meta property="og:type" content="article"')
       .replace("</head>", () => `  <script type="application/ld+json">${JSON.stringify(ld)}</script>\n  </head>`);

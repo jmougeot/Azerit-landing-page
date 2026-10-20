@@ -9,6 +9,14 @@ const post: Post = {
     figure: { en: "×10", fr: "×10" },
     caption: { en: "gap between good and great engineers", fr: "d'écart entre bons et très bons ingénieurs" },
   },
+  image: {
+    src: "/blog/img/ai-widens-the-engineer-gap.jpg",
+    width: 1200,
+    height: 675,
+    alt: { en: "Jad Naous on the a16z podcast", fr: "Jad Naous dans le podcast d'a16z" },
+    credit: "© a16z, YouTube",
+    href: "https://www.youtube.com/watch?v=blkIGLlZePg",
+  },
   sources: [
     {
       url: "https://www.youtube.com/watch?v=blkIGLlZePg",

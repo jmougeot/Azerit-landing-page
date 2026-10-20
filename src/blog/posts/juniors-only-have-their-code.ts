@@ -9,6 +9,14 @@ const post: Post = {
     figure: { en: "27 → 9%", fr: "27 → 9 %" },
     caption: { en: "junior share of tech hires at Anthropic", fr: "part des juniors dans les recrutements tech chez Anthropic" },
   },
+  image: {
+    src: "/blog/img/juniors-only-have-their-code.png",
+    width: 1200,
+    height: 675,
+    alt: { en: "Chart: the decline of entry-level technical hiring at Anthropic", fr: "Graphique : le déclin des embauches techniques juniors chez Anthropic" },
+    credit: "© Anthropic, How employment is changing at Anthropic",
+    href: "https://mindandmachineweekly.substack.com/p/the-six-to-one-workplace-what-anthropics",
+  },
   sources: [
     {
       url: "https://mindandmachineweekly.substack.com/p/the-six-to-one-workplace-what-anthropics",

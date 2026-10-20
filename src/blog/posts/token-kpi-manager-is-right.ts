@@ -9,6 +9,14 @@ const post: Post = {
     figure: { en: "$10k", fr: "10 k$" },
     caption: { en: "of models per person, per month", fr: "de modèles par personne et par mois" },
   },
+  image: {
+    src: "/blog/img/token-kpi-manager-is-right.jpg",
+    width: 1200,
+    height: 675,
+    alt: { en: "Alex Mashrabov on 20VC", fr: "Alex Mashrabov sur 20VC" },
+    credit: "© 20VC with Harry Stebbings, YouTube",
+    href: "https://www.youtube.com/watch?v=jszn8rFtxm4",
+  },
   sources: [
     {
       url: "https://x.com/GergelyOrosz/status/2111924637126820076",

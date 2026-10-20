@@ -9,6 +9,14 @@ const post: Post = {
     figure: { en: "500", fr: "500" },
     caption: { en: "plausible engineers before your coffee cools", fr: "ingénieurs plausibles avant que le café refroidisse" },
   },
+  image: {
+    src: "/blog/img/search-is-free-context-is-not.jpg",
+    width: 1200,
+    height: 675,
+    alt: { en: "The Context Economy", fr: "The Context Economy" },
+    credit: "FWD Motion (Brian Fink)",
+    href: "https://fwdmotion.substack.com/p/the-context-economy",
+  },
   sources: [
     {
       url: "https://fwdmotion.substack.com/p/the-context-economy",

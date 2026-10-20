@@ -7,7 +7,17 @@ import { Link } from "react-router-dom";
 // Inside a block: [label](url) links (internal when the url starts with "/")
 // and **bold**. Single line breaks inside a paragraph are joined with a space.
 
-function inline(text: string): ReactNode[] {
+// French typography: keep "1 000", "68 %", "mot :" and « guillemets » from
+// breaking across lines. A no-op on English text, which has none of these.
+export function typo(text: string) {
+  return text
+    .replace(/(\d) (?=\d{3}\b)/g, "$1\u00a0")
+    .replace(/ ([%:;?!»])/g, "\u00a0$1")
+    .replace(/« /g, "«\u00a0");
+}
+
+function inline(raw: string): ReactNode[] {
+  const text = typo(raw);
   const out: ReactNode[] = [];
   const re = /\[([^\]]+)\]\(([^)\s]+)\)|\*\*([^*]+)\*\*/g;
   let last = 0;

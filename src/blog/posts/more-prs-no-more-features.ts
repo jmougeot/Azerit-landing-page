@@ -9,6 +9,14 @@ const post: Post = {
     figure: { en: "+23%", fr: "+23 %" },
     caption: { en: "pull requests, about zero more features", fr: "de PR, à peu près zéro feature de plus" },
   },
+  image: {
+    src: "/blog/img/more-prs-no-more-features.jpg",
+    width: 1200,
+    height: 675,
+    alt: { en: "Bundles of cables running through a building site", fr: "Des faisceaux de câbles sur un chantier" },
+    credit: "The Last Software Engineer",
+    href: "https://thelastsoftwareengineer.substack.com/p/the-future-of-ai-software-is-already",
+  },
   sources: [
     {
       url: "https://thelastsoftwareengineer.substack.com/p/the-future-of-ai-software-is-already",

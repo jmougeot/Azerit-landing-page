@@ -9,6 +9,14 @@ const post: Post = {
     figure: { en: "2-4", fr: "2 à 4" },
     caption: { en: "levels below the abstraction", fr: "niveaux sous l'abstraction" },
   },
+  image: {
+    src: "/blog/img/turbopuffer-levels-below-abstraction.png",
+    width: 1200,
+    height: 630,
+    alt: { en: "The turbopuffer logo", fr: "Le logo de turbopuffer" },
+    credit: "turbopuffer",
+    href: "https://turbopuffer.com/",
+  },
   sources: [
     {
       url: "https://x.com/Sirupsen/status/1814383612566831512",

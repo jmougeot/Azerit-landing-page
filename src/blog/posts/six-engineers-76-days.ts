@@ -9,6 +9,15 @@ const post: Post = {
     figure: { en: "30 → 6", fr: "30 → 6" },
     caption: { en: "engineers, in 76 days", fr: "ingénieurs, en 76 jours" },
   },
+  image: {
+    src: "/blog/img/six-engineers-76-days.png",
+    width: 1200,
+    height: 630,
+    alt: { en: "Six engineers completed a 30-person project in 76 days", fr: "Six ingénieurs ont mené un projet de 30 personnes en 76 jours" },
+    credit: "Kiro (AWS)",
+    href: "https://kiro.dev/case-studies/bedrock/",
+    focus: "left center",
+  },
   sources: [
     {
       url: "https://kiro.dev/case-studies/bedrock/",

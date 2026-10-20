@@ -9,6 +9,14 @@ const post: Post = {
     figure: { en: "68%", fr: "68 %" },
     caption: { en: "of students admit cheating with AI", fr: "des étudiants avouent tricher avec l'IA" },
   },
+  image: {
+    src: "/blog/img/degrees-prove-nothing-work-does.jpg",
+    width: 1200,
+    height: 675,
+    alt: { en: "An empty university lecture hall", fr: "Un amphithéâtre universitaire vide" },
+    credit: "Open Questions",
+    href: "https://openquestionsblog.substack.com/p/ai-is-killing-higher-ed-heres-how",
+  },
   sources: [
     {
       url: "https://openquestionsblog.substack.com/p/ai-is-killing-higher-ed-heres-how",

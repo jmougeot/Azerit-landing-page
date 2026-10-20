@@ -9,6 +9,14 @@ const post: Post = {
     figure: { en: "80%", fr: "80 %" },
     caption: { en: "of agent time spent waiting for a human", fr: "du temps des agents passé à attendre un humain" },
   },
+  image: {
+    src: "/blog/img/reviewing-is-the-skill-to-hire-for.png",
+    width: 1200,
+    height: 750,
+    alt: { en: "Chart: reading what Claude produces becomes a full-time job", fr: "Graphique : lire ce que produit Claude devient un temps plein" },
+    credit: "© Anthropic, How employment is changing at Anthropic",
+    href: "https://mindandmachineweekly.substack.com/p/the-six-to-one-workplace-what-anthropics",
+  },
   sources: [
     {
       url: "https://mindandmachineweekly.substack.com/p/the-six-to-one-workplace-what-anthropics",

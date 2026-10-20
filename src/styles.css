@@ -3015,7 +3015,7 @@ main > .band:nth-of-type(4n + 4) {
 }
 .post-row {
   display: grid;
-  grid-template-columns: 170px minmax(0, 1fr) 200px;
+  grid-template-columns: 170px minmax(0, 1fr) 220px;
   gap: 32px;
   align-items: start;
   padding: 28px 0;
@@ -3139,6 +3139,39 @@ main > .band:nth-of-type(4n + 4) {
   margin-bottom: 40px;
 }
 
+/* ---- blog photo : the source's own picture, credited under it ---- */
+.post-photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-soft);
+}
+/* in the index every thumbnail is cut to the same 16:10 frame as the covers,
+   close to the 16:9 the sources publish, so their titles stay in frame */
+.post-photo-thumb {
+  aspect-ratio: 16 / 10;
+  height: auto;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.post-photo-figure figcaption {
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+.post-photo-figure figcaption a {
+  color: inherit;
+  text-decoration: none;
+}
+.post-photo-figure figcaption a:hover {
+  color: var(--green);
+  text-decoration: underline;
+}
+
 /* ---- blog cover : the article's key figure on a dark terminal tile ---- */
 /* sizes are container units (cqw), so one design serves the 200px index
    thumbnail and the full-width cover on the post. Each category tints the
@@ -3162,7 +3195,7 @@ main > .band:nth-of-type(4n + 4) {
     var(--dark);
 }
 .cover-thumb {
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 10;
   border-radius: 6px;
 }
 .cover-interviews {
@@ -3233,13 +3266,13 @@ main > .band:nth-of-type(4n + 4) {
 }
 /* the thumbnail is small: bigger figure, caption kept, footer dropped */
 .cover-thumb .cover-figure {
-  font-size: min(19cqw, calc(138cqw / var(--len, 4)));
+  font-size: min(17cqw, calc(138cqw / var(--len, 4)));
 }
 .cover-thumb .cover-caption {
   font-size: max(9.5px, 5.4cqw);
   max-width: none;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -3325,7 +3358,7 @@ main > .band:nth-of-type(4n + 4) {
     border-top: 1px dashed var(--border);
   }
   .post-row {
-    grid-template-columns: minmax(0, 1fr) 96px;
+    grid-template-columns: minmax(0, 1fr) 116px;
     gap: 10px 16px;
     padding: 22px 0;
   }
