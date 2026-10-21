@@ -2,16 +2,18 @@ import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 
 // The landing's "how it works", as a machine read left to right. Rough,
-// tumbling blocks come out of a dark "github" block and ride two belts laid
-// out as terraces. Each of the four steps is a numbered booth the belt runs
-// through: [ 1 · scan ] and [ 2 · read ] on the lower belt, [ 3 · enrich ]
-// and [ 4 · rank ] on the upper one, each booth straightening and tinting
-// a block one step as it passes (its roof lights up). Between the two belts
-// a tower crane lifts every block from the end of the lower belt onto the
-// start of the upper one. At rank, a share of the blocks is tipped off the
-// front edge; the rest stack up on the top platform as the shortlist. No
-// hands anywhere. Lives in its own chunk: the AutomationScene wrapper
-// dynamic-imports this module once mounted.
+// tumbling blocks come out of a dark "github" block (blinking lights, a
+// radar sweeping on its roof) and ride two belts laid out as terraces.
+// Each of the four steps is a scanner gate the belt runs through: a thin
+// teal frame with a glass pane, a scan line sweeping it, a light on top,
+// and a burst of sparks when a block crosses, straightened and tinted one
+// step. [ 1 ] and [ 2 ] on the lower belt, [ 3 ] and [ 4 ] on the upper
+// one. Between the belts a tower crane lifts every block from the end of
+// the lower belt onto the start of the upper one. At rank, a share of the
+// blocks is tipped off the front edge into a bin; the rest stack up on the
+// top platform as the shortlist. No hands anywhere. Lives in its own
+// chunk: the AutomationScene wrapper dynamic-imports this module once
+// mounted.
 
 // ---- layout (scene units) ------------------------------------------------
 const CUBE = 0.5;
@@ -33,62 +35,67 @@ const BELTS: Belt[] = [
 ];
 const STACK_X = 9.6; // the platform, level with the upper belt
 const PLATFORM = { x0: 8.5, x1: 10.7 };
-// the four booths: which belt, where on it
+// the four gates: which belt, where on it
 const STEP_DEFS = [
   { belt: 0, x: -5.9, label: "scan" },
   { belt: 0, x: -3.3, label: "read" },
   { belt: 1, x: 2.9, label: "enrich" },
   { belt: 1, x: 5.5, label: "rank" },
 ];
-const BOOTH_LEN = 1.4; // along the belt
-const BOOTH_H = 1.3; // clearance over the belt
-const WALL = 0.12;
+const GATE_H = 1.55;
+const GATE_W = TRACK_W + 0.2;
+const BAR = 0.075;
 // the crane: mast behind the belts, between the two; its jib reaches the
 // end of the lower belt and the start of the upper one at the same radius
 const CRANE_X = -0.2;
 const CRANE_Z = -2.3;
-const MAST_TOP = 4.1; // the slewing unit sits here
+const MAST_TOP = 4.1;
 const JIB_LEN = 3.7;
 const COUNTER_LEN = 1.4;
+// the bin the rejected blocks fall into, in front of the rank gate
+const BIN = { x: STEP_DEFS[3].x + 0.5, z: TRACK_W / 2 + 0.72, w: 0.95, h: 0.75 };
 
 // ---- motion ---------------------------------------------------------------
 const SPEED = 1.0; // units / s along a belt
 const SPAWN_EVERY = 2.4; // s
 const JUMP_TIME = 0.55; // s, belt end -> stack slot
 const POP_TIME = 0.28; // s, a full stack clears
-const DROP_TIME = 1.0; // s, a rejected block tips off the belt
-const REJECT_RATE = 0.3; // share of blocks the rank booth turns away
-const SETTLE = 5; // 1/s, how fast a block straightens after a booth
-// one crane cycle: down, up, slew across, down, up, slew back (s)
+const DROP_TIME = 1.1; // s, a rejected block tips into the bin
+const REJECT_RATE = 0.3; // share of blocks the rank gate turns away
+const SETTLE = 5; // 1/s, how fast a block straightens after a gate
 const CRANE = { lower: 0.32, lift: 0.28, slew: 0.6, lower2: 0.26, lift2: 0.22, back: 0.55 };
 const HOOK_UP = 3.3; // the gripper's underside at rest
+const SPARKS = 14; // per gate crossing
+const SPARK_LIFE = 0.65; // s
 
 // ---- palette --------------------------------------------------------------
-// one stop per booth passed: raw dark -> slate -> teal -> teal -> bright teal
 const STAGE = ["#2a3139", "#56656f", "#0f766e", "#129787", "#2ec4ad"].map((c) => new THREE.Color(c));
 const COL_TRACK = "#e2e8ed";
 const COL_SOURCE = "#0f151d";
-const COL_BOOTH = "#0f766e";
+const COL_GATE = "#0f766e";
 const COL_SCAN = "#2ec4ad";
 const COL_STEEL = "#2a3139";
 const COL_CRANE = "#9db03a"; // the gem's chartreuse, dark enough on white
+const COL_LIME = "#c6d36a";
 
 type Phase = "free" | "track" | "carried" | "jump" | "stack" | "pop" | "drop";
 type Cube = {
   phase: Phase;
   belt: number;
   x: number;
-  passed: number; // booths crossed so far
-  tilt: THREE.Euler; // the disorder it arrives with, lerped away per booth
+  passed: number;
+  tilt: THREE.Euler;
   size: number;
   order: number; // 0 = as it arrived, 1 = straight and true
   reject: boolean;
   color: THREE.Color;
   slot: number;
-  t: number; // jump / pop / drop progress
+  t: number;
   from: THREE.Vector3;
 };
 type CraneState = "idle" | "lower" | "lift" | "slew" | "lower2" | "lift2" | "back";
+type Spark = { life: number; pos: THREE.Vector3; vel: THREE.Vector3; color: THREE.Color };
+type Ring = { t: number; mesh: THREE.Mesh<THREE.RingGeometry, THREE.MeshBasicMaterial> };
 
 function seeded(n: number) {
   const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
@@ -102,7 +109,7 @@ export function initAutomation(container: HTMLElement): () => void {
   try {
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   } catch {
-    return () => {}; // no WebGL: the page just has no picture there
+    return () => {};
   }
   renderer.setClearColor(0x000000, 0);
   renderer.shadowMap.enabled = true;
@@ -113,7 +120,7 @@ export function initAutomation(container: HTMLElement): () => void {
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const scene = new THREE.Scene();
-  const world = new THREE.Group(); // takes the pointer parallax
+  const world = new THREE.Group();
   scene.add(world);
 
   // orthographic camera high and to the front-left, turned only 30° off the
@@ -151,6 +158,8 @@ export function initAutomation(container: HTMLElement): () => void {
     parent.add(m);
     return m;
   };
+  const glow = (color: string, opacity = 1) =>
+    keep(new THREE.MeshBasicMaterial({ color, transparent: opacity < 1, opacity, depthWrite: false }));
   // a mono "[ … ]" stencil, drawn once into a texture
   const stencil = (text: string, px: number, w: number, h: number, color: string) => {
     const c = document.createElement("canvas");
@@ -175,9 +184,9 @@ export function initAutomation(container: HTMLElement): () => void {
   floor.receiveShadow = true;
   world.add(floor);
 
-  // ---- the terraces and the platform: solid blocks standing on the floor,
-  // the second one a step higher ------------------------------------------
+  // ---- the terraces and the platform ----------------------------------
   const slabMat = keep(new THREE.MeshStandardMaterial({ color: COL_TRACK, roughness: 1, metalness: 0 }));
+  const steelMat = keep(new THREE.MeshStandardMaterial({ color: COL_STEEL, roughness: 0.5, metalness: 0.2 }));
   const terrace = (x0: number, x1: number, top: number, w = TRACK_W) => {
     const h = top - FLOOR;
     const m = solid(new RoundedBoxGeometry(x1 - x0, h, w, 2, 0.05), slabMat);
@@ -186,23 +195,76 @@ export function initAutomation(container: HTMLElement): () => void {
   for (const b of BELTS) terrace(b.slab0, b.slab1, b.top);
   terrace(PLATFORM.x0, PLATFORM.x1, BELTS[1].top, 2.2);
 
-  // ---- the source: the dark block the raw cubes come out of ------------
+  // the head pulleys: a striped roller at each end of each belt, turning
+  const stripeCanvas = document.createElement("canvas");
+  stripeCanvas.width = 64;
+  stripeCanvas.height = 8;
+  const sctx = stripeCanvas.getContext("2d")!;
+  sctx.fillStyle = "#b9c4cc";
+  sctx.fillRect(0, 0, 64, 8);
+  sctx.fillStyle = "#59636e";
+  for (let i = 0; i < 64; i += 16) sctx.fillRect(i, 0, 8, 8);
+  const stripeTex = keep(new THREE.CanvasTexture(stripeCanvas));
+  stripeTex.colorSpace = THREE.SRGBColorSpace;
+  stripeTex.wrapS = THREE.RepeatWrapping;
+  stripeTex.repeat.set(3, 1);
+  const rollerMat = keep(new THREE.MeshStandardMaterial({ map: stripeTex, roughness: 0.6, metalness: 0.2 }));
+  const rollerGeo = keep(new THREE.CylinderGeometry(0.13, 0.13, TRACK_W - 0.1, 20));
+  const rollers: THREE.Mesh[] = [];
+  const roller = (x: number, top: number) => {
+    const holder = new THREE.Group();
+    holder.position.set(x, top - 0.13, 0);
+    holder.rotation.x = Math.PI / 2; // the cylinder's axis along z
+    world.add(holder);
+    const r = solid(rollerGeo, rollerMat, holder);
+    rollers.push(r);
+  };
+  for (const b of BELTS) {
+    roller(b.slab1 + 0.08, b.top);
+    roller(b.slab0 - 0.08, b.top);
+  }
+
+  // ---- the source: the dark block the raw cubes come out of, with a row
+  // of blinking lights and a radar sweeping on its roof ------------------
+  const SRC_H = 2.1;
   const source = solid(
-    new RoundedBoxGeometry(1.7, 2.1, TRACK_W + 0.1, 2, 0.06),
+    new RoundedBoxGeometry(1.7, SRC_H, TRACK_W + 0.1, 2, 0.06),
     keep(new THREE.MeshStandardMaterial({ color: COL_SOURCE, roughness: 0.55, metalness: 0.1 }))
   );
-  source.position.set(SOURCE_FACE - 0.85, BELTS[0].top + 1.05, 0);
+  const srcX = SOURCE_FACE - 0.85;
+  const srcTop = BELTS[0].top + SRC_H;
+  source.position.set(srcX, BELTS[0].top + SRC_H / 2, 0);
+  const srcFront = (TRACK_W + 0.1) / 2 + 0.004;
   const sourceSign = new THREE.Mesh(keep(new THREE.PlaneGeometry(1.5, 0.375)), stencil("[ github ]", 56, 512, 128, COL_SCAN));
-  sourceSign.position.set(SOURCE_FACE - 0.85, BELTS[0].top + 1.5, (TRACK_W + 0.1) / 2 + 0.004);
+  sourceSign.position.set(srcX, BELTS[0].top + 1.35, srcFront);
   world.add(sourceSign);
+  const ledGeo = keep(new THREE.PlaneGeometry(0.09, 0.09));
+  const LED_COLORS = [COL_SCAN, COL_SCAN, COL_LIME, COL_SCAN, "#6cb6ff", COL_SCAN];
+  const leds = LED_COLORS.map((c, i) => {
+    const mat = keep(new THREE.MeshBasicMaterial({ color: c }));
+    const m = new THREE.Mesh(ledGeo, mat);
+    m.position.set(srcX - 0.5 + (i % 3) * 0.2, BELTS[0].top + 1.85 - Math.floor(i / 3) * 0.17, srcFront);
+    world.add(m);
+    return { mat, on: new THREE.Color(c), off: new THREE.Color(c).multiplyScalar(0.22), rate: 1.6 + seeded(i + 3) * 3, phase: seeded(i + 9) * 6.3 };
+  });
+  const radarRing = new THREE.Mesh(keep(new THREE.RingGeometry(0.5, 0.54, 40)), glow(COL_SCAN, 0.9));
+  radarRing.rotation.x = -Math.PI / 2;
+  radarRing.position.set(srcX, srcTop + 0.004, 0);
+  world.add(radarRing);
+  const radarSweep = new THREE.Mesh(keep(new THREE.CircleGeometry(0.5, 24, 0, Math.PI / 3)), glow(COL_SCAN, 0.45));
+  radarSweep.rotation.x = -Math.PI / 2;
+  radarSweep.position.set(srcX, srcTop + 0.006, 0);
+  world.add(radarSweep);
+  const radarDot = new THREE.Mesh(keep(new THREE.SphereGeometry(0.05, 10, 10)), glow(COL_SCAN));
+  radarDot.position.set(srcX, srcTop + 0.03, 0);
+  world.add(radarDot);
 
-  // ---- the belts: dashed teal lines marching at the cubes' speed, the
-  // landing's marching-dash connectors in 3D ------------------------------
+  // ---- the belts: dashed teal lines marching at the cubes' speed --------
   const dashCanvas = document.createElement("canvas");
   dashCanvas.width = 64;
   dashCanvas.height = 8;
   const dctx = dashCanvas.getContext("2d")!;
-  dctx.fillStyle = COL_BOOTH;
+  dctx.fillStyle = COL_GATE;
   dctx.fillRect(0, 0, 36, 8);
   const DASH_PERIOD = 0.55;
   const belts = BELTS.map((bd) => {
@@ -222,45 +284,76 @@ export function initAutomation(container: HTMLElement): () => void {
     return { tex };
   });
 
-  // ---- the booths: two teal walls either side of the belt, a translucent
-  // roof that lights up when a block passes under it, the step's number on
-  // the front wall --------------------------------------------------------
-  const boothMat = keep(new THREE.MeshStandardMaterial({ color: COL_BOOTH, roughness: 0.5, metalness: 0.1 }));
-  const booths = STEP_DEFS.map((sd, i) => {
+  // ---- the gates: a thin teal frame across the belt with a glass pane,
+  // a scan line sweeping it, a light on top -------------------------------
+  const gateMat = keep(
+    new THREE.MeshStandardMaterial({ color: COL_GATE, roughness: 0.45, metalness: 0.15, emissive: new THREE.Color(COL_GATE), emissiveIntensity: 0.12 })
+  );
+  const barV = keep(new RoundedBoxGeometry(BAR, GATE_H, BAR, 1, 0.02));
+  const barH = keep(new RoundedBoxGeometry(BAR, BAR, GATE_W, 1, 0.02));
+  const footGeo = keep(new RoundedBoxGeometry(0.22, 0.08, 0.22, 1, 0.02));
+  const paneGeo = keep(new THREE.PlaneGeometry(GATE_H - BAR, GATE_W - BAR));
+  const lineGeo = keep(new THREE.PlaneGeometry(0.035, GATE_W - BAR - 0.02));
+  const lampGeo = keep(new THREE.SphereGeometry(0.055, 12, 12));
+  const gates = STEP_DEFS.map((sd) => {
     const belt = BELTS[sd.belt];
-    const roofY = belt.top + BOOTH_H;
-    const wallH = roofY - FLOOR;
-    const wallZ = TRACK_W / 2 + 0.16 + WALL / 2;
-    for (const z of [-wallZ, wallZ]) {
-      const wall = solid(new RoundedBoxGeometry(BOOTH_LEN, wallH, WALL, 1, 0.02), boothMat);
-      wall.position.set(sd.x, FLOOR + wallH / 2, z);
+    const g = new THREE.Group();
+    g.position.set(sd.x, belt.top, 0);
+    world.add(g);
+    for (const z of [-GATE_W / 2 + BAR / 2, GATE_W / 2 - BAR / 2]) {
+      const bar = solid(barV, gateMat, g);
+      bar.position.set(0, GATE_H / 2, z);
+      const foot = solid(footGeo, gateMat, g);
+      foot.position.set(0, 0.04, z);
     }
-    // the roof: a teal pane the camera looks down through
-    const roofMat = keep(
-      new THREE.MeshBasicMaterial({ color: COL_SCAN, transparent: true, opacity: 0.32, side: THREE.DoubleSide, depthWrite: false })
+    const top = solid(barH, gateMat, g);
+    top.position.set(0, GATE_H - BAR / 2, 0);
+    const paneMat = keep(
+      new THREE.MeshBasicMaterial({ color: COL_SCAN, transparent: true, opacity: 0.1, side: THREE.DoubleSide, depthWrite: false })
     );
-    const roof = new THREE.Mesh(keep(new THREE.PlaneGeometry(BOOTH_LEN, 2 * wallZ + WALL)), roofMat);
-    roof.rotation.x = -Math.PI / 2;
-    roof.position.set(sd.x, roofY, 0);
-    world.add(roof);
-    // a thin teal rim around the roof so its edge reads from above
-    const rim = solid(new RoundedBoxGeometry(BOOTH_LEN + 0.06, 0.06, 2 * wallZ + WALL + 0.06, 1, 0.02), boothMat);
-    rim.position.set(sd.x, roofY + 0.03, 0);
-    // the number on the front wall
-    const sign = new THREE.Mesh(keep(new THREE.PlaneGeometry(0.9, 0.9)), stencil(String(i + 1), 150, 256, 256, "#e8f6f3"));
-    sign.position.set(sd.x, FLOOR + wallH - 0.62, wallZ + WALL / 2 + 0.004);
-    world.add(sign);
-    return { belt: sd.belt, x: sd.x, label: sd.label, roofMat, flash: 0 };
+    const pane = new THREE.Mesh(paneGeo, paneMat);
+    pane.rotation.y = Math.PI / 2;
+    pane.rotation.z = Math.PI / 2;
+    pane.position.set(0, GATE_H / 2, 0);
+    g.add(pane);
+    // the scan line: a bright bar sweeping the pane top to bottom
+    const lineMat = keep(new THREE.MeshBasicMaterial({ color: COL_SCAN, transparent: true, opacity: 0.85, side: THREE.DoubleSide, depthWrite: false }));
+    const line = new THREE.Mesh(lineGeo, lineMat);
+    line.rotation.y = Math.PI / 2;
+    line.rotation.z = Math.PI / 2;
+    line.position.set(0, GATE_H / 2, 0);
+    g.add(line);
+    // the lamp on the top bar
+    const lampMat = keep(new THREE.MeshBasicMaterial({ color: COL_SCAN }));
+    const lamp = new THREE.Mesh(lampGeo, lampMat);
+    lamp.position.set(0, GATE_H + 0.05, 0);
+    g.add(lamp);
+    return { belt: sd.belt, x: sd.x, label: sd.label, paneMat, line, lineMat, lampMat, flash: 0, sweep: seeded(sd.x) };
   });
+  const lampOn = new THREE.Color(COL_SCAN);
+  const lampDim = new THREE.Color(COL_GATE);
 
-  // ---- the crane: a tower crane behind the belts. Lattice mast, slewing
-  // unit with cab, jib truss, counter-jib and counterweight, apex with
-  // pendants, trolley, cable, gripper ---------------------------------------
+  // ---- the bin the rank gate tips the rejects into ----------------------
+  const binWallGeo = keep(new RoundedBoxGeometry(BIN.w, BIN.h, 0.06, 1, 0.02));
+  const binSideGeo = keep(new RoundedBoxGeometry(0.06, BIN.h, BIN.w, 1, 0.02));
+  const binBase = BELTS[1].top - RISE + 0.0; // stands on the lower terrace's level? no: on the floor
+  const binY = FLOOR + BIN.h / 2;
+  for (const dz of [-1, 1]) {
+    const w = solid(binWallGeo, steelMat);
+    w.position.set(BIN.x, binY, BIN.z + (dz * (BIN.w - 0.06)) / 2);
+  }
+  for (const dx of [-1, 1]) {
+    const w = solid(binSideGeo, steelMat);
+    w.position.set(BIN.x + (dx * (BIN.w - 0.06)) / 2, binY, BIN.z);
+  }
+  const binFloor = solid(new RoundedBoxGeometry(BIN.w, 0.06, BIN.w, 1, 0.02), steelMat);
+  binFloor.position.set(BIN.x, FLOOR + 0.03, BIN.z);
+  void binBase;
+
+  // ---- the crane: a tower crane behind the belts -----------------------
   const craneMat = keep(new THREE.MeshStandardMaterial({ color: COL_CRANE, roughness: 0.55, metalness: 0.1 }));
-  const steelMat = keep(new THREE.MeshStandardMaterial({ color: COL_STEEL, roughness: 0.5, metalness: 0.2 }));
   const base = solid(new RoundedBoxGeometry(1.1, 0.3, 1.1, 1, 0.03), steelMat);
   base.position.set(CRANE_X, FLOOR + 0.15, CRANE_Z);
-  // the mast: four chords and rungs on every side, like a lattice tower
   const MAST_W = 0.36;
   const mastH = MAST_TOP - FLOOR;
   const chordGeo = keep(new RoundedBoxGeometry(0.06, mastH, 0.06, 1, 0.01));
@@ -280,7 +373,6 @@ export function initAutomation(container: HTMLElement): () => void {
       b.position.set(CRANE_X + (s * MAST_W) / 2, y, CRANE_Z);
     }
   }
-  // the slewing unit: everything above the mast turns together
   const slew = new THREE.Group();
   slew.position.set(CRANE_X, MAST_TOP, CRANE_Z);
   world.add(slew);
@@ -288,13 +380,10 @@ export function initAutomation(container: HTMLElement): () => void {
   turntable.position.y = 0.07;
   const cab = solid(new RoundedBoxGeometry(0.42, 0.36, 0.4, 1, 0.04), steelMat, slew);
   cab.position.set(0.45, 0.4, 0.34);
-  const cabGlass = new THREE.Mesh(
-    keep(new THREE.PlaneGeometry(0.3, 0.2)),
-    keep(new THREE.MeshBasicMaterial({ color: COL_SCAN, transparent: true, opacity: 0.8 }))
-  );
+  const cabGlass = new THREE.Mesh(keep(new THREE.PlaneGeometry(0.3, 0.2)), glow(COL_SCAN, 0.8));
   cabGlass.position.set(0.45, 0.44, 0.545);
   slew.add(cabGlass);
-  // the jib: two bottom chords, one top chord, posts between them
+  const beacon = new THREE.Mesh(lampGeo, keep(new THREE.MeshBasicMaterial({ color: "#ff6b6b" })));
   const JIB_Y = 0.32;
   const JIB_H = 0.34;
   const chordLong = keep(new RoundedBoxGeometry(JIB_LEN, 0.055, 0.055, 1, 0.01));
@@ -312,15 +401,15 @@ export function initAutomation(container: HTMLElement): () => void {
     const br = solid(braceGeo, craneMat, slew);
     br.position.set(x, JIB_Y, 0);
   }
-  // the counter-jib and its weight
   const counter = solid(keep(new RoundedBoxGeometry(COUNTER_LEN, 0.06, 0.3, 1, 0.01)), craneMat, slew);
   counter.position.set(-COUNTER_LEN / 2, JIB_Y, 0);
   const weight = solid(new RoundedBoxGeometry(0.5, 0.5, 0.42, 1, 0.03), steelMat, slew);
   weight.position.set(-COUNTER_LEN + 0.25, JIB_Y - 0.28, 0);
-  // the apex and its pendant lines
   const APEX = 1.0;
   const apex = solid(keep(new RoundedBoxGeometry(0.07, APEX, 0.07, 1, 0.01)), craneMat, slew);
   apex.position.set(0, JIB_Y + APEX / 2, 0);
+  beacon.position.set(0, JIB_Y + APEX + 0.06, 0);
+  slew.add(beacon);
   const pendant = (x: number, y: number) => {
     const len = Math.hypot(x, JIB_Y + APEX - y);
     const p = new THREE.Mesh(keep(new THREE.CylinderGeometry(0.012, 0.012, len, 5)), steelMat);
@@ -330,7 +419,6 @@ export function initAutomation(container: HTMLElement): () => void {
   };
   pendant(JIB_LEN * 0.62, JIB_Y + JIB_H);
   pendant(-COUNTER_LEN + 0.15, JIB_Y);
-  // the trolley, at the one radius both belts sit at
   const R = Math.hypot(BELTS[0].x1 - CRANE_X, 0 - CRANE_Z);
   const trolley = solid(new RoundedBoxGeometry(0.3, 0.16, 0.34, 1, 0.03), steelMat, slew);
   trolley.position.set(R, JIB_Y - 0.1, 0);
@@ -344,12 +432,48 @@ export function initAutomation(container: HTMLElement): () => void {
     finger.position.set(side * 0.31, -0.17, 0);
   }
   slew.add(gripper);
-  // jib headings for the pick-up and the drop: rotation.y turns local +x
-  // onto (cos θ, 0, -sin θ)
   const heading = (x: number, z: number) => Math.atan2(-(z - CRANE_Z), x - CRANE_X);
   const thetaPick = heading(BELTS[0].x1, 0);
   const thetaDrop = heading(BELTS[1].x0, 0);
   const crane = { state: "idle" as CraneState, t: 0, theta: thetaPick, hookY: HOOK_UP, swing: 0, cube: null as Cube | null };
+
+  // ---- sparks: tiny bits that fly off a block as it crosses a gate -----
+  const SPARK_N = 120;
+  const sparks = new THREE.InstancedMesh(keep(new RoundedBoxGeometry(0.07, 0.07, 0.07, 1, 0.015)), keep(new THREE.MeshBasicMaterial()), SPARK_N);
+  keep(sparks);
+  sparks.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  world.add(sparks);
+  const sparkPool: Spark[] = Array.from({ length: SPARK_N }, () => ({ life: 0, pos: new THREE.Vector3(), vel: new THREE.Vector3(), color: new THREE.Color() }));
+  let sparkSeed = 11;
+  const burst = (x: number, y: number, tint: THREE.Color) => {
+    let n = 0;
+    for (const s of sparkPool) {
+      if (s.life > 0) continue;
+      sparkSeed++;
+      s.life = SPARK_LIFE;
+      s.pos.set(x + (seeded(sparkSeed) - 0.5) * 0.3, y + seeded(sparkSeed + 0.2) * 0.4, (seeded(sparkSeed + 0.4) - 0.5) * 0.7);
+      s.vel.set((seeded(sparkSeed + 0.6) - 0.5) * 1.6, 1.4 + seeded(sparkSeed + 0.8) * 1.6, (seeded(sparkSeed + 0.1) - 0.5) * 1.6);
+      s.color.copy(seeded(sparkSeed + 0.3) < 0.75 ? tint : new THREE.Color(COL_LIME));
+      if (++n >= SPARKS) break;
+    }
+  };
+
+  // ---- rings: a pulse on the surface where a block is set down ---------
+  const ringGeo = keep(new THREE.RingGeometry(0.22, 0.3, 32));
+  const rings: Ring[] = Array.from({ length: 6 }, () => {
+    const mat = keep(new THREE.MeshBasicMaterial({ color: COL_SCAN, transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false }));
+    const mesh = new THREE.Mesh(ringGeo, mat);
+    mesh.rotation.x = -Math.PI / 2;
+    mesh.visible = false;
+    world.add(mesh);
+    return { t: 1, mesh };
+  });
+  const pulse = (x: number, y: number, z: number) => {
+    const r = rings.find((k) => k.t >= 1) ?? rings[0];
+    r.t = 0;
+    r.mesh.position.set(x, y + 0.004, z);
+    r.mesh.visible = true;
+  };
 
   // ---- the cubes ------------------------------------------------------
   const N = 24;
@@ -385,6 +509,10 @@ export function initAutomation(container: HTMLElement): () => void {
     cubes.setMatrixAt(i, dummy.matrix);
     cubes.setColorAt(i, STAGE[0]);
   }
+  for (let i = 0; i < SPARK_N; i++) {
+    sparks.setMatrixAt(i, dummy.matrix);
+    sparks.setColorAt(i, STAGE[4]);
+  }
 
   const lastBelt = BELTS.length - 1;
   const slotPos = (slot: number) =>
@@ -402,7 +530,7 @@ export function initAutomation(container: HTMLElement): () => void {
     seed++;
     c.phase = "track";
     c.belt = 0;
-    c.x = BELTS[0].x0; // starts inside the source block
+    c.x = BELTS[0].x0;
     c.passed = 0;
     c.tilt.set((seeded(seed) - 0.5) * 1.1, (seeded(seed + 0.3) - 0.5) * 1.3, (seeded(seed + 0.6) - 0.5) * 1.1);
     c.size = 0.78 + seeded(seed + 0.9) * 0.4;
@@ -421,9 +549,9 @@ export function initAutomation(container: HTMLElement): () => void {
     slotTaken.fill(null);
   };
 
+  let clock = 0;
   const step = (dt: number) => {
-    // blocks on the belts: queue up behind each other, pass the booths,
-    // reach the end (the crane's pick-up spot, or the jump to the stack)
+    clock += dt;
     for (let bi = 0; bi < BELTS.length; bi++) {
       const belt = BELTS[bi];
       const onBelt = pool.filter((c) => c.phase === "track" && c.belt === bi).sort((a, b) => b.x - a.x);
@@ -432,12 +560,13 @@ export function initAutomation(container: HTMLElement): () => void {
         const prev = c.x;
         c.x = Math.min(c.x + SPEED * dt, limit);
         limit = c.x - QUEUE_GAP;
-        for (const b of booths) {
-          if (b.belt !== bi) continue;
-          if (prev < b.x && c.x >= b.x) {
-            b.flash = 1;
-            c.passed = Math.min(c.passed + 1, booths.length);
-            if (b.label === "rank" && c.reject) {
+        for (const g of gates) {
+          if (g.belt !== bi) continue;
+          if (prev < g.x && c.x >= g.x) {
+            g.flash = 1;
+            c.passed = Math.min(c.passed + 1, gates.length);
+            burst(g.x, belt.top + 0.3, STAGE[c.passed]);
+            if (g.label === "rank" && c.reject) {
               c.phase = "drop";
               c.t = 0;
               c.from.set(c.x, belt.top + CUBE / 2, 0);
@@ -445,7 +574,7 @@ export function initAutomation(container: HTMLElement): () => void {
           }
         }
         if (c.phase !== "track") continue;
-        c.order += (c.passed / booths.length - c.order) * Math.min(1, dt * SETTLE);
+        c.order += (c.passed / gates.length - c.order) * Math.min(1, dt * SETTLE);
         c.color.lerp(STAGE[c.passed], Math.min(1, dt * SETTLE));
         if (bi === lastBelt && c.x >= belt.x1 - 1e-3) {
           if (slotTaken.every(Boolean)) shipStack();
@@ -497,7 +626,6 @@ export function initAutomation(container: HTMLElement): () => void {
           cr.t += dt / CRANE.slew;
           const k = Math.min(1, cr.t);
           cr.theta = THREE.MathUtils.lerp(thetaPick, thetaDrop, easeInOut(k));
-          // the load lags the jib: swings back while speeding up, forward while braking
           cr.swing = 0.2 * (1 - 2 * k) * Math.sign(thetaDrop - thetaPick);
           if (cr.t >= 1) {
             cr.state = "lower2";
@@ -514,6 +642,7 @@ export function initAutomation(container: HTMLElement): () => void {
             cr.cube.belt = 1;
             cr.cube.x = BELTS[1].x0;
             cr.cube = null;
+            pulse(BELTS[1].x0, BELTS[1].top, 0);
             cr.state = "lift2";
             cr.t = 0;
           }
@@ -547,6 +676,8 @@ export function initAutomation(container: HTMLElement): () => void {
         if (c.t >= 1) {
           c.t = 1;
           c.phase = "stack";
+          const p = slotPos(c.slot);
+          if (c.slot < SLOT_OFF.length) pulse(p.x, BELTS[lastBelt].top, p.z);
         }
       } else if (c.phase === "pop") {
         c.t += dt / POP_TIME;
@@ -556,11 +687,22 @@ export function initAutomation(container: HTMLElement): () => void {
         c.color.lerp(STAGE[1], Math.min(1, dt * 4));
         if (c.t >= 1) c.phase = "free";
       } else if (c.phase === "carried") {
-        c.order += (c.passed / booths.length - c.order) * Math.min(1, dt * SETTLE);
+        c.order += (c.passed / gates.length - c.order) * Math.min(1, dt * SETTLE);
       }
     }
-    for (const b of booths) b.flash *= Math.exp(-dt * 5.5);
+    for (const g of gates) {
+      g.flash *= Math.exp(-dt * 5.5);
+      // the scan line sweeps slowly, and races while a block is going through
+      g.sweep = (g.sweep + dt * (0.45 + g.flash * 2.2)) % 1;
+    }
     for (const b of belts) b.tex.offset.x -= (SPEED * dt) / DASH_PERIOD;
+    for (const s of sparkPool) {
+      if (s.life <= 0) continue;
+      s.life -= dt;
+      s.vel.y -= 6 * dt;
+      s.pos.addScaledVector(s.vel, dt);
+    }
+    for (const r of rings) if (r.t < 1) r.t = Math.min(1, r.t + dt / 0.55);
   };
 
   const tmpPos = new THREE.Vector3();
@@ -568,6 +710,7 @@ export function initAutomation(container: HTMLElement): () => void {
   const straight = new THREE.Quaternion();
   const tilted = new THREE.Quaternion();
   const euler = new THREE.Euler();
+  const tmpColor = new THREE.Color();
   const hookWorld = () => tmpPos.set(CRANE_X + R * Math.cos(crane.theta), crane.hookY, CRANE_Z - R * Math.sin(crane.theta));
   const draw = () => {
     for (let i = 0; i < N; i++) {
@@ -581,14 +724,13 @@ export function initAutomation(container: HTMLElement): () => void {
         tilted.setFromEuler(c.tilt);
         tmpQuat.copy(tilted).slerp(straight, c.order);
         if (c.phase === "track") {
-          const lift = (1 - c.order) * 0.09; // a tilted block sits a little higher
+          const lift = (1 - c.order) * 0.09;
           dummy.position.set(c.x, BELTS[c.belt].top + (CUBE * s) / 2 + lift, 0);
           dummy.quaternion.copy(tmpQuat);
           dummy.scale.setScalar(s);
         } else if (c.phase === "carried") {
           hookWorld();
           dummy.position.set(tmpPos.x, tmpPos.y - (CUBE * s) / 2, tmpPos.z);
-          // hangs under the gripper, swinging along the jib's travel
           euler.set(crane.swing, crane.theta, 0, "YXZ");
           dummy.quaternion.setFromEuler(euler).multiply(tmpQuat);
           dummy.scale.setScalar(s);
@@ -604,17 +746,18 @@ export function initAutomation(container: HTMLElement): () => void {
           dummy.quaternion.identity();
           dummy.scale.setScalar(1);
         } else if (c.phase === "drop") {
-          // slides to the front edge, tips over it, falls and fades
+          // slides to the front edge, tips over it, falls into the bin
           const t = c.t;
           const slide = Math.min(1, t / 0.45);
-          const z = THREE.MathUtils.lerp(0, 1.5, slide * slide);
+          const z = THREE.MathUtils.lerp(0, BIN.z, slide * slide);
           const fall = Math.max(0, t - 0.4);
-          dummy.position.set(c.from.x + t * 0.3, c.from.y - fall * fall * 9, z);
+          const y = c.from.y - fall * fall * 9;
+          dummy.position.set(c.from.x + Math.min(0.5, t * 0.6), y, z);
           euler.set(fall * 3.2, 0, -slide * 0.25);
           dummy.quaternion.setFromEuler(euler);
-          dummy.scale.setScalar(1 - Math.max(0, (t - 0.7) / 0.3));
+          // gone once it's inside the bin
+          dummy.scale.setScalar(y < FLOOR + BIN.h - 0.15 ? 0 : 1);
         } else {
-          // pop: shrink in place
           dummy.position.copy(slotPos(c.slot));
           dummy.quaternion.identity();
           dummy.scale.setScalar(1 - easeOut(c.t));
@@ -626,7 +769,50 @@ export function initAutomation(container: HTMLElement): () => void {
     }
     cubes.instanceMatrix.needsUpdate = true;
     if (cubes.instanceColor) cubes.instanceColor.needsUpdate = true;
-    for (const b of booths) b.roofMat.opacity = 0.32 + b.flash * 0.55;
+    // sparks
+    for (let i = 0; i < SPARK_N; i++) {
+      const s = sparkPool[i];
+      if (s.life <= 0) {
+        dummy.scale.setScalar(0);
+        dummy.position.set(0, -10, 0);
+      } else {
+        const k = s.life / SPARK_LIFE;
+        dummy.position.copy(s.pos);
+        dummy.scale.setScalar(0.5 + k * 0.9);
+        euler.set(s.pos.x * 3, s.pos.y * 2, 0);
+        dummy.quaternion.setFromEuler(euler);
+      }
+      dummy.updateMatrix();
+      sparks.setMatrixAt(i, dummy.matrix);
+      sparks.setColorAt(i, s.color);
+    }
+    sparks.instanceMatrix.needsUpdate = true;
+    if (sparks.instanceColor) sparks.instanceColor.needsUpdate = true;
+    // rings
+    for (const r of rings) {
+      if (r.t >= 1) {
+        r.mesh.visible = false;
+        continue;
+      }
+      const k = easeOut(r.t);
+      r.mesh.scale.setScalar(0.4 + k * 2.2);
+      r.mesh.material.opacity = 0.7 * (1 - k);
+    }
+    // gates: pane, scan line, lamp
+    for (const g of gates) {
+      g.paneMat.opacity = 0.1 + g.flash * 0.4;
+      g.line.position.y = BAR / 2 + (GATE_H - BAR) * (1 - g.sweep);
+      g.lineMat.opacity = 0.35 + g.flash * 0.6;
+      g.lampMat.color.copy(tmpColor.copy(lampDim).lerp(lampOn, 0.3 + g.flash * 0.7 + 0.15 * Math.sin(clock * 3 + g.x)));
+    }
+    // the source: lights blink, the radar sweeps
+    for (const l of leds) {
+      const on = Math.sin(clock * l.rate + l.phase) > 0.25;
+      l.mat.color.copy(on ? l.on : l.off);
+    }
+    radarSweep.rotation.z = -clock * 1.3;
+    // the rollers turn with the belts
+    for (const r of rollers) r.rotation.y = -clock * (SPEED / 0.13);
     // the crane: the jib turns, the cable pays out, the gripper swings
     slew.rotation.y = crane.theta;
     const hookLocal = crane.hookY - MAST_TOP;
@@ -634,13 +820,15 @@ export function initAutomation(container: HTMLElement): () => void {
     cable.position.set(R, (top + hookLocal) / 2, 0);
     cable.scale.y = Math.max(0.01, top - hookLocal);
     gripper.position.set(R, hookLocal, 0);
-    gripper.rotation.x = crane.swing;
+    gripper.rotation.x = crane.swing + (crane.state === "idle" ? Math.sin(clock * 1.4) * 0.03 : 0);
+    beacon.material.opacity = 1;
+    (beacon.material as THREE.MeshBasicMaterial).color.setStyle(Math.sin(clock * 4) > 0 ? "#ff6b6b" : "#7a2c2c");
   };
 
-  // ---- labels: the site's [ tags ], pinned over each booth and the stack,
+  // ---- labels: the site's [ tags ], pinned over each gate and the stack,
   // numbered like the steps under the machine -------------------------------
   const labelDefs: { text: string; at: THREE.Vector3 }[] = [
-    ...booths.map((b, i) => ({ text: `${i + 1} · ${b.label}`, at: new THREE.Vector3(b.x, BELTS[b.belt].top + BOOTH_H + 0.55, 0) })),
+    ...gates.map((g, i) => ({ text: `${i + 1} · ${g.label}`, at: new THREE.Vector3(g.x, BELTS[g.belt].top + GATE_H + 0.5, 0) })),
     { text: "shortlist", at: new THREE.Vector3(STACK_X, BELTS[lastBelt].top + CUBE + SLOT_ROWS[2] + 0.25, 0) },
   ];
   const labels = labelDefs.map((d) => {
@@ -677,20 +865,18 @@ export function initAutomation(container: HTMLElement): () => void {
   container.addEventListener("pointerleave", onPointerLeave);
 
   // ---- sizing ---------------------------------------------------------
-  // the frustum fits the machine whatever the box's aspect: project the
-  // scene's extreme points into view space once and frame their bounds
   const topBelt = BELTS[lastBelt].top;
   const extremes: number[][] = [
-    [BELTS[0].slab0, FLOOR, TRACK_W / 2],
-    [BELTS[0].slab0, FLOOR, -TRACK_W / 2],
-    [SOURCE_FACE - 0.85, BELTS[0].top + 2.1 + 0.4, 0],
+    [BELTS[0].slab0 - 0.2, FLOOR, TRACK_W / 2],
+    [BELTS[0].slab0 - 0.2, FLOOR, -TRACK_W / 2],
+    [srcX, srcTop + 0.4, 0],
     [PLATFORM.x1, FLOOR, 1.1],
     [PLATFORM.x1, FLOOR, -1.1],
     [STACK_X, topBelt + CUBE + SLOT_ROWS[2] + 0.85, 0],
-    [STEP_DEFS[3].x, topBelt + BOOTH_H + 1.1, 0],
+    [STEP_DEFS[3].x, topBelt + GATE_H + 1.1, 0],
+    [BIN.x, FLOOR, BIN.z + BIN.w / 2 + 0.1],
     [CRANE_X, MAST_TOP + JIB_Y + APEX + 0.3, CRANE_Z],
   ];
-  // the jib and counter-jib sweep: their tips at both headings
   for (const th of [thetaPick, thetaDrop, (thetaPick + thetaDrop) / 2]) {
     extremes.push([CRANE_X + JIB_LEN * Math.cos(th), MAST_TOP + JIB_Y + JIB_H, CRANE_Z - JIB_LEN * Math.sin(th)]);
     extremes.push([CRANE_X - COUNTER_LEN * Math.cos(th), MAST_TOP + JIB_Y, CRANE_Z + COUNTER_LEN * Math.sin(th)]);
@@ -742,9 +928,10 @@ export function initAutomation(container: HTMLElement): () => void {
     }
     step(dt);
   };
-  // the machine never starts empty: ~80 s of machine time before the first frame
   for (let i = 0; i < 80 / 0.05; i++) advance(0.05);
-  for (const b of booths) b.flash = 0;
+  for (const g of gates) g.flash = 0;
+  for (const s of sparkPool) s.life = 0;
+  for (const r of rings) r.t = 1;
   draw();
 
   let raf = 0;
