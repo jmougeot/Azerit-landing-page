@@ -16,10 +16,12 @@ import juniorsCode from "./posts/juniors-only-have-their-code";
 import candidatesOutbound from "./posts/candidates-discovered-ai-outbound";
 import reviewing from "./posts/reviewing-is-the-skill-to-hire-for";
 import searchIsFree from "./posts/search-is-free-context-is-not";
+import sourceOnGithub from "./posts/how-to-source-engineers-on-github";
+import githubVsLinkedin from "./posts/github-vs-linkedin-for-hiring-engineers";
 
-// To publish a post: write it in a new file under posts/ (copy one next to it),
-// import it below, and add its URL to public/sitemap.xml. The build
-// prerenders /blog/<slug> from this list.
+// To publish a post: write it in a new file under posts/ named after its slug
+// (copy one next to it) and import it below. The build prerenders
+// /blog/<slug> and /fr/blog/<slug> from this list and adds both to the sitemap.
 
 export const CATEGORIES = [
   { id: "hiring-signals", en: "Hiring signals", fr: "Signaux de recrutement" },
@@ -64,6 +66,8 @@ export type Post = {
 
 // newest first; posts of the same day keep the order below
 export const POSTS: Post[] = [
+  sourceOnGithub,
+  githubVsLinkedin,
   degreesProveNothing,
   cursorHiresPeople,
   turbopufferLevels,

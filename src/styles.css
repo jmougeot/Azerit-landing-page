@@ -2817,7 +2817,7 @@ main > .band:nth-of-type(4n + 4) {
   overflow: hidden;
   background: var(--bg);
 }
-.lang-switch button {
+.lang-switch a {
   font-family: var(--font-mono);
   font-size: 12px;
   text-transform: uppercase;
@@ -2825,11 +2825,12 @@ main > .band:nth-of-type(4n + 4) {
   background: none;
   border: none;
   padding: 4px 10px;
+  text-decoration: none;
 }
-.lang-switch button + button {
+.lang-switch a + a {
   border-left: 1px solid var(--border);
 }
-.lang-switch button[aria-pressed="true"] {
+.lang-switch a[aria-current="true"] {
   color: var(--green);
   background: var(--green-soft);
   font-weight: 700;

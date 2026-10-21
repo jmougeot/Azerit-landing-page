@@ -1,14 +1,9 @@
-import { useEffect } from "react";
+import { usePageTitle } from "../meta";
 import { Link } from "react-router-dom";
 import { TopBar, Footer } from "../components/Nav";
 
 export function NotFound() {
-  useEffect(() => {
-    document.title = "Page not found · Azerit";
-    return () => {
-      document.title = "Azerit · Recruit Engineers from GitHub with AI";
-    };
-  }, []);
+  usePageTitle("Page not found · Azerit");
 
   return (
     <>

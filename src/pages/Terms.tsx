@@ -1,16 +1,11 @@
-import { useEffect } from "react";
+import { usePageTitle, PAGES } from "../meta";
 import { Link } from "react-router-dom";
 import { TopBar, Footer } from "../components/Nav";
 import { Email } from "../components/Email";
 import { PRICE_EUR_MONTHLY } from "../links";
 
 export function Terms() {
-  useEffect(() => {
-    document.title = "Terms of sale · Azerit";
-    return () => {
-      document.title = "Azerit · Recruit Engineers from GitHub with AI";
-    };
-  }, []);
+  usePageTitle(PAGES["/terms"].title);
 
   return (
     <>

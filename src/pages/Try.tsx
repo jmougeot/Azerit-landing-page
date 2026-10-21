@@ -2,8 +2,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { TopBar, Footer } from "../components/Nav";
 import { saveLead } from "../leads";
+import { PAGES, usePageTitle } from "../meta";
 
 export function Try() {
+  usePageTitle(PAGES["/try"].title);
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
   const [submitting, setSubmitting] = useState(false);

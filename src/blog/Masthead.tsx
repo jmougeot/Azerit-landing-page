@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { LogoMark } from "../components/Logo";
 import type { Lang } from "./lang";
-import { UI } from "./lang";
+import { UI, blogPath } from "./lang";
 import { LangSwitch } from "./LangSwitch";
 import { CATEGORIES, POSTS, formatLongDate, type CategoryId } from "./posts";
 
@@ -28,19 +28,19 @@ export function Masthead({
         <span className="masthead-edition">
           {t.edition} {formatLongDate(POSTS[0].date, lang)}
         </span>
-        <Link to="/blog/" className="masthead-title">
+        <Link to={blogPath(lang)} className="masthead-title">
           <LogoMark size={compact ? 24 : 40} /> {t.masthead}
         </Link>
         <LangSwitch lang={lang} onChange={onLang} />
       </div>
       <nav className="rubriques" aria-label={t.categories}>
-        <Link to="/blog/" className={active ? undefined : "active"}>
+        <Link to={blogPath(lang)} className={active ? undefined : "active"}>
           {t.frontPage}
         </Link>
         {CATEGORIES.map((c) => (
           <Link
             key={c.id}
-            to={`/blog/?category=${c.id}`}
+            to={blogPath(lang, `?category=${c.id}`)}
             className={active === c.id ? "active" : undefined}
           >
             {c[lang]}

@@ -1,30 +1,61 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
-// The blog is bilingual: each post exists in English and French, and readers
-// get the one matching their browser until they pick the other with the
-// switch (remembered per browser). The rest of the site stays English, and so
-// does the prerendered HTML: main.tsx renders these routes fresh in the
-// browser, so the French version replaces it without a hydration mismatch.
+// The blog is bilingual: each post exists in English, under /blog/, and in
+// French, under /fr/blog/. Each version has its own URL so search engines
+// index both (they read one language per URL, and never the switch). The rest
+// of the site stays English.
 export type Lang = "en" | "fr";
 
 const KEY = "azerit-blog-lang";
 
-function detectLang(): Lang {
-  if (typeof window === "undefined") return "en";
+export function langOf(pathname: string): Lang {
+  return pathname.startsWith("/fr/") ? "fr" : "en";
+}
+
+// "/blog/", "/blog/<slug>", "/blog/?category=<id>" in the given language
+export function blogPath(lang: Lang, rest = "") {
+  return `${lang === "fr" ? "/fr" : ""}/blog/${rest}`;
+}
+
+// the same page in the other language
+export function switchPath(pathname: string, to: Lang) {
+  const bare = pathname.replace(/^\/fr(?=\/)/, "");
+  return to === "fr" ? `/fr${bare}` : bare;
+}
+
+function savedLang(): Lang | null {
   try {
     const saved = localStorage.getItem(KEY);
     if (saved === "en" || saved === "fr") return saved;
   } catch {
-    // storage blocked: fall back to the browser language
+    // storage blocked: no remembered choice
   }
+  return null;
+}
+
+function browserPrefersFr() {
   const langs = navigator.languages?.length ? navigator.languages : [navigator.language];
   // the first of the two we publish wins, so "de, fr" reads French and "en, fr" English
   const first = langs.find((l) => /^(en|fr)\b/i.test(l ?? ""));
-  return first?.toLowerCase().startsWith("fr") ? "fr" : "en";
+  return !!first?.toLowerCase().startsWith("fr");
 }
 
 export function useLang() {
-  const [lang, setLangState] = useState<Lang>(detectLang);
+  const { pathname, search } = useLocation();
+  const navigate = useNavigate();
+  const lang = langOf(pathname);
+
+  // Readers land on the version they picked last time, and French browsers
+  // on the French one. Only a remembered choice ever leaves a French URL:
+  // crawlers have none and browse in English, so they must stay on whichever
+  // URL they asked for, or the French pages would never be indexed.
+  useEffect(() => {
+    const preferred = savedLang() ?? (lang === "en" && browserPrefersFr() ? "fr" : null);
+    if (preferred && preferred !== lang) {
+      navigate(switchPath(pathname, preferred) + search, { replace: true });
+    }
+  }, [pathname]);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -34,12 +65,12 @@ export function useLang() {
   }, [lang]);
 
   const setLang = (next: Lang) => {
-    setLangState(next);
     try {
       localStorage.setItem(KEY, next);
     } catch {
       // not remembered, still switched for this page
     }
+    navigate(switchPath(pathname, next) + search);
   };
 
   return [lang, setLang] as const;

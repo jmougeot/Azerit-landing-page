@@ -53,6 +53,9 @@ export function App() {
           <Route path="/about" element={<About />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
+          {/* the same blog in French, see src/blog/lang.ts */}
+          <Route path="/fr/blog" element={<Blog />} />
+          <Route path="/fr/blog/:slug" element={<BlogPost />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

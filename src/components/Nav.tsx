@@ -1,7 +1,9 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { LogoMark } from "./Logo";
 
 export function TopBar() {
+  // on the French blog, "blog" stays on the French front page
+  const blog = useLocation().pathname.startsWith("/fr/blog") ? "/fr/blog/" : "/blog/";
   return (
     <div className="topbar">
       <div className="topbar-inner">
@@ -10,7 +12,7 @@ export function TopBar() {
         </Link>
         <div className="topbar-nav">
           <NavLink
-            to="/blog/"
+            to={blog}
             className={({ isActive }) => `nav-link nav-secondary${isActive ? " active" : ""}`}
           >
             blog

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { usePageTitle, PAGES } from "../meta";
 import { Link } from "react-router-dom";
 import { TopBar, Footer } from "../components/Nav";
 import { ContribBg } from "../components/ContribBg";
@@ -7,12 +7,7 @@ import { DemoLink } from "../components/DemoLink";
 import { STRIPE_CHECKOUT_URL, PRICE_EUR_MONTHLY } from "../links";
 
 export function Pricing() {
-  useEffect(() => {
-    document.title = "Pricing · Azerit";
-    return () => {
-      document.title = "Azerit · Recruit Engineers from GitHub with AI";
-    };
-  }, []);
+  usePageTitle(PAGES["/pricing"].title);
 
   return (
     <>

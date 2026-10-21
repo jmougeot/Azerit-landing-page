@@ -1,14 +1,14 @@
-import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { TopBar, Footer } from "../components/Nav";
 import { DemoLink } from "../components/DemoLink";
 import { POSTS, categoryLabel, formatDate } from "../blog/posts";
-import { UI, useLang } from "../blog/lang";
+import { UI, blogPath, useLang } from "../blog/lang";
 import { Masthead } from "../blog/Masthead";
 import { Story } from "../blog/Story";
 import { Prose, readingMinutes, typo } from "../blog/Prose";
 import { PostVisual } from "../blog/PostCover";
 import { NotFound } from "./NotFound";
+import { postTitle, usePageTitle } from "../meta";
 
 // An article page: the compact masthead with the article's rubrique
 // underlined, the story in a reading column, three more stories, the box.
@@ -19,13 +19,7 @@ export function BlogPost() {
   const t = UI[lang];
   const v = post?.[lang];
 
-  useEffect(() => {
-    if (!v) return;
-    document.title = `${v.title} · Azerit`;
-    return () => {
-      document.title = "Azerit · Recruit Engineers from GitHub with AI";
-    };
-  }, [v]);
+  usePageTitle(v ? postTitle(v.title) : "Page not found · Azerit");
 
   if (!post || !v) return <NotFound />;
 
@@ -44,7 +38,7 @@ export function BlogPost() {
 
           <article className="story">
             <span className="kicker">
-              <Link to={`/blog/?category=${post.category}`}>{categoryLabel(post.category, lang)}</Link>
+              <Link to={blogPath(lang, `?category=${post.category}`)}>{categoryLabel(post.category, lang)}</Link>
             </span>
             <h1 className="story-title">{typo(v.title)}</h1>
             <p className="story-standfirst">{typo(v.description)}</p>
@@ -59,7 +53,7 @@ export function BlogPost() {
             </p>
             <PostVisual post={post} lang={lang} />
             <div className="story-body">
-              <Prose source={v.body} />
+              <Prose source={v.body} lang={lang} />
               {post.sources.length > 0 && (
                 <aside className="story-sources">
                   <h2>{t.sources}</h2>

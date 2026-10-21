@@ -1,14 +1,9 @@
-import { useEffect } from "react";
+import { usePageTitle, PAGES } from "../meta";
 import { TopBar, Footer } from "../components/Nav";
 import { Email } from "../components/Email";
 
 export function Legal() {
-  useEffect(() => {
-    document.title = "Legal notice & privacy policy · Azerit";
-    return () => {
-      document.title = "Azerit · Recruit Engineers from GitHub with AI";
-    };
-  }, []);
+  usePageTitle(PAGES["/legal"].title);
 
   return (
     <>

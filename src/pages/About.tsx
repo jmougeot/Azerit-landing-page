@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { usePageTitle, PAGES } from "../meta";
 import { TopBar, Footer } from "../components/Nav";
 import { Founders } from "../components/Founders";
 import { DemoLink } from "../components/DemoLink";
@@ -9,12 +9,7 @@ import { LatticeScene } from "../components/LatticeScene";
 // beats (proof, the team, the method), the two founders, and a way to reach
 // them.
 export function About() {
-  useEffect(() => {
-    document.title = "About · Azerit";
-    return () => {
-      document.title = "Azerit · Recruit Engineers from GitHub with AI";
-    };
-  }, []);
+  usePageTitle(PAGES["/about"].title);
 
   return (
     <>

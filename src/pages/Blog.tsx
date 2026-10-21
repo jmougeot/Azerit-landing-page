@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { usePageTitle, BLOG_META } from "../meta";
 import { Link, useSearchParams } from "react-router-dom";
 import { TopBar, Footer } from "../components/Nav";
 import { DemoLink } from "../components/DemoLink";
 import { CATEGORIES, POSTS, categoryLabel, type CategoryId } from "../blog/posts";
-import { UI, useLang } from "../blog/lang";
+import { UI, blogPath, useLang } from "../blog/lang";
 import { Masthead } from "../blog/Masthead";
 import { Story, Headline } from "../blog/Story";
 import { readingMinutes, typo } from "../blog/Prose";
@@ -19,12 +19,7 @@ export function Blog() {
   const active = CATEGORIES.find((c) => c.id === params.get("category"))?.id as CategoryId | undefined;
   const posts = active ? POSTS.filter((p) => p.category === active) : POSTS;
 
-  useEffect(() => {
-    document.title = "Blog · Azerit";
-    return () => {
-      document.title = "Azerit · Recruit Engineers from GitHub with AI";
-    };
-  }, []);
+  usePageTitle(BLOG_META[lang].title);
 
   const [lead, ...rest] = posts;
   const rows = active ? rest : rest.slice(0, 3);
@@ -57,7 +52,7 @@ export function Blog() {
                 {bands.map((b) => (
                   <section className="front-block" key={b.cat.id}>
                     <h2 className="block-title">
-                      <Link to={`/blog/?category=${b.cat.id}`}>{b.cat[lang]}</Link>
+                      <Link to={blogPath(lang, `?category=${b.cat.id}`)}>{b.cat[lang]}</Link>
                     </h2>
                     <div className="cards">
                       {b.posts.slice(0, 3).map((post) => (
@@ -92,7 +87,7 @@ export function Blog() {
                   <ol className="picks">
                     {picks.map((post, i) => (
                       <li key={post.slug}>
-                        <Link to={`/blog/${post.slug}`}>
+                        <Link to={blogPath(lang, post.slug)}>
                           <span className="pick-n">{String(i + 1).padStart(2, "0")}</span>
                           <span>
                             <span className="kicker">{categoryLabel(post.category, lang)}</span>

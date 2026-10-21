@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import type { Lang } from "./lang";
-import { UI } from "./lang";
+import { UI, blogPath } from "./lang";
 import { Thumb } from "./PostCover";
 import { categoryLabel, formatDate, type Post } from "./posts";
 import { readingMinutes, typo } from "./Prose";
@@ -22,7 +22,7 @@ export function Story({
   const v = post[lang];
   const t = UI[lang];
   return (
-    <Link to={`/blog/${post.slug}`} className={kind}>
+    <Link to={blogPath(lang, post.slug)} className={kind}>
       <div className="slot">
         <Thumb post={post} lang={lang} eager={eager} />
       </div>
@@ -45,7 +45,7 @@ export function Story({
 export function Headline({ post, lang, date = false }: { post: Post; lang: Lang; date?: boolean }) {
   const v = post[lang];
   return (
-    <Link to={`/blog/${post.slug}`}>
+    <Link to={blogPath(lang, post.slug)}>
       {date && <time dateTime={post.date}>{formatDate(post.date, lang)}</time>}
       <span className="kicker">{categoryLabel(post.category, lang)}</span>
       <span className="headline">{typo(v.title)}</span>

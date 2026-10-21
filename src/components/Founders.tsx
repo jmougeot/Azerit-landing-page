@@ -1,4 +1,5 @@
 import { Email } from "./Email";
+import { FOUNDERS } from "../links";
 import luminePhoto from "../assets/lumine.webp";
 import jacquesPhoto from "../assets/jacques.webp";
 
@@ -11,7 +12,7 @@ export function Founders() {
         <div className="name">Lumine Trentelivres</div>
         <div className="bio">Co-founder. Centrale Supélec engineer, ex-sales.</div>
         <div className="links">
-          <a href="https://www.linkedin.com/in/lumine-trentelivres/" target="_blank" rel="noreferrer">
+          <a href={FOUNDERS[0].linkedin} target="_blank" rel="noreferrer">
             linkedin
           </a>{" "}
           · <Email user="lumine" domain="azerit.tech">email</Email>
@@ -22,7 +23,7 @@ export function Founders() {
         <div className="name">Jacques Mougeot</div>
         <div className="bio">Co-founder. Centrale engineer, computer science research</div>
         <div className="links">
-          <a href="https://www.linkedin.com/in/jacquesmougeot/" target="_blank" rel="noreferrer">
+          <a href={FOUNDERS[1].linkedin} target="_blank" rel="noreferrer">
             linkedin
           </a>{" "}
           · <Email user="jacques" domain="azerit.tech">email</Email>
