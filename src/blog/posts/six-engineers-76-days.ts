@@ -16,7 +16,6 @@ const post: Post = {
     alt: { en: "Six engineers completed a 30-person project in 76 days", fr: "Six ingénieurs ont mené un projet de 30 personnes en 76 jours" },
     credit: "Kiro (AWS)",
     href: "https://kiro.dev/case-studies/bedrock/",
-    focus: "left center",
   },
   sources: [
     {

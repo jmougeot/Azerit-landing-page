@@ -1,25 +1,13 @@
 import { useEffect } from "react";
 import { TopBar, Footer } from "../components/Nav";
-import { Seam } from "../components/Seam";
 import { Founders } from "../components/Founders";
 import { DemoLink } from "../components/DemoLink";
 import { Email } from "../components/Email";
+import { LatticeScene } from "../components/LatticeScene";
 
-const PRINCIPLES = [
-  {
-    title: "Code over claims",
-    text: "We rank candidates on the work they have published, not on the keywords they picked for their profile. Every score shows the projects behind it.",
-  },
-  {
-    title: "One good message beats fifty",
-    text: "Engineers ignore generic outreach. We help you send fewer messages, each one about something the candidate actually built.",
-  },
-  {
-    title: "Founders on support",
-    text: "You work directly with the two people building Azerit, from your first open role onward.",
-  },
-];
-
+// The pitch beside the cube that keeps assembling itself, then the three
+// beats (proof, the team, the method), the two founders, and a way to reach
+// them.
 export function About() {
   useEffect(() => {
     document.title = "About · Azerit";
@@ -31,89 +19,68 @@ export function About() {
   return (
     <>
       <TopBar />
-      <main>
-        <Seam />
-
-        <section className="band">
-          <div className="container page-head">
+      <main className="page about">
+        <section className="about-hero">
+          <div className="about-hero-copy">
             <span className="tag eyebrow">about</span>
             <h1>
-              Engineers should be hired on what they've <em>built</em>
+              Better engineers, faster.
+              <br />
+              Proven by their <em>code</em>.
             </h1>
+            <p className="lede">
+              Azerit finds the engineers who have already built what you're hiring for, and opens
+              the conversation on their work. Every step in between is automated.
+            </p>
+          </div>
+          <div className="about-hero-visual">
+            <LatticeScene />
+          </div>
+        </section>
+
+        <section className="about-beats">
+          <div className="beat">
+            <span className="tag eyebrow">proof</span>
+            <h2>Skills you can check</h2>
             <p>
-              Azerit reads GitHub to find the developers who have already built what you're hiring
-              for, then helps you reach them with a message about their own work.
+              CVs and keyword searches return the same crowded pool every time, and nothing in
+              them is verified. We start from the work instead: we read GitHub for the people
+              who have already shipped something like your role, rank them on what they actually
+              built, and show you the projects behind every score.
+            </p>
+          </div>
+          <div className="beat">
+            <span className="tag eyebrow">team</span>
+            <h2>Built by engineers, not recruiters</h2>
+            <p>
+              We're two engineers from Centrale. We've shipped code, reviewed pull requests and
+              run technical interviews. We know what a strong engineer looks like in a
+              repository, and what a weak one looks like on a polished profile. That judgement
+              is what we put in the product.
+            </p>
+          </div>
+          <div className="beat">
+            <span className="tag eyebrow">method</span>
+            <h2>Automated end to end</h2>
+            <p>
+              Everything at Azerit that can be automated is, with AI on the repetitive work:
+              sourcing, enrichment, scoring, outreach, and most of how we run the company. Two
+              people deliver what used to take a team, and the difference goes to you: a
+              shortlist in days, not weeks, replies instead of silence, and the founders on the
+              line when you need them.
             </p>
           </div>
         </section>
 
-        <Seam hatch />
-
-        <section className="band">
-          <div className="container about-story">
-            <div className="about-story-title">
-              <span className="tag eyebrow">why azerit</span>
-              <h2>The proof is already on GitHub</h2>
-            </div>
-            <div className="about-story-text">
-              <p>
-                Hiring engineers usually starts from the wrong documents. CVs and LinkedIn profiles
-                list titles and keywords, so every search returns the same crowded pool, and
-                everyone in it receives the same generic messages.
-              </p>
-              <p>
-                Meanwhile, millions of developers publish their work in the open: the systems they
-                build, the pull requests they review, the problems they keep coming back to. That
-                is better evidence than any CV, and almost nobody recruits from it.
-              </p>
-              <p>
-                We started Azerit to change that. You describe the role; we find the engineers
-                whose code matches it, show you why each one fits, and write a first email that
-                opens on their work. The best candidates aren't the ones with the right keywords.
-                They're the ones who have already built it.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <Seam />
-
-        <section className="band band-head">
-          <div className="container how-title">
-            <span className="tag eyebrow">principles</span>
-            <h2>What we believe</h2>
-          </div>
-        </section>
-        <section className="band">
-          <div className="container principles">
-            {PRINCIPLES.map((p, i) => (
-              <div className="principle" key={p.title}>
-                <span className="tag">{String(i + 1).padStart(2, "0")}</span>
-                <h3>{p.title}</h3>
-                <p>{p.text}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <Seam hatch />
-
-        <section className="band">
-          <div className="container team">
-            <span className="tag eyebrow">team</span>
-            <h2>Meet the founders</h2>
+        <section className="about-foot">
+          <div className="about-team">
+            <span className="tag eyebrow">founders</span>
             <Founders />
           </div>
-        </section>
-
-        <Seam />
-
-        <section className="band">
-          <div className="container demo-band">
+          <div className="about-contact">
             <span className="tag eyebrow">contact</span>
-            <h2>Talk to the founders</h2>
-            <p>Questions, partnerships, or an open role you'd like us to try.</p>
-            <div className="page-ctas">
+            <p>An open role you'd like us to try, a question, a partnership.</p>
+            <div className="page-cta-row">
               <DemoLink className="btn-try">book a demo</DemoLink>
               <Email user="jacques" domain="azerit.tech" className="demo-link">
                 or email us
@@ -121,10 +88,8 @@ export function About() {
             </div>
           </div>
         </section>
-
-        <Seam />
       </main>
-      <Footer />
+      <Footer plain />
     </>
   );
 }

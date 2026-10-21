@@ -6,7 +6,7 @@ import { HeroGlobe } from "../components/HeroGlobe";
 import { DotGridBand } from "../components/DotGridBand";
 import { DemoLink } from "../components/DemoLink";
 import { RepoFeed, type Repo } from "../components/RepoFeed";
-import { FlowStep } from "../components/FlowStep";
+import { AutomationScene } from "../components/AutomationScene";
 import { CtaCommits } from "../components/CtaCommits";
 import { Seam } from "../components/Seam";
 import { Founders } from "../components/Founders";
@@ -164,6 +164,14 @@ const INMAILS = [
     date: "Apr 2",
     text: "Hi Léa, looping back to see if you're open to a founding SWE role at a well-funded AI…",
   },
+];
+
+// The four stages of the pipeline, the same four gates the machine draws.
+const STEPS = [
+  "We scan GitHub for the developers who already work in your stack.",
+  "We read their commits, pull requests and code reviews.",
+  "We add their names, locations and verified work emails.",
+  "We score each one against your role and keep only the matches.",
 ];
 
 // Local brand assets. Aurel source: https://www.agilitesolutions.com/projects/a-multi-purpose-space-for-aurel-bgc/
@@ -390,53 +398,29 @@ export function Landing() {
       </section>
       <section className="band">
         <div className="container how">
-          {/* the pipeline as a data-flow diagram: the role drops in top-left,
-              runs through the four processing stages, a candidate reply falls
-              out bottom-right */}
-          <div className="flow">
-            <div className="flow-input">
+          {/* the pipeline as a machine: the role goes in, rough blocks come out
+              of GitHub, four gates straighten and tint them, the shortlist
+              stacks up at the end (components/automation) */}
+          <div className="how-io">
+            <div className="how-note">
               <span className="tag">input</span>
               <p>Describe your role in one sentence.</p>
             </div>
-            <div className="f-drop f-drop-in" aria-hidden="true" />
-
-            <FlowStep n={1} title="Scan GitHub">
-              Find developers working in your stack.
-            </FlowStep>
-            <div className="f-link f-l1" aria-hidden="true" />
-            <FlowStep n={2} title="Read the code">
-              Analyze commits, pull requests and reviews.
-            </FlowStep>
-            <div className="f-link f-l2" aria-hidden="true" />
-            <FlowStep n={3} title="Enrich profiles">
-              Add names, locations and verified emails.
-            </FlowStep>
-            <div className="f-link f-l3" aria-hidden="true" />
-            <FlowStep n={4} title="Rank matches">
-              Score fit against your role requirements.
-            </FlowStep>
-
-            {/* all four stages converge into the outreach */}
-            <div className="f-fan" aria-hidden="true">
-              <i className="fv fv-1" />
-              <i className="fv fv-2" />
-              <i className="fv fv-3" />
-              <i className="fv fv-4" />
-              <svg className="fc fc-l" viewBox="0 0 12 12">
-                <path d="M0.75 0 A11.25 11.25 0 0 0 12 11.25" />
-              </svg>
-              <svg className="fc fc-r" viewBox="0 0 12 12">
-                <path d="M11.25 0 A11.25 11.25 0 0 1 0 11.25" />
-              </svg>
-              <i className="fb fb-l" />
-              <i className="fb fb-r" />
-            </div>
-            <div className="f-drop f-cd" aria-hidden="true" />
-            <div className="flow-merge">
+            <div className="how-note how-note-out">
               <span className="tag">output</span>
-              <h3>A ready-to-send email</h3>
-              <p>Opens on a specific project or contribution.</p>
+              <p>A ranked shortlist, with a ready-to-send email for each candidate.</p>
             </div>
+          </div>
+          <div className="how-machine">
+            <AutomationScene />
+          </div>
+          <div className="steps">
+            {STEPS.map((step, i) => (
+              <div className="step" key={step}>
+                <span className="tag">step {i + 1}</span>
+                <h3>{step}</h3>
+              </div>
+            ))}
           </div>
         </div>
       </section>

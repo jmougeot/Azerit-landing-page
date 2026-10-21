@@ -23,6 +23,9 @@
   --blue-on-dark: #6cb6ff;
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+  /* the blog is set like a newspaper: Newsreader's optical sizes go from
+     body text to the masthead */
+  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
   /* one size for every section title (features, how it works, demo, founders) */
   --h2-size: clamp(22px, 2.4vw, 28px);
 }
@@ -1024,265 +1027,84 @@ main {
   letter-spacing: -0.03em;
 }
 .how {
-  padding-top: 56px;
-  padding-bottom: 64px;
+  padding-top: 40px;
+  padding-bottom: 56px;
 }
-/* one lead traced through the pipeline, drawn as a data-flow diagram: the
-   offer drops in at the top-left, runs through three nodes, and the reply
-   falls out at the bottom-right. Dashed teal connectors = data moving. */
-.flow {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 30px minmax(0, 1fr) 30px minmax(0, 1fr) 30px minmax(0, 1fr);
-  /* the input pill may spill into the neighbouring connector columns so its
-     quote never truncates; below the cards, one line drops from each of the
-     four stages onto a shared bus that funnels into the output node */
-  grid-template-areas:
-    "in  in  in  .   .   .   ."
-    "d1  .   .   .   .   .   ."
-    "s1  l1  s2  l2  s3  l3  s4"
-    "fan fan fan fan fan fan fan"
-    "cd  cd  cd  cd  cd  cd  cd"
-    "out out out out out out out";
-}
-
-/* the input node: what the user hands the pipeline. Dashed border = "yours",
-   solid nodes = ours. */
-.flow-input {
-  grid-area: in;
-  justify-self: start;
-  border: 1px dashed var(--border);
-  border-radius: 12px;
-  background: var(--bg-soft);
-  padding: 12px 18px 11px;
-  max-width: 100%;
-}
-.flow-input p {
-  font-size: 13.5px;
-  color: var(--text-dim);
-}
-
-/* connectors are drawn as repeating gradients (not dashed borders) so the
-   dash pattern itself can march along the flow direction — the movement IS
-   the lines advancing. Dash cycle: 4px on / 5px off = 9px period. */
-.f-drop {
-  width: 1.5px;
-  height: 30px;
-  background: repeating-linear-gradient(180deg, var(--text-dim) 0 4px, transparent 4px 9px);
+/* the machine's labels: the site's [ tags ], pinned over the canvas */
+.automation {
   position: relative;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  width: 100%;
+  overflow: visible;
 }
-.f-drop::after {
-  content: "";
+.automation canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+.automation-label {
   position: absolute;
-  left: -2.75px;
-  bottom: -1px;
-  border-top: 5px solid var(--text-dim);
-  border-left: 3.5px solid transparent;
-  border-right: 3.5px solid transparent;
-}
-.f-drop-in {
-  grid-area: d1;
-  margin-left: 32px;
-}
-/* the convergence fan: a line drops from the centre of each card, the outer
-   two turn inwards through rounded SVG elbows onto a shared bus, and the bus
-   funnels into the arrowed centre drop. All positions derive from the card
-   column centres: a card column is (100% - 3*30px)/4 wide, so the first
-   centre sits at (100% - 90px)/8 and the rest at +column+connector offsets. */
-.f-fan {
-  grid-area: fan;
-  position: relative;
-  height: 24px;
-}
-.f-fan .fv {
-  position: absolute;
+  left: 0;
   top: 0;
-  width: 1.5px;
-  background: repeating-linear-gradient(180deg, var(--text-dim) 0 4px, transparent 4px 9px);
-}
-.fv-1 {
-  left: calc((100% - 90px) / 8);
-  height: 10px;
-}
-.fv-2 {
-  left: calc(3 * (100% - 90px) / 8 + 30px);
-  height: 22px;
-}
-.fv-3 {
-  left: calc(5 * (100% - 90px) / 8 + 60px);
-  height: 22px;
-}
-.fv-4 {
-  left: calc(7 * (100% - 90px) / 8 + 90px);
-  height: 10px;
-}
-.f-fan .fc {
-  position: absolute;
-  top: 10px;
-  width: 12px;
-  height: 12px;
-}
-.fc-l {
-  left: calc((100% - 90px) / 8);
-}
-.fc-r {
-  left: calc(7 * (100% - 90px) / 8 + 79.5px);
-}
-.f-fan .fc path {
-  fill: none;
-  stroke: var(--text-dim);
-  stroke-width: 1.5;
-  stroke-dasharray: 4 5;
-}
-.f-fan .fb {
-  position: absolute;
-  top: 22px;
-  height: 1.5px;
-  background: repeating-linear-gradient(90deg, var(--text-dim) 0 4px, transparent 4px 9px);
-}
-.fb-l {
-  left: calc((100% - 90px) / 8 + 12px);
-  right: 50%;
-}
-.fb-r {
-  left: 50%;
-  right: calc((100% - 90px) / 8 + 10.5px);
-}
-.f-cd {
-  grid-area: cd;
-  justify-self: center;
-  height: 26px;
-  margin-top: 0;
-}
-/* …and horizontal links between the step nodes */
-.f-link {
-  align-self: center;
-  justify-self: stretch;
-  height: 1.5px;
-  background: repeating-linear-gradient(90deg, var(--text-dim) 0 4px, transparent 4px 9px);
-  position: relative;
-  margin: 0 5px;
-}
-.f-link::after {
-  content: "";
-  position: absolute;
-  right: -1px;
-  top: -2.75px;
-  border-left: 5px solid var(--text-dim);
-  border-top: 3.5px solid transparent;
-  border-bottom: 3.5px solid transparent;
-}
-.f-l1 {
-  grid-area: l1;
-}
-.f-l2 {
-  grid-area: l2;
-}
-.f-l3 {
-  grid-area: l3;
-}
-
-/* the three nodes share one anatomy — tag, title, story, telemetry line —
-   and margin-top:auto pins every telemetry line to the same baseline */
-.fstep {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 2px 7px;
   background: var(--bg);
-  padding: 20px 20px 16px;
-  box-shadow: 0 1px 2px rgba(31, 35, 40, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(31, 35, 40, 0.06);
 }
-.fs-1 {
-  grid-area: s1;
+/* the pipeline as the isometric machine (components/automation): the
+   input and output notes above it, the four steps in a row under it */
+.how-io {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
 }
-.fs-2 {
-  grid-area: s2;
+.how-note {
+  max-width: 320px;
 }
-.fs-3 {
-  grid-area: s3;
-}
-.fs-4 {
-  grid-area: s4;
-}
-.fstep .tag,
-.flow-merge .tag,
-.flow-input .tag {
-  margin-bottom: 12px;
-}
-.flow-input .tag {
-  display: inline-block;
-  margin-bottom: 3px;
-}
-.fstep h3 {
-  font-size: 16.5px;
-  margin-bottom: 8px;
-}
-.fstep p {
-  font-size: 13.5px;
+.how-note p {
+  font-size: 14px;
+  line-height: 1.55;
   color: var(--text-dim);
-  line-height: 1.6;
-  margin-bottom: 0;
+  margin-top: 4px;
 }
-
-/* the output node: the four stages' data assembled into one message */
-.flow-merge {
-  grid-area: out;
-  justify-self: center;
-  max-width: 620px;
-  border: 1px solid var(--green);
-  background: var(--green-soft);
-  border-radius: 12px;
-  padding: 20px 26px 18px;
-  text-align: center;
+.how-note-out {
+  text-align: right;
 }
-.flow-merge .tag {
-  margin-bottom: 8px;
-  display: inline-block;
+.how-machine {
+  max-width: 1080px;
+  margin: 0 auto;
 }
-.flow-merge h3 {
-  font-size: 16.5px;
-  margin-bottom: 12px;
+.how-machine .automation {
+  aspect-ratio: 16 / 9;
 }
-.flow-merge p {
-  font-size: 13.5px;
-  color: var(--text-dim);
-  line-height: 1.6;
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 12px;
+  border-top: 1px dashed var(--border);
 }
-
-/* the movement is the lines themselves advancing: every dash pattern marches
-   along its flow direction at the same 12px/s (9px period / 0.75s), so the
-   whole diagram reads as one conveyor — down from the input, rightwards
-   through the cards, inwards along the bus, down into the output */
-@media (prefers-reduced-motion: no-preference) {
-  .f-drop,
-  .f-fan .fv {
-    animation: march-v 0.75s linear infinite;
-  }
-  .f-link,
-  .fb-l {
-    animation: march-h 0.75s linear infinite;
-  }
-  .fb-r {
-    animation: march-h-rev 0.75s linear infinite;
-  }
-  .f-fan .fc path {
-    animation: march-c 0.75s linear infinite;
-  }
-  @keyframes march-v {
-    to { background-position: 0 9px; }
-  }
-  @keyframes march-h {
-    to { background-position: 9px 0; }
-  }
-  @keyframes march-h-rev {
-    to { background-position: -9px 0; }
-  }
-  @keyframes march-c {
-    to { stroke-dashoffset: -9; }
-  }
+.step {
+  padding: 22px 24px 6px;
+  border-left: 1px dashed var(--border);
+}
+.step:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+.step:last-child {
+  padding-right: 0;
+}
+.step h3 {
+  font-size: 15.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.5;
+  margin: 8px 0 0;
 }
 
 /* ---- alternating feature rows ----
@@ -2216,41 +2038,31 @@ main {
     padding-top: 36px;
     padding-bottom: 44px;
   }
-  /* Four compact numbered steps keep the process scannable on phones. */
-  .flow {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-areas: "in in" "s1 s2" "s3 s4" "out out";
+  .how-io {
+    flex-direction: column;
     gap: 12px;
   }
-  .flow-input {
-    justify-self: stretch;
-    padding: 12px 14px;
+  .how-note-out {
+    text-align: left;
   }
-  .fstep {
-    min-width: 0;
-    padding: 14px;
+  .how-machine .automation {
+    aspect-ratio: 4 / 3;
   }
-  .fstep .tag {
-    font-size: 11px;
-    margin-bottom: 6px;
-  }
-  .fstep h3 {
-    font-size: 15px;
-    line-height: 1.4;
-  }
-  .fstep p {
-    font-size: 13px;
-    margin-bottom: 0;
-  }
-  .f-fan,
-  .f-drop,
-  .f-link {
+  /* the pills would pile up on a phone-sized machine; the booths carry
+     their numbers and the steps below say the rest */
+  .automation-label {
     display: none;
   }
-  .flow-merge {
-    justify-self: stretch;
-    max-width: none;
-    padding: 16px;
+  .steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px 20px;
+  }
+  .step {
+    padding: 16px 0 4px;
+    border-left: 0;
+  }
+  .step h3 {
+    font-size: 14.5px;
   }
   .repo-feed-window {
     height: 340px;
@@ -2401,6 +2213,10 @@ main {
 .footer > .container {
   padding-top: 24px;
   padding-bottom: 38px;
+}
+/* the reading pages' footer: the hairline alone, no rails or crossings */
+.footer-plain {
+  border-top: 1px solid var(--border);
 }
 
 /* ---- try page ---- */
@@ -2845,114 +2661,161 @@ main > .band:nth-of-type(4n + 4) {
   content: none;
 }
 
-/* ---- secondary page head : /about, /blog ---- */
-/* the hero of a secondary page: one framed panel, eyebrow + mono title + a
-   line of copy, centered like the section titles on the landing */
-.page-head {
-  text-align: center;
-  padding-top: 72px;
-  padding-bottom: 72px;
+/* ---- about ---- */
+/* the about page leaves the landing's rule grid behind: no panels, no rails,
+   no dots. A hero with the copy beside the isometric machine (three.js, see
+   components/automation), three columns for the three beats, then the
+   founders and the contact side by side. The top bar's hairline above and
+   the footer's below are the only rules on the screen. */
+.page {
+  background: var(--bg);
 }
-.page-head h1 {
+.about-hero,
+.about-beats,
+.about-foot {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+.about-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 40px;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 16px;
+}
+.about-hero h1 {
   font-family: var(--font-mono);
-  font-size: clamp(30px, 3.8vw, 44px);
+  font-size: clamp(28px, 2.9vw, 36px);
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.15;
-  max-width: 820px;
-  margin: 0 auto 18px;
+  margin: 0 0 20px;
 }
-.page-head h1 em {
+.about-hero h1 em {
   font-style: normal;
   color: var(--green);
 }
-.page-head p {
+.about-hero .lede {
+  font-size: 18px;
+  line-height: 1.6;
   color: var(--text-dim);
-  font-size: 17px;
-  max-width: 600px;
-  margin: 0 auto;
+  max-width: 480px;
 }
-/* primary button + quiet link side by side, under a demo-band */
-.page-ctas {
+/* the cube of cubes: a transparent canvas over the hero's dot grid, fading
+   at the edges */
+.about-hero-visual {
+  position: relative;
+}
+.about-hero-visual::before {
+  content: "";
+  position: absolute;
+  inset: -6% -4%;
+  background-image: radial-gradient(circle at center, rgba(89, 99, 110, 0.2) 1px, transparent 1.4px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(ellipse 60% 56% at 50% 50%, #000 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 56% at 50% 50%, #000 40%, transparent 100%);
+  pointer-events: none;
+}
+.lattice {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 5 / 4;
+}
+.lattice canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* the three beats as three columns under a dashed rule */
+.about-beats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 40px;
+  margin-top: 24px;
+  padding-top: 40px;
+  padding-bottom: 8px;
+  border-top: 1px dashed var(--border);
+}
+.beat h2 {
+  font-family: var(--font-mono);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 10px;
+}
+.beat p {
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: var(--text-dim);
+}
+
+/* founders on the left, contact on the right */
+.about-foot {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 40px;
+  margin-top: 48px;
+  padding-top: 40px;
+  padding-bottom: 96px;
+  border-top: 1px dashed var(--border);
+}
+.about-team .team-grid {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 22px;
+  margin-top: 6px;
+}
+.about-team .member {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  grid-template-rows: auto auto auto;
+  column-gap: 18px;
+  row-gap: 2px;
+  align-items: center;
+  text-align: left;
+}
+.about-team .member img {
+  grid-row: 1 / 4;
+  width: 56px;
+  height: 56px;
+  margin: 0;
+}
+.about-team .member .bio {
+  max-width: none;
+  margin: 0;
+}
+.about-contact p {
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text-dim);
+  margin-bottom: 20px;
+}
+.page-cta-row {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 18px;
   flex-wrap: wrap;
 }
-
-/* ---- about : story ---- */
-/* title cell left, copy right, split by a rule like the feature panels */
-.about-story {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-}
-.about-story-title {
-  padding-top: 64px;
-  padding-bottom: 64px;
-  padding-right: 48px;
-}
-.about-story-title h2 {
-  font-family: var(--font-mono);
-  font-size: var(--h2-size);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.2;
-}
-.about-story-text {
-  border-left: 1px solid var(--border);
-  padding-top: 64px;
-  padding-bottom: 64px;
-  padding-left: 48px;
-}
-.about-story-text p {
-  font-size: 16.5px;
-  line-height: 1.75;
-  color: var(--text-dim);
-  max-width: 640px;
-}
-.about-story-text p + p {
-  margin-top: 16px;
+.page-cta-row .btn-try {
+  display: inline-flex;
+  align-items: center;
+  height: 46px;
+  padding: 0 24px;
+  font-size: 14px;
+  line-height: 1;
 }
 
-/* ---- about : principles, three cells split like the stats strip ---- */
-.principles {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-.principle {
-  padding: 40px 32px 44px;
-}
-.principle + .principle {
-  border-left: 1px solid var(--border);
-}
-.principle h3 {
-  font-size: 17px;
-  letter-spacing: -0.01em;
-  margin: 10px 0 8px;
-}
-.principle p {
-  color: var(--text-dim);
-  font-size: 14.5px;
-  line-height: 1.65;
-}
-
-/* ---- blog : EN | FR switch, top right of the page head ---- */
-.page-head,
-.post-head {
-  position: relative;
-}
+/* ---- blog : EN | FR switch ---- */
 .lang-switch {
   display: inline-flex;
   border: 1px solid var(--border);
   border-radius: 6px;
   overflow: hidden;
   background: var(--bg);
-}
-.page-head > .lang-switch {
-  position: absolute;
-  top: 20px;
-  right: 24px;
 }
 .lang-switch button {
   font-family: var(--font-mono);
@@ -2972,210 +2835,574 @@ main > .band:nth-of-type(4n + 4) {
   font-weight: 700;
 }
 
-/* ---- blog index : category filters, then one row per post ---- */
-.blog-filters {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  padding-top: 18px;
-  padding-bottom: 18px;
-}
-.blog-filters button {
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  color: var(--text-dim);
+/* ---- the blog, set like a newspaper ---- */
+/* /blog/ is a front page and /blog/<slug> an article page, in the manner of
+   Les Echos: a serif masthead over a bar of rubriques, a lead story with a
+   big picture, rows of headline + standfirst + picture, rubrique blocks of
+   three cards, and a side column with the wire and the most-read list.
+   Kickers and the active rubrique take the brand teal where a paper would
+   use red; hairlines do the rest. */
+.paper {
+  position: relative;
   background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 6px 12px;
-  transition: color 0.12s ease, border-color 0.12s ease;
-}
-.blog-filters button span {
-  margin-left: 4px;
-  opacity: 0.6;
-}
-.blog-filters button:hover {
   color: var(--text);
 }
-.blog-filters button[aria-pressed="true"] {
-  color: var(--green);
-  border-color: var(--green);
-  background: var(--green-soft);
-  font-weight: 700;
+/* the hero's dot grid behind the masthead, fading out before the stories */
+.paper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 240px;
+  background-image: radial-gradient(circle at center, rgba(89, 99, 110, 0.18) 1px, transparent 1.4px);
+  background-size: 24px 24px;
+  mask-image: linear-gradient(to bottom, #000 45%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent);
+  pointer-events: none;
 }
-.post-list {
-  padding-top: 8px;
-  padding-bottom: 8px;
+.paper-wrap {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
 }
-.post-empty {
-  padding: 40px 0;
-  text-align: center;
+.paper-empty {
+  padding: 48px 0;
+  font-family: var(--font-serif);
+  font-size: 19px;
   color: var(--text-dim);
-}
-.post-row {
-  display: grid;
-  grid-template-columns: 170px minmax(0, 1fr) 220px;
-  gap: 32px;
-  align-items: start;
-  padding: 28px 0;
-}
-.post-row + .post-row {
-  border-top: 1px dashed var(--border);
-}
-.post-row-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  color: var(--text-dim);
-}
-.post-row-cat {
-  color: var(--green);
-  margin-bottom: 4px;
-}
-.post-row-main {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.post-row-title {
-  font-family: var(--font-mono);
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.3;
-  transition: color 0.12s ease;
-}
-.post-row-desc {
-  color: var(--text-dim);
-  font-size: 15px;
-  max-width: 680px;
-}
-.post-row-thumb {
-  display: block;
-  transition: transform 0.2s ease;
-}
-.post-row:hover .post-row-title {
-  color: var(--green);
-}
-.post-row:hover .post-row-thumb {
-  transform: translateY(-2px);
 }
 
-/* ---- blog post ---- */
-.post-head {
-  padding-top: 48px;
-  padding-bottom: 44px;
-  text-align: center;
+/* masthead: the edition on the left, the site's wordmark in the middle, the
+   language switch on the right; then the rubriques, in the nav's lowercase
+   mono, over a thin rule */
+.masthead {
+  padding-top: 28px;
 }
-.post-head-bar {
-  display: flex;
+.masthead-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
-  max-width: 780px;
-  margin: 0 auto 28px;
+  gap: 16px;
 }
-.post-back {
+/* each piece keeps its column, so the wordmark stays centred when the
+   edition line is dropped on small screens */
+.masthead-edition {
+  grid-column: 1;
   font-family: var(--font-mono);
-  font-size: 12.5px;
-  color: var(--text-dim);
-}
-.post-head .eyebrow a:hover {
-  text-decoration: underline;
-}
-.post-back:hover {
+  font-size: 12px;
   color: var(--green);
 }
-.post-head h1 {
+.masthead-edition::before {
+  content: "[ ";
+}
+.masthead-edition::after {
+  content: " ]";
+}
+.masthead-row > .lang-switch {
+  grid-column: 3;
+  justify-self: end;
+}
+.masthead-title {
+  grid-column: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
   font-family: var(--font-mono);
-  font-size: clamp(28px, 3.4vw, 40px);
+  font-size: 46px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--text);
+}
+.masthead-compact .masthead-title {
+  font-size: 28px;
+  gap: 8px;
+}
+.rubriques {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  margin-top: 20px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  text-transform: lowercase;
+}
+.masthead-compact .rubriques {
+  margin-top: 16px;
+}
+.rubriques a {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 11px 0 9px;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color 0.12s ease;
+}
+.rubriques a:hover {
+  color: var(--green);
+}
+.rubriques a.active {
+  color: var(--green);
+  font-weight: 700;
+  border-bottom-color: var(--green);
+}
+
+/* the front page: the stories on the left, the side column on the right */
+.front {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 0 40px;
+}
+.front-main {
+  padding-top: 28px;
+}
+.front-side {
+  position: relative;
+  border-left: 1px solid var(--border);
+  padding-top: 28px;
+  padding-left: 32px;
+}
+.front-side::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 7px;
+  height: 7px;
+  background: var(--green);
+}
+
+/* one anatomy for every story on the page: picture in a slot, kicker,
+   serif headline, standfirst, byline. The kind (lead, row, card, wire,
+   pick) sets the sizes and where the picture goes. */
+.kicker {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  text-transform: lowercase;
+  color: var(--green);
+  margin-bottom: 7px;
+}
+.kicker::before {
+  content: "[ ";
+}
+.kicker::after {
+  content: " ]";
+}
+.headline {
+  display: block;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.22;
+  color: var(--text);
+  transition: color 0.12s ease;
+}
+a:hover > * > .headline,
+a:hover > .headline {
+  color: var(--green);
+}
+.standfirst {
+  display: block;
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--text-dim);
+  margin-top: 10px;
+}
+.byline {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 12px;
+}
+.slot {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background: var(--bg-soft);
+}
+/* the picture is taken out of flow so the slot keeps its ratio whatever
+   the picture's own: every card in a band gets the same frame */
+.slot img,
+.slot .cover {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.slot .cover {
+  aspect-ratio: auto;
+  border: 0;
+  border-radius: 0;
+}
+
+/* the lead: picture full width, then the biggest headline on the page */
+.lead {
+  display: block;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+.lead .slot {
+  aspect-ratio: 2 / 1;
+  margin-bottom: 20px;
+}
+.lead .headline {
+  font-size: clamp(27px, 3vw, 38px);
+  font-weight: 700;
+  font-variation-settings: "opsz" 36;
+  line-height: 1.12;
+}
+.lead .standfirst {
+  font-size: 17px;
+}
+
+/* rows: the words on the left, a picture on the right */
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 210px;
+  gap: 24px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--border);
+}
+.row .slot {
+  order: 2;
+  aspect-ratio: 4 / 3;
+}
+.row .headline {
+  font-size: 23px;
+}
+
+/* rubrique blocks: a titled band of three cards, then the rest of the
+   rubrique as headlines against a teal rule */
+.front-block,
+.read-next {
+  padding-top: 30px;
+}
+.block-title {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  padding-bottom: 8px;
+  border-bottom: 3px solid var(--green);
+  margin-bottom: 22px;
+}
+.block-title a:hover {
+  color: var(--green);
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.card {
+  display: block;
+  padding: 0 20px;
+  border-left: 1px solid var(--border);
+}
+.card:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+.card:last-child {
+  padding-right: 0;
+}
+.card .slot {
+  aspect-ratio: 3 / 2;
+  margin-bottom: 14px;
+}
+.card .headline {
+  font-size: 18.5px;
+}
+.block-more {
+  list-style: none;
+  margin-top: 22px;
+  padding-left: 16px;
+  border-left: 2px solid var(--green);
+}
+.block-more li + li {
+  margin-top: 14px;
+}
+.block-more .kicker {
+  margin-bottom: 2px;
+}
+.block-more .headline {
+  font-size: 17.5px;
+}
+
+/* the side column: the wire (every post, newest first), the most-read
+   list, and the paper's own box */
+.side-title {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  padding-bottom: 8px;
+  border-bottom: 3px solid var(--green);
+  margin-bottom: 4px;
+}
+.front-side section + section {
+  margin-top: 36px;
+}
+.wire,
+.picks {
+  list-style: none;
+}
+.wire li,
+.picks li {
+  border-bottom: 1px solid var(--border);
+}
+.wire a {
+  display: block;
+  padding: 14px 0;
+}
+.wire time {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--green);
+  margin-bottom: 5px;
+}
+.wire .kicker {
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+.wire .headline {
+  font-size: 17px;
+}
+.picks a {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px 0;
+}
+.pick-n {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--green);
+}
+.pick-n::before {
+  content: "[ ";
+}
+.pick-n::after {
+  content: " ]";
+}
+.picks .headline {
+  font-size: 17px;
+}
+.paper-box {
+  margin-top: 36px;
+  padding: 26px 24px;
+  color: var(--dark-text);
+  border: 1px solid var(--dark-border);
+  background:
+    radial-gradient(circle at center, rgba(132, 148, 165, 0.22) 1px, transparent 1.4px) 0 0 / 18px 18px,
+    radial-gradient(ellipse 80% 70% at 85% 100%, rgba(82, 208, 189, 0.16), transparent 70%),
+    var(--dark);
+}
+.paper-box h2 {
+  font-family: var(--font-mono);
+  font-size: 20px;
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.2;
-  max-width: 780px;
-  margin: 0 auto 14px;
+  color: var(--teal-bright);
+  margin-bottom: 10px;
 }
-.post-author {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--text-dim);
+.paper-box p {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--dark-dim);
+  margin-bottom: 18px;
 }
-/* the reading column: narrow, centered in the framed panel */
-.post-body > * {
-  max-width: 680px;
-  margin-left: auto;
-  margin-right: auto;
+.paper-box .demo-link {
+  color: var(--teal-bright);
 }
-.post-body {
-  padding-top: 52px;
-  padding-bottom: 64px;
-  font-size: 17px;
-  line-height: 1.75;
+.paper-box .btn-try {
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 22px;
+  font-size: 14px;
+  line-height: 1;
+  border-radius: 6px;
 }
-.post-body p,
-.post-body ul,
-.post-body blockquote {
-  margin-bottom: 20px;
-}
-.post-body h2 {
-  font-family: var(--font-mono);
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.35;
-  margin-top: 44px;
-  margin-bottom: 12px;
-}
-.post-body ul,
-.post-body ol {
-  padding-left: 22px;
-}
-.post-body ol {
-  margin-bottom: 20px;
-}
-.post-figure {
-  margin-bottom: 40px;
+.paper-box .demo-link {
+  margin-left: 16px;
 }
 
-/* ---- blog photo : the source's own picture, credited under it ---- */
-.post-photo {
+/* ---- the article page ---- */
+/* a reading column under the compact masthead: kicker, serif headline,
+   standfirst, a byline between two rules, the picture with its credit, the
+   body in serif, the sources as a footnote */
+.story {
+  max-width: 720px;
+  margin: 0 auto;
+  padding-top: 40px;
+}
+.story > .kicker {
+  font-size: 12px;
+}
+.story-title {
+  font-family: var(--font-serif);
+  font-size: clamp(30px, 4vw, 44px);
+  font-weight: 700;
+  font-variation-settings: "opsz" 48;
+  letter-spacing: -0.015em;
+  line-height: 1.12;
+  margin-bottom: 16px;
+}
+.story-standfirst {
+  font-family: var(--font-serif);
+  font-size: 21px;
+  line-height: 1.45;
+  color: var(--text-dim);
+  margin-bottom: 22px;
+}
+.story-byline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  padding: 11px 0;
+  border-top: 1px solid var(--text);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-dim);
+  margin-bottom: 30px;
+}
+.story-byline b {
+  font-weight: 600;
+  color: var(--text);
+}
+.story-figure {
+  margin-bottom: 34px;
+}
+.story-figure img {
   display: block;
   width: 100%;
   height: auto;
-  border: 1px solid var(--border);
-  border-radius: 8px;
   background: var(--bg-soft);
 }
-/* in the index every thumbnail is cut to the same 16:10 frame as the covers,
-   close to the 16:9 the sources publish, so their titles stay in frame */
-.post-photo-thumb {
-  aspect-ratio: 16 / 10;
-  height: auto;
-  object-fit: cover;
-  border-radius: 6px;
-}
-.post-photo-figure figcaption {
+.story-figure figcaption {
   margin-top: 8px;
-  font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 12.5px;
   line-height: 1.5;
   color: var(--text-dim);
 }
-.post-photo-figure figcaption a {
-  color: inherit;
-  text-decoration: none;
+.story-figure figcaption a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
-.post-photo-figure figcaption a:hover {
+.story-figure figcaption a:hover {
+  color: var(--green);
+}
+.story-body {
+  font-family: var(--font-serif);
+  font-size: 19.5px;
+  line-height: 1.6;
+}
+.story-body p,
+.story-body ul,
+.story-body ol,
+.story-body blockquote {
+  margin-bottom: 22px;
+}
+.story-body h2 {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  margin: 40px 0 12px;
+}
+.story-body b {
+  font-weight: 600;
+}
+.story-body ul,
+.story-body ol {
+  padding-left: 24px;
+}
+.story-body li + li {
+  margin-top: 8px;
+}
+.story-body li::marker {
+  color: var(--green);
+}
+.story-body a {
   color: var(--green);
   text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.story-body blockquote {
+  border-left: 3px solid var(--green);
+  padding: 2px 0 2px 20px;
+  font-style: italic;
+}
+.story-body > :last-child {
+  margin-bottom: 0;
+}
+.story-sources {
+  margin-top: 40px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.story-sources h2 {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--green);
+  margin: 0 0 8px;
+}
+.story-sources h2::before {
+  content: "[ ";
+}
+.story-sources h2::after {
+  content: " ]";
+}
+.story-sources ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.story-sources li + li {
+  margin-top: 6px;
+}
+.story-sources a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.story-sources a:hover {
+  color: var(--green);
+}
+/* three more stories under the article, then the paper's box */
+.read-next {
+  margin-top: 56px;
+  border-top: 2px solid var(--text);
+}
+.story-end {
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 /* ---- blog cover : the article's key figure on a dark terminal tile ---- */
-/* sizes are container units (cqw), so one design serves the 200px index
-   thumbnail and the full-width cover on the post. Each category tints the
-   hatched band and the figure with one of the palette's greens. */
+/* drawn for the posts that have no picture of their own. Sizes are container
+   units (cqw) so the tile scales with whatever slot it fills. Each category
+   tints the hatched band and the figure with one of the palette's greens. */
 .cover {
   --cover-accent: var(--teal-bright);
   --cover-hatch: rgba(82, 208, 189, 0.22);
@@ -3185,7 +3412,6 @@ main > .band:nth-of-type(4n + 4) {
   flex-direction: column;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: 8px;
   border: 1px solid var(--dark-border);
   color: var(--dark-text);
   font-family: var(--font-mono);
@@ -3193,10 +3419,6 @@ main > .band:nth-of-type(4n + 4) {
     radial-gradient(circle at center, rgba(132, 148, 165, 0.22) 1px, transparent 1.4px) 0 0 / 4.5cqw 4.5cqw,
     radial-gradient(ellipse 80% 70% at 85% 100%, color-mix(in srgb, var(--cover-accent) 16%, transparent), transparent 70%),
     var(--dark);
-}
-.cover-thumb {
-  aspect-ratio: 16 / 10;
-  border-radius: 6px;
 }
 .cover-interviews {
   --cover-accent: #c6d36a;
@@ -3264,145 +3486,126 @@ main > .band:nth-of-type(4n + 4) {
   font-weight: 700;
   color: var(--dark-dim);
 }
-/* the thumbnail is small: bigger figure, caption kept, footer dropped */
-.cover-thumb .cover-figure {
-  font-size: min(17cqw, calc(138cqw / var(--len, 4)));
-}
-.cover-thumb .cover-caption {
-  font-size: max(9.5px, 5.4cqw);
-  max-width: none;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.cover-thumb .cover-tag,
-.cover-thumb .cover-foot {
-  display: none;
-}
-.cover-thumb .cover-top {
-  height: 9cqw;
-}
-.cover-thumb .cover-main {
-  gap: 2.5cqw;
-  padding: 0 7cqw;
-}
-/* sources : a footnote block under the article, quieter than the body */
-.post-body .post-sources {
-  margin-top: 40px;
-  padding-top: 20px;
-  border-top: 1px dashed var(--border);
-  font-size: 14px;
-  line-height: 1.6;
-}
-.post-body .post-sources h2 {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-dim);
-  margin: 0 0 8px;
-}
-.post-body .post-sources ul {
-  margin: 0;
-}
-.post-body li + li {
-  margin-top: 8px;
-}
-.post-body li::marker {
-  color: var(--green);
-}
-.post-body a {
-  color: var(--green);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-.post-body blockquote {
-  border-left: 3px solid var(--green);
-  background: var(--green-soft);
-  padding: 16px 20px;
-  font-size: 16px;
-}
-.post-body > :last-child {
-  margin-bottom: 0;
-}
 
-@media (max-width: 800px) {
-  .page-head {
-    padding-top: 48px;
-    padding-bottom: 48px;
+@media (max-width: 960px) {
+  /* one column: the side column follows the stories under its own rule */
+  .front {
+    grid-template-columns: minmax(0, 1fr);
   }
-  .page-head p {
+  .front-side {
+    border-left: 0;
+    padding-left: 0;
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid var(--text);
+  }
+  .front-side::before {
+    content: none;
+  }
+}
+@media (max-width: 800px) {
+  .about-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding-top: 36px;
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .about-hero h1 {
+    font-size: 28px;
+  }
+  .about-hero .lede {
+    font-size: 16.5px;
+  }
+  .lattice {
+    aspect-ratio: 4 / 3;
+  }
+  .about-beats,
+  .about-foot {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .about-beats {
+    padding-top: 28px;
+  }
+  .about-foot {
+    margin-top: 36px;
+    padding-top: 28px;
+    padding-bottom: 64px;
+  }
+  .paper-wrap {
+    padding: 0 18px 56px;
+  }
+  .masthead {
+    padding-top: 18px;
+  }
+  .masthead-edition {
+    display: none;
+  }
+  .masthead-title {
+    font-size: 32px;
+    gap: 8px;
+  }
+  .masthead-compact .masthead-title {
+    font-size: 24px;
+  }
+  .rubriques {
+    justify-content: flex-start;
+    gap: 22px;
+  }
+  .front {
+    padding-top: 20px;
+  }
+  .lead .headline {
+    font-size: 26px;
+  }
+  .lead .standfirst {
     font-size: 16px;
   }
-  .about-story {
-    grid-template-columns: 1fr;
+  .row {
+    grid-template-columns: minmax(0, 1fr) 110px;
+    gap: 16px;
+    padding: 20px 0;
   }
-  .about-story-title {
-    padding-top: 40px;
-    padding-bottom: 16px;
-    padding-right: 0;
+  .row .slot {
+    aspect-ratio: 1 / 1;
   }
-  .about-story-text {
-    border-left: none;
-    padding-top: 0;
-    padding-bottom: 44px;
-    padding-left: 0;
+  .row .headline {
+    font-size: 19px;
   }
-  .principles {
-    grid-template-columns: 1fr;
-  }
-  .principle {
-    padding: 28px 0 30px;
-  }
-  .principle + .principle {
-    border-left: none;
-    border-top: 1px dashed var(--border);
-  }
-  .post-row {
-    grid-template-columns: minmax(0, 1fr) 116px;
-    gap: 10px 16px;
-    padding: 22px 0;
-  }
-  .post-row-meta {
-    grid-column: 1 / -1;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 2px 12px;
-  }
-  .post-row-cat {
-    margin-bottom: 0;
-  }
-  .post-row-desc {
+  .row .standfirst {
     font-size: 14px;
   }
-  .page-head > .lang-switch {
-    top: 14px;
-    right: 18px;
+  .cards {
+    grid-template-columns: minmax(0, 1fr);
   }
-  .page-head {
-    padding-top: 60px;
+  .card {
+    padding: 18px 0;
+    border-left: 0;
+    border-top: 1px solid var(--border);
   }
-  .blog-filters {
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
+  .card:first-child {
+    padding-top: 0;
+    border-top: 0;
   }
-  .blog-filters button {
-    flex: none;
+  .card:last-child {
+    padding-bottom: 0;
   }
-  .post-head-bar {
-    margin-bottom: 20px;
+  .card .slot {
+    aspect-ratio: 2 / 1;
   }
-  .post-row-title {
+  .story {
+    padding-top: 28px;
+  }
+  .story-standfirst {
+    font-size: 19px;
+  }
+  .story-body {
     font-size: 18px;
   }
-  .post-head {
-    padding-top: 32px;
-    padding-bottom: 32px;
-  }
-  .post-body {
-    padding-top: 36px;
-    padding-bottom: 44px;
-    font-size: 16px;
+  .read-next {
+    margin-top: 44px;
   }
 }

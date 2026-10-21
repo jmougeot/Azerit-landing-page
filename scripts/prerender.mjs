@@ -38,7 +38,7 @@ const ROUTES = [
     path: "/about",
     out: "about.html",
     title: "About · Azerit",
-    desc: "Azerit is built by two founders who think engineers should be hired on what they've built. Why we read GitHub instead of CVs, and what we believe.",
+    desc: "Better engineers, faster, proven by their code. Azerit is two engineers from Centrale who read GitHub instead of CVs and automate everything they can.",
   },
   {
     // a directory index, not blog.html: the posts live under blog/, and a

@@ -51,8 +51,6 @@ export type Post = {
     alt: { en: string; fr: string };
     credit: string;
     href: string; // the source page the picture comes from
-    // what the 16:10 index thumbnail keeps when it crops (CSS object-position)
-    focus?: string;
   };
   // drawn by PostCover when there is no image: the key figure and what it counts
   cover: {
@@ -87,6 +85,16 @@ export const POSTS: Post[] = [
 
 export function categoryLabel(id: CategoryId, lang: Lang) {
   return CATEGORIES.find((c) => c.id === id)![lang];
+}
+
+// "October 20, 2026" / "20 octobre 2026": the masthead's edition line
+export function formatLongDate(date: string, lang: Lang) {
+  return new Date(`${date}T00:00:00Z`).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
 }
 
 export function formatDate(date: string, lang: Lang) {

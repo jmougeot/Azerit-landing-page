@@ -36,9 +36,11 @@ export function TopBar() {
   );
 }
 
-export function Footer() {
+// `plain` is for the reading pages (/about, /blog): no rails or crossings,
+// just a hairline above the line of links.
+export function Footer({ plain = false }: { plain?: boolean }) {
   return (
-    <footer className="footer band">
+    <footer className={plain ? "footer footer-plain" : "footer band"}>
       <div className="container" style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <LogoMark size={13} /> azerit © {new Date().getFullYear()} · the proof is already on
         GitHub.

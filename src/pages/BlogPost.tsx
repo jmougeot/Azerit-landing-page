@@ -1,15 +1,17 @@
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { TopBar, Footer } from "../components/Nav";
-import { Seam } from "../components/Seam";
 import { DemoLink } from "../components/DemoLink";
 import { POSTS, categoryLabel, formatDate } from "../blog/posts";
 import { UI, useLang } from "../blog/lang";
-import { LangSwitch } from "../blog/LangSwitch";
+import { Masthead } from "../blog/Masthead";
+import { Story } from "../blog/Story";
 import { Prose, readingMinutes, typo } from "../blog/Prose";
 import { PostVisual } from "../blog/PostCover";
 import { NotFound } from "./NotFound";
 
+// An article page: the compact masthead with the article's rubrique
+// underlined, the story in a reading column, three more stories, the box.
 export function BlogPost() {
   const { slug } = useParams();
   const post = POSTS.find((p) => p.slug === slug);
@@ -27,39 +29,39 @@ export function BlogPost() {
 
   if (!post || !v) return <NotFound />;
 
+  // the same rubrique first, then the newest of the others, three in all
+  const next = [
+    ...POSTS.filter((p) => p.category === post.category && p.slug !== post.slug),
+    ...POSTS.filter((p) => p.category !== post.category),
+  ].slice(0, 3);
+
   return (
     <>
       <TopBar />
-      <main>
-        <Seam />
+      <main className="paper">
+        <div className="paper-wrap">
+          <Masthead lang={lang} onLang={setLang} active={post.category} compact />
 
-        <article>
-          <header className="band band-head">
-            <div className="container post-head">
-              <div className="post-head-bar">
-                <Link to="/blog/" className="post-back">
-                  ← {t.allPosts}
-                </Link>
-                <LangSwitch lang={lang} onChange={setLang} />
-              </div>
-              <span className="tag eyebrow">
-                <Link to={`/blog/?category=${post.category}`}>{categoryLabel(post.category, lang)}</Link>
+          <article className="story">
+            <span className="kicker">
+              <Link to={`/blog/?category=${post.category}`}>{categoryLabel(post.category, lang)}</Link>
+            </span>
+            <h1 className="story-title">{typo(v.title)}</h1>
+            <p className="story-standfirst">{typo(v.description)}</p>
+            <p className="story-byline">
+              <span>
+                {t.by} <b>{post.author}</b>
               </span>
-              <h1>{typo(v.title)}</h1>
-              <p className="post-author">
-                <time dateTime={post.date}>{formatDate(post.date, lang)}</time> · {readingMinutes(v.body)}{" "}
-                {t.minRead} · {t.by} {post.author}
-              </p>
-            </div>
-          </header>
-          <section className="band">
-            <div className="container post-body">
-              <div className="post-figure">
-                <PostVisual post={post} lang={lang} size="full" />
-              </div>
+              <time dateTime={post.date}>{formatDate(post.date, lang)}</time>
+              <span>
+                {readingMinutes(v.body)} {t.minRead}
+              </span>
+            </p>
+            <PostVisual post={post} lang={lang} />
+            <div className="story-body">
               <Prose source={v.body} />
               {post.sources.length > 0 && (
-                <aside className="post-sources">
+                <aside className="story-sources">
                   <h2>{t.sources}</h2>
                   <ul>
                     {post.sources.map((s) => (
@@ -73,28 +75,30 @@ export function BlogPost() {
                 </aside>
               )}
             </div>
+          </article>
+
+          <section className="read-next">
+            <h2 className="block-title">{t.readNext}</h2>
+            <div className="cards">
+              {next.map((p) => (
+                <Story key={p.slug} post={p} lang={lang} kind="card" />
+              ))}
+            </div>
           </section>
-        </article>
 
-        <Seam hatch />
-
-        <section className="band">
-          <div className="container demo-band">
-            <span className="tag eyebrow">azerit</span>
-            <h2>{t.ctaTitle}</h2>
-            <p>{t.ctaSub}</p>
-            <div className="page-ctas">
+          <div className="story-end">
+            <section className="paper-box">
+              <h2>{t.boxTitle}</h2>
+              <p>{t.boxText}</p>
               <Link to="/try" className="btn-try">
                 {t.ctaTry}
               </Link>
               <DemoLink className="demo-link">{t.ctaDemo}</DemoLink>
-            </div>
+            </section>
           </div>
-        </section>
-
-        <Seam />
+        </div>
       </main>
-      <Footer />
+      <Footer plain />
     </>
   );
 }
