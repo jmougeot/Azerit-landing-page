@@ -1026,9 +1026,18 @@ main {
   font-weight: 700;
   letter-spacing: -0.03em;
 }
+/* the one-paragraph version of the whole section: who it's for, what
+   comes out */
+.how-lede {
+  max-width: 600px;
+  margin: 14px auto 0;
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
 .how {
-  padding-top: 40px;
-  padding-bottom: 56px;
+  padding-top: 20px;
+  padding-bottom: 48px;
 }
 /* the machine's labels: the site's [ tags ], pinned over the canvas */
 .automation {
@@ -1055,56 +1064,120 @@ main {
   border-radius: 4px;
   box-shadow: 0 1px 2px rgba(31, 35, 40, 0.06);
 }
-/* the pipeline as the isometric machine (components/automation): the
-   input and output notes above it, the four steps in a row under it */
-.how-io {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 24px;
-}
-.how-note {
-  max-width: 320px;
-}
-.how-note p {
-  font-size: 14px;
-  line-height: 1.55;
-  color: var(--text-dim);
-  margin-top: 4px;
-}
-.how-note-out {
-  text-align: right;
-}
+/* the search as the isometric machine (components/automation), the four
+   steps in a row under it */
 .how-machine {
-  max-width: 1080px;
+  position: relative;
+  max-width: 1180px;
   margin: 0 auto;
 }
-.how-machine .automation {
-  aspect-ratio: 16 / 9;
+/* the whole band is the generated plateau picture (public/how/plateau.jpg):
+   pale ground, hazy hills at the top, a nearly white foreground where the
+   step cards sit; the machine's canvas is transparent over it */
+.how-band {
+  background: #f4f7f6;
+  overflow: hidden;
 }
+.how-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 38%;
+  pointer-events: none;
+}
+.how-band > .container {
+  position: relative;
+}
+/* beats the panel rule further down (`.band > .container`), which paints
+   the page colour under every panel */
+.band.how-band > .container {
+  background: transparent;
+}
+.how-machine .automation {
+  aspect-ratio: 16 / 9.5;
+}
+/* the leader lines from each step to its station, drawn by the engine */
+.automation-leaders {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+.automation-leaders line {
+  stroke: var(--green);
+  stroke-width: 1.2;
+  stroke-dasharray: 3 4;
+  opacity: 0.75;
+}
+.automation-leaders circle {
+  fill: var(--green);
+}
+/* the four steps in one row under the machine, read left to right like the
+   belts; the engine ties each to its station with a leader line */
 .steps {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin-top: 12px;
-  border-top: 1px dashed var(--border);
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
 }
 .step {
-  padding: 22px 24px 6px;
-  border-left: 1px dashed var(--border);
+  position: absolute;
+  top: 78%;
+  width: 22%;
+  pointer-events: auto;
 }
-.step:first-child {
-  padding-left: 0;
-  border-left: 0;
+.step:nth-child(1) {
+  left: 0;
 }
-.step:last-child {
-  padding-right: 0;
+.step:nth-child(2) {
+  left: 26%;
+}
+.step:nth-child(3) {
+  left: 52%;
+}
+.step:nth-child(4) {
+  left: 78%;
 }
 .step h3 {
   font-size: 15.5px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  line-height: 1.5;
+  line-height: 1.45;
   margin: 8px 0 0;
+}
+.step p {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+/* narrower than a laptop the cards would cover the machine: stack them
+   under it instead */
+@media (max-width: 1023px) {
+  .automation-leaders {
+    display: none;
+  }
+  .steps {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 24px;
+    margin-top: 16px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border);
+  }
+  .step {
+    position: static;
+    width: auto;
+    max-width: none;
+    padding: 12px 0 4px;
+  }
 }
 
 /* ---- alternating feature rows ----
@@ -2038,13 +2111,6 @@ main {
     padding-top: 36px;
     padding-bottom: 44px;
   }
-  .how-io {
-    flex-direction: column;
-    gap: 12px;
-  }
-  .how-note-out {
-    text-align: left;
-  }
   .how-machine .automation {
     aspect-ratio: 4 / 3;
   }
@@ -2053,16 +2119,12 @@ main {
   .automation-label {
     display: none;
   }
-  .steps {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 4px 20px;
-  }
-  .step {
-    padding: 16px 0 4px;
-    border-left: 0;
-  }
   .step h3 {
     font-size: 14.5px;
+  }
+  .how-lede {
+    font-size: 14.5px;
+    margin-top: 10px;
   }
   .repo-feed-window {
     height: 340px;

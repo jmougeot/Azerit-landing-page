@@ -60,9 +60,9 @@ export function About() {
             <p>
               Everything at Azerit that can be automated is, with AI on the repetitive work:
               sourcing, enrichment, scoring, outreach, and most of how we run the company. Two
-              people deliver what used to take a team, and the difference goes to you: a
-              shortlist in days, not weeks, replies instead of silence, and the founders on the
-              line when you need them.
+              people deliver what used to take a team, and the difference goes to you: the
+              right engineer in days, not weeks, replies instead of silence, and the founders on
+              the line when you need them.
             </p>
           </div>
         </section>

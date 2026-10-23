@@ -91,8 +91,8 @@ export const UI = {
     empty: "No posts in this rubrique yet.",
     boxTitle: "Find the engineers who have already built it",
     boxText:
-      "Azerit reads GitHub for the developers who have shipped what you're hiring for: a ranked shortlist, verified emails, and a first message written about their own work.",
-    ctaTry: "Find my candidates",
+      "Azerit reads GitHub for the developers who have shipped what you're hiring for, and sends you the one who fits: skills proven by their code, a verified email, and a first message written about their own work.",
+    ctaTry: "Find my engineer",
     ctaDemo: "book a demo",
     switchLabel: "Language",
   },
@@ -110,8 +110,8 @@ export const UI = {
     empty: "Pas encore d'article dans cette rubrique.",
     boxTitle: "Trouvez les ingénieurs qui l'ont déjà construit",
     boxText:
-      "Azerit lit GitHub pour trouver les développeurs qui ont déjà livré ce que vous recrutez : une shortlist classée, des emails vérifiés, et un premier message écrit sur leur propre travail.",
-    ctaTry: "Trouver mes candidats",
+      "Azerit lit GitHub pour trouver les développeurs qui ont déjà livré ce que vous recrutez, et vous envoie celui qui correspond : des compétences prouvées par son code, un email vérifié, et un premier message écrit sur son propre travail.",
+    ctaTry: "Trouver mon ingénieur",
     ctaDemo: "réserver une démo",
     switchLabel: "Langue",
   },

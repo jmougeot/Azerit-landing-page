@@ -166,12 +166,15 @@ const INMAILS = [
   },
 ];
 
-// The four stages of the pipeline, the same four gates the machine draws.
+// The four steps of a search, the same four stations the machine draws: a
+// short name (the station's), an explicit title, one line on what it means
+// for the hire. On desktop they sit around the machine, each tied to its
+// station by a leader line the engine draws.
 const STEPS = [
-  "We scan GitHub for the developers who already work in your stack.",
-  "We read their commits, pull requests and code reviews.",
-  "We add their names, locations and verified work emails.",
-  "We score each one against your role and keep only the matches.",
+  { short: "find", title: "Find them on GitHub", text: "The developers who already build what you're hiring for." },
+  { short: "read code", title: "Read their code", text: "Commits, pull requests and reviews, not a CV." },
+  { short: "match", title: "Keep the one who fits", text: "Not a list: one engineer whose work matches, each skill backed by a project." },
+  { short: "message", title: "Write the first message", text: "About their own work, ready to send. The kind engineers answer." },
 ];
 
 // Local brand assets. Aurel source: https://www.agilitesolutions.com/projects/a-multi-purpose-space-for-aurel-bgc/
@@ -219,12 +222,12 @@ export function Landing() {
                 Hire the engineers who actually <em>ship</em>
               </h1>
               <p className="sub">
-                Find engineers who have already built what you need on GitHub.
-                Get a ranked shortlist, verified emails and outreach grounded in their code.
+                Find the engineers who have already built what you need on GitHub.
+                We send you the one who fits, with a first message grounded in their code.
               </p>
               <div className="hero-cta">
                 <Link to="/try" className="btn-try">
-                  Find my candidates
+                  Find my engineer
                 </Link>
                 <DemoLink className="demo-link">book a demo</DemoLink>
               </div>
@@ -316,14 +319,14 @@ export function Landing() {
 
       <Seam />
 
-      {/* feature: the deliverable — a scored candidate, not a pile of CVs */}
+      {/* feature: the deliverable — one proven engineer, not a pile of CVs */}
       <section className="band">
         <div className="container feature rev">
         <div className="f-copy">
-          <span className="tag eyebrow">shortlist</span>
-          <h2>Your ranked shortlist</h2>
+          <span className="tag eyebrow">the match</span>
+          <h2>The one who fits your role</h2>
           <p>
-            See the projects and contributions behind each score.
+            See the projects and contributions behind the match.
           </p>
         </div>
         <div className="f-visual">
@@ -389,38 +392,51 @@ export function Landing() {
 
       <Seam hatch />
 
-      {/* how it works */}
+      {/* how it works: a hire, from the code up */}
       <section className="band band-head">
         <div className="container how-title">
-          <span className="tag eyebrow">pipeline</span>
+          <span className="tag eyebrow">method</span>
           <h2>How it works</h2>
+          <p className="how-lede">
+            You're hiring an engineer. We search GitHub for the people who have already built
+            what you need, read their code, and send you the one who fits, with a first message
+            about their work ready to send.
+          </p>
         </div>
       </section>
-      <section className="band">
+      <section className="band how-band">
+        {/* the plateau the machine stands on: a lazy image behind the band, so
+            it only downloads as the section nears the viewport */}
+        <img
+          className="how-bg"
+          src="/how/plateau.jpg"
+          srcSet="/how/plateau-small.jpg 1010w, /how/plateau.jpg 1627w"
+          sizes="100vw"
+          width={1627}
+          height={967}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          aria-hidden
+        />
         <div className="container how">
-          {/* the pipeline as a machine: the role goes in, rough blocks come out
-              of GitHub, four gates straighten and tint them, the shortlist
-              stacks up at the end (components/automation) */}
-          <div className="how-io">
-            <div className="how-note">
-              <span className="tag">input</span>
-              <p>Describe your role in one sentence.</p>
-            </div>
-            <div className="how-note how-note-out">
-              <span className="tag">output</span>
-              <p>A ranked shortlist, with a ready-to-send email for each candidate.</p>
-            </div>
-          </div>
+          {/* the search as a machine, downhill: rough blocks come out of GitHub
+              repositories, four stations find, read, match and message them,
+              the one that fits is shown on the pedestal at the end
+              (components/automation) */}
           <div className="how-machine">
             <AutomationScene />
-          </div>
-          <div className="steps">
-            {STEPS.map((step, i) => (
-              <div className="step" key={step}>
-                <span className="tag">step {i + 1}</span>
-                <h3>{step}</h3>
-              </div>
-            ))}
+            <ol className="steps">
+              {STEPS.map((step, i) => (
+                <li className="step" data-step={i + 1} key={step.title}>
+                  <span className="tag">
+                    step {i + 1} · {step.short}
+                  </span>
+                  <h3>{step.title}</h3>
+                  <p>{step.text}</p>
+                </li>
+              ))}
+            </ol>
           </div>
         </div>
       </section>

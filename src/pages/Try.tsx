@@ -28,14 +28,14 @@ export function Try() {
         {done ? (
           <div className="confirm">
             <div className="check">✓ request received</div>
-            <h1>Your first shortlist starts here.</h1>
+            <h1>Your first search starts here.</h1>
             <p>
               We're onboarding teams one by one so every search gets set up properly. You'll get an
               email at <strong style={{ color: "var(--text)" }}>{email}</strong> when your dashboard
               is ready.
             </p>
             <p style={{ fontSize: 13.5 }}>
-              Early users get their first candidate batch free. We'll run your role as the test.
+              Early users get their first search free. We'll run your role as the test.
             </p>
             <Link to="/" className="btn-ghost" style={{ display: "inline-block", marginTop: 20 }}>
               back
@@ -48,7 +48,7 @@ export function Try() {
               Tell us who you're hiring. We're onboarding teams one by one and will email you
               when your search and dashboard are ready.
             </p>
-            <p className="try-benefit">Your first candidate batch is free.</p>
+            <p className="try-benefit">Your first search is free.</p>
             <form onSubmit={submit}>
               <div className="field">
                 <label htmlFor="email">work email</label>
@@ -78,7 +78,7 @@ export function Try() {
                 style={{ width: "100%" }}
                 disabled={submitting}
               >
-                {submitting ? "sending your request…" : "Request my shortlist"}
+                {submitting ? "sending your request…" : "Find my engineer"}
               </button>
             </form>
           </div>

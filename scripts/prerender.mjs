@@ -312,4 +312,38 @@ ${urls.join("\n")}
 );
 console.log(`Sitemap with ${urls.length} URLs in dist/sitemap.xml`);
 
+// ---- llms.txt ----
+// The llmstxt.org format: an H1, a one-paragraph summary in a blockquote,
+// then sections of "- [title](url): description" links. Built from the same
+// page and post data as the sitemap, so it stays current.
+const llmsPage = (path, title, desc) => `- [${title}](${SITE_URL}${path}): ${desc}`;
+const llms = `# Azerit
+
+> Azerit is a recruiting service for software engineers. Tell it the role you're hiring for; it searches GitHub for the developers who have already built what you need, reads their code (commits, pull requests, reviews), and sends you the one who fits, with skills proven by their work, a verified professional email and a first message about their work ready to send. Built by two engineers from Centrale, Paris. 300 € a month, up to 10 open roles, first search free.
+
+Azerit does not rank CVs or keywords: it starts from public code. Every match comes with the projects and contributions behind it. Candidates are contacted through the professional email they publish, with one personal message about their own work, which is why reply rates are around 30% instead of the 1 to 3% of LinkedIn InMails.
+
+## Pages
+
+${llmsPage("/", "Home", "How Azerit finds, reads, matches and messages engineers from GitHub.")}
+${Object.entries(PAGES)
+  .filter(([path]) => !["/legal", "/terms"].includes(path))
+  .map(([path, { title, desc }]) => llmsPage(path, title, desc))
+  .join("\n")}
+${llmsPage("/blog/", "Blog (English)", "Guides and notes on hiring engineers from their code.")}
+${llmsPage("/fr/blog/", "Blog (French)", "The same articles in French.")}
+
+## Guides and articles
+
+${posts.map(({ post }) => llmsPage(`/blog/${post.slug}`, post.en.title, post.en.description)).join("\n")}
+
+## Optional
+
+${llmsPage("/terms", "Terms of sale", "What the subscription includes, price, cancellation, use of candidate data.")}
+${llmsPage("/legal", "Legal notice and privacy policy", "Publisher, data collected and why, retention, your rights.")}
+${posts.map(({ post }) => llmsPage(`/fr/blog/${post.slug}`, post.fr.title, post.fr.description)).join("\n")}
+`;
+writeFileSync(new URL("../dist/llms.txt", import.meta.url), llms);
+console.log(`llms.txt with ${posts.length} posts in dist/llms.txt`);
+
 rmSync(new URL("../dist-ssr/", import.meta.url), { recursive: true, force: true });

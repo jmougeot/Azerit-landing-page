@@ -12,7 +12,7 @@ export const HOME_TITLE = "Azerit · Recruit Engineers from GitHub with AI";
 export const PAGES = {
   "/try": {
     title: "Try Azerit on Your Role · Recruit Engineers from GitHub",
-    desc: "Tell us the role you're hiring for and get a shortlist of GitHub engineers who have already built it. Your first candidate batch is free.",
+    desc: "Tell us the role you're hiring for and get the GitHub engineer who has already built it: skills proven by their code, a verified email, a first message. Your first search is free.",
   },
   "/legal": {
     title: "Legal Notice & Privacy Policy · Azerit",
@@ -24,7 +24,7 @@ export const PAGES = {
   },
   "/pricing": {
     title: "Pricing · Azerit · 300 € / month",
-    desc: "Azerit costs 300 € a month: up to 10 open roles, 20+ ranked GitHub candidates per role, verified emails and a personalized first email for each one.",
+    desc: "Azerit costs 300 € a month: up to 10 open roles, 20+ GitHub candidates per role with skills proven by their code, verified emails and a personalized first email for each one.",
   },
   "/about": {
     title: "About · Azerit",

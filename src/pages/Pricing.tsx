@@ -44,7 +44,7 @@ export function Pricing() {
 
               <ul className="price-features">
                 <li>Candidates matched across 145M+ GitHub developers on the code they write</li>
-                <li>Ranked shortlists, with the projects and contributions behind each score</li>
+                <li>The engineer who fits each role, with the projects and contributions behind the match</li>
                 <li>Verified professional emails</li>
                 <li>A personalized first email for every candidate, opening on their own work</li>
                 <li>Direct support from the founders</li>
