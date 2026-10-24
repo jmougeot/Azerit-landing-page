@@ -2,7 +2,7 @@ import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { TopBar, Footer } from "../components/Nav";
 import { LogoMark } from "../components/Logo";
-import { HeroGlobe } from "../components/HeroGlobe";
+import { HeroPicker } from "../components/HeroPicker";
 import { DotGridBand } from "../components/DotGridBand";
 import { DemoLink } from "../components/DemoLink";
 import { RepoFeed, type Repo } from "../components/RepoFeed";
@@ -244,7 +244,9 @@ export function Landing() {
               </div>
             </div>
             <div className="hero-visual">
-              <HeroGlobe />
+              {/* the result: a robot arm picks the one card that fits, its
+                  code gathers around it (components/picker) */}
+              <HeroPicker />
             </div>
           </header>
 
@@ -405,12 +407,12 @@ export function Landing() {
         </div>
       </section>
       <section className="band how-band">
-        {/* the plateau the machine stands on: a lazy image behind the band, so
+        {/* the hall the machine stands in: a lazy image behind the band, so
             it only downloads as the section nears the viewport */}
         <img
           className="how-bg"
-          src="/how/plateau.jpg"
-          srcSet="/how/plateau-small.jpg 1010w, /how/plateau.jpg 1627w"
+          src="/how/hall.jpg"
+          srcSet="/how/hall-small.jpg 1010w, /how/hall.jpg 1627w"
           sizes="100vw"
           width={1627}
           height={967}

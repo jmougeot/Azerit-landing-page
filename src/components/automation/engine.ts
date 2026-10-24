@@ -14,7 +14,7 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
 // (message). That one ends up straight, teal and badged on a turning pedestal
 // at the end: one engineer for the role, not a list. The next one to fit
 // takes its place. The machine stands on a picture the page paints behind
-// the canvas (a hazy plateau), casting its shadows on it; the camera is a
+// the canvas (a white hall), casting its shadows on it; the camera is a
 // perspective one, pitched like the picture, so the machine sits in it. The
 // step cards around the machine are laid out by the page's CSS; this module
 // ties each to its station with a leader line. No hands anywhere. Lives in
@@ -110,10 +110,17 @@ const COL_LIME = "#c6d36a";
 const COL_RED = "#ff6b6b";
 const COL_SCREEN_OFF = "#1c2530";
 const GREENS = ["#9be9a8", "#40c463", "#30a14e", "#216e39"]; // GitHub's graph
-// the camera: 30° off the front, 19° up, 45° lens: the horizon lands where
-// the plateau picture's does, a little under the top edge
-const CAM_DIR = new THREE.Vector3(-0.471, 0.326, 0.820).normalize();
-const CAM_FOV = 45;
+// the camera: level and square to the machine, at eye height, like the hall
+// picture behind it is seen: its horizontals stay horizontal, its verticals
+// vertical, depth runs to one vanishing point. The frame is shifted down
+// (a lens shift, `setViewOffset`) so the machine, which stands below eye
+// level, fills it while the horizon stays where the picture's is
+const CAM_DIR = new THREE.Vector3(0, 0, 1);
+const CAM_FOV = 52; // of the whole, unshifted image: a wide lens, like the picture
+const EYE = FLOOR + 3.2; // the camera's height: it looks down on the belts, as the picture looks down on its tables
+// where the hall picture's eye level sits, as a share of its height, and how
+// the page shows it (public/how/hall.jpg behind `.how-band`)
+const PIC = { w: 1627, h: 967, horizon: 0.36, position: 0.38 };
 const FACE_CAM = Math.atan2(CAM_DIR.x, CAM_DIR.z); // yaw of a panel facing the camera
 
 type Phase = "free" | "lane" | "track" | "carried" | "jump" | "stack" | "pop" | "drop";
@@ -218,7 +225,7 @@ export function initAutomation(container: HTMLElement): () => void {
 
   // perspective camera to the front-left; fitCamera() below places it
   const camera = new THREE.PerspectiveCamera(CAM_FOV, 1, 0.5, 600);
-  const target = new THREE.Vector3(0, 1, 0);
+  const target = new THREE.Vector3(0, EYE, 0);
   let camDist = 40;
   camera.position.copy(target).addScaledVector(CAM_DIR, camDist);
   camera.lookAt(target);
@@ -231,11 +238,12 @@ export function initAutomation(container: HTMLElement): () => void {
   scene.environment = envTex;
   scene.environmentIntensity = 0.55;
   pmrem.dispose();
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xcfd9e0, 1.0));
-  // the sun stands high and a little behind, so the shadows fall toward
-  // the viewer, in front of the belts, where they ground the machine
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xcfd9e0, 1.15));
+  // the sun comes through the hall's windows: behind, a little to the left,
+  // at about 45°, so the shadows fall toward the viewer and slightly right,
+  // like the patches of light on the picture's floor
   const sun = new THREE.DirectionalLight(0xffffff, 1.15);
-  sun.position.set(-5, 16, -6);
+  sun.position.set(-4, 10, -8);
   sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048);
   sun.shadow.camera.left = -16;
@@ -527,7 +535,8 @@ export function initAutomation(container: HTMLElement): () => void {
 
   // ---- the floor shadow: the machine casts onto the page, and a soft
   // contact shadow hugs every footprint so nothing seems to hover ----------
-  const floor = new THREE.Mesh(keep(new THREE.PlaneGeometry(80, 80)), keep(new THREE.ShadowMaterial({ opacity: 0.28 })));
+  // the shadows take the picture's sage-grey, not black
+  const floor = new THREE.Mesh(keep(new THREE.PlaneGeometry(80, 80)), keep(new THREE.ShadowMaterial({ color: "#2f4a40", opacity: 0.3 })));
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = FLOOR - 0.01;
   floor.receiveShadow = true;
@@ -1873,16 +1882,20 @@ export function initAutomation(container: HTMLElement): () => void {
   };
 
   // ---- pointer parallax ----------------------------------------------
-  let targetRX = 0;
-  let targetRY = 0;
+  // under the pointer the camera slides a little sideways and up or down,
+  // never turns: the lines must stay square to the picture's
+  let targetPX = 0;
+  let targetPY = 0;
+  let panX = 0;
+  let panY = 0;
   const onPointerMove = (e: PointerEvent) => {
     const r = container.getBoundingClientRect();
-    targetRY = ((e.clientX - r.left) / r.width - 0.5) * 0.14;
-    targetRX = ((e.clientY - r.top) / r.height - 0.5) * 0.07;
+    targetPX = ((e.clientX - r.left) / r.width - 0.5) * -0.5;
+    targetPY = ((e.clientY - r.top) / r.height - 0.5) * 0.25;
   };
   const onPointerLeave = () => {
-    targetRX = 0;
-    targetRY = 0;
+    targetPX = 0;
+    targetPY = 0;
   };
   container.addEventListener("pointermove", onPointerMove);
   container.addEventListener("pointerleave", onPointerLeave);
@@ -1936,10 +1949,11 @@ export function initAutomation(container: HTMLElement): () => void {
       camRight.setFromMatrixColumn(camera.matrixWorld, 0);
       camUp.setFromMatrixColumn(camera.matrixWorld, 1);
       const dx = ((minX + maxX) / 2 - (FRAME.x0 + FRAME.x1) / 2) * camDist * halfTan * camera.aspect;
-      const dy = ((minY + maxY) / 2 - (FRAME.y0 + FRAME.y1) / 2) * camDist * halfTan;
-      target.addScaledVector(camRight, dx).addScaledVector(camUp, dy);
+      // only sideways: the height is the eye's, the vertical placement is
+      // the lens shift's
+      target.addScaledVector(camRight, dx);
       camDist *= scale;
-      if (Math.abs(scale - 1) < 0.002 && Math.hypot(dx, dy) < 0.02) break;
+      if (Math.abs(scale - 1) < 0.002 && Math.abs(dx) < 0.02) break;
     }
     camera.position.copy(target).addScaledVector(CAM_DIR, camDist);
     camera.lookAt(target);
@@ -1958,9 +1972,26 @@ export function initAutomation(container: HTMLElement): () => void {
     findCards();
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(w, h);
-    camera.aspect = w / h;
+    // the lens shift: the canvas shows the lower part of a taller image whose
+    // middle (the horizon) lands where the picture's eye level is
+    const frac = horizonFrac();
+    const full = 2 * h * Math.max(frac, 1 - frac);
+    camera.setViewOffset(w, full, 0, full / 2 - frac * h, w, h);
     fitCamera();
     if (reduced) render();
+  };
+  // the picture's eye level, as a share of the canvas height from its top
+  const horizonFrac = () => {
+    const band = container.closest(".how-band");
+    if (!band) return 0.3;
+    const b = band.getBoundingClientRect();
+    const c = container.getBoundingClientRect();
+    if (!b.height || !c.height) return 0.3;
+    const scale = Math.max(b.width / PIC.w, b.height / PIC.h);
+    const shownH = PIC.h * scale;
+    const top = b.top + (b.height - shownH) * PIC.position;
+    const horizon = top + shownH * PIC.horizon;
+    return THREE.MathUtils.clamp((horizon - c.top) / c.height, 0.05, 0.6);
   };
   const ro = new ResizeObserver(resize);
   ro.observe(container);
@@ -1991,8 +2022,9 @@ export function initAutomation(container: HTMLElement): () => void {
     const dt = Math.min((t - last) / 1000, 0.1);
     last = t;
     advance(dt);
-    world.rotation.y += (targetRY - world.rotation.y) * Math.min(1, dt * 4);
-    world.rotation.x += (targetRX - world.rotation.x) * Math.min(1, dt * 4);
+    panX += (targetPX - panX) * Math.min(1, dt * 4);
+    panY += (targetPY - panY) * Math.min(1, dt * 4);
+    camera.position.set(target.x + panX, target.y + panY, target.z + camDist);
     draw();
     render();
   };

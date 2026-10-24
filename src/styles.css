@@ -339,9 +339,9 @@ main {
   }
 }
 
-/* ---- hero : copy + CTA left, 3D graph right ---- */
+/* ---- hero : copy + CTA left, the robot arm right ---- */
 .hero {
-  /* narrower than the panels below so the copy and globe sit toward the
+  /* narrower than the panels below so the copy and the arm sit toward the
      middle of the screen instead of hugging the viewport edges */
   max-width: 1260px;
   display: flex;
@@ -364,32 +364,17 @@ main {
   align-items: center;
   justify-content: flex-end;
 }
-/* github.com-style dot globe (three.js canvas injected by HeroGlobe) */
-.hero-globe {
+/* the robot arm picking the one who fits (three.js canvas injected by
+   HeroPicker): a compact scene on the page itself, its shadows cast on the
+   dot grid, no scenery */
+.hero-picker {
   position: relative;
   width: 100%;
-  max-width: 480px;
-  aspect-ratio: 1;
-  cursor: grab;
+  max-width: 540px;
+  aspect-ratio: 1.12;
   flex-shrink: 0;
 }
-.hero-globe.dragging {
-  cursor: grabbing;
-}
-.hero-globe::before {
-  /* soft teal atmosphere behind the sphere */
-  content: "";
-  position: absolute;
-  inset: -6%;
-  pointer-events: none;
-  background: radial-gradient(
-    circle at 45% 40%,
-    rgba(15, 118, 110, 0.16),
-    rgba(15, 118, 110, 0.05) 40%,
-    transparent 56%
-  );
-}
-.hero-globe canvas {
+.hero-picker canvas {
   position: relative;
   width: 100% !important;
   height: 100% !important;
@@ -413,9 +398,9 @@ main {
     min-height: 0;
     justify-content: center;
   }
-  .hero-globe {
-    width: min(40vw, 200px);
-    margin: 0;
+  .hero-picker {
+    width: min(84vw, 360px);
+    margin: 0 auto;
   }
   .hero .btn-try {
     align-self: flex-start; /* keep the CTA at its natural width, left-aligned */
@@ -1071,9 +1056,9 @@ main {
   max-width: 1180px;
   margin: 0 auto;
 }
-/* the whole band is the generated plateau picture (public/how/plateau.jpg):
-   pale ground, hazy hills at the top, a nearly white foreground where the
-   step cards sit; the machine's canvas is transparent over it */
+/* the whole band is the generated hall picture (public/how/hall.jpg): a
+   white industrial hall, windows and a back wall at the top, a nearly white
+   floor where the step cards sit; the machine's canvas is transparent over it */
 .how-band {
   background: #f4f7f6;
   overflow: hidden;
@@ -1097,6 +1082,16 @@ main {
 }
 .how-machine .automation {
   aspect-ratio: 16 / 9.5;
+}
+/* the machine is seen square on, so only width makes it bigger: on a wide
+   screen the canvas runs past the step cards on both sides (the band clips
+   it); the leaders are drawn in the canvas's own frame, so they follow */
+@media (min-width: 1024px) {
+  .how-machine .automation {
+    width: calc(100% + 240px);
+    margin-inline: -120px;
+    aspect-ratio: 16 / 7;
+  }
 }
 /* the leader lines from each step to its station, drawn by the engine */
 .automation-leaders {

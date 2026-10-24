@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 
 // The about page's cube of cubes. Renders only an empty div (so the
 // prerender stays trivial) and pulls in the three.js engine as its own chunk
-// once mounted in the browser, the same way HeroGlobe does.
+// once mounted in the browser, the same way HeroPicker does.
 export function LatticeScene() {
   const ref = useRef<HTMLDivElement>(null);
 

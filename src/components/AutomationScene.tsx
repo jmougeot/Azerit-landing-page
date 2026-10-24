@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 
 // The landing's "how it works" machine. Renders only an empty div (so the
 // prerender stays trivial) and pulls in the three.js engine as its own chunk
-// once mounted in the browser, the same way HeroGlobe does.
+// once mounted in the browser, the same way HeroPicker does.
 export function AutomationScene() {
   const ref = useRef<HTMLDivElement>(null);
 
