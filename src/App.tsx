@@ -39,8 +39,8 @@ export function App() {
       <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<Landing />} />
-          {/* Azerit used to ship two products on two pages; only sourcing
-              remains, so both old product URLs fold back into "/". The build
+          {/* Azerit used to ship two products on two pages; one recruiting
+              service remains, so both old product URLs fold back into "/". The build
               also emits meta-refresh stubs for them (scripts/prerender.mjs) —
               these routes catch visitors who arrive client-side. */}
           <Route path="/hiring" element={<Navigate to="/" replace />} />

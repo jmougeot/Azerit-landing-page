@@ -60,8 +60,8 @@ export const OgImage: React.FC = () => (
     </div>
 
     <div style={{ marginTop: 34, fontSize: 30, lineHeight: 1.45, color: T.dim, maxWidth: 760 }}>
-      We match your role with the GitHub devs who've already built exactly what you're hiring for,
-      then write the outreach they answer.
+      We find on GitHub the engineers who've built what you're hiring for, read their code, and
+      send you the one who fits.
     </div>
   </AbsoluteFill>
 );

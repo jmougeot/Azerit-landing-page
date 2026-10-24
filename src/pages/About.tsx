@@ -24,8 +24,9 @@ export function About() {
               Proven by their <em>code</em>.
             </h1>
             <p className="lede">
-              Azerit finds the engineers who have already built what you're hiring for, and opens
-              the conversation on their work. Every step in between is automated.
+              Azerit recruits the engineers who have already built what you're hiring for. We find
+              them on GitHub, read their code and open the conversation on their work. Every step
+              in between is automated.
             </p>
           </div>
           <div className="about-hero-visual">
@@ -41,7 +42,7 @@ export function About() {
               CVs and keyword searches return the same crowded pool every time, and nothing in
               them is verified. We start from the work instead: we read GitHub for the people
               who have already shipped something like your role, rank them on what they actually
-              built, and show you the projects behind every score.
+              built, and show you the projects behind the one we send you.
             </p>
           </div>
           <div className="beat">
@@ -61,8 +62,8 @@ export function About() {
               Everything at Azerit that can be automated is, with AI on the repetitive work:
               sourcing, enrichment, scoring, outreach, and most of how we run the company. Two
               people deliver what used to take a team, and the difference goes to you: the
-              right engineer in days, not weeks, replies instead of silence, and the founders on
-              the line when you need them.
+              right engineer in days, not weeks, already interested when you meet them, and the
+              founders on the line when you need them.
             </p>
           </div>
         </section>

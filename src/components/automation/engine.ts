@@ -52,7 +52,7 @@ const STATIONS: { belt: number; x: number; kind: Kind; label: string }[] = [
   { belt: 0, x: -5.4, kind: "scan", label: "find" },
   { belt: 0, x: -3.0, kind: "read", label: "read code" },
   { belt: 1, x: 2.9, kind: "rank", label: "match" },
-  { belt: 1, x: 5.5, kind: "verify", label: "message" },
+  { belt: 1, x: 5.5, kind: "verify", label: "reach out" },
 ];
 const RANK_X = STATIONS.find((s) => s.kind === "rank")!.x;
 const GATE_H = 1.55;

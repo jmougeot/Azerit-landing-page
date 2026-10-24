@@ -1,7 +1,6 @@
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { TopBar, Footer } from "../components/Nav";
-import { LogoMark } from "../components/Logo";
 import { HeroPicker } from "../components/HeroPicker";
 import { DotGridBand } from "../components/DotGridBand";
 import { DemoLink } from "../components/DemoLink";
@@ -19,8 +18,8 @@ const DemoPlayer = lazy(() =>
 );
 
 // One imaginary search traced through the page: a senior real-time-systems
-// role. The feed shows the repos that prove the skill, the email opens on the
-// best candidate's actual work.
+// role. The feed shows the repos that prove the skill, the card shows the one
+// engineer we send back.
 const REPOS: Repo[] = [
   {
     name: "lea-fabre/rt-order-matching",
@@ -131,50 +130,15 @@ function CandGraph() {
   );
 }
 
-// Léa's LinkedIn inbox: the recruiter blasts she never answered. Each row is a
-// months-old InMail — the counterpoint to the Azerit thread beside it.
-const INMAILS = [
-  {
-    initials: "MR",
-    name: "Marc R. · TalentForge",
-    date: "Jun 5",
-    text: "InMail · 100% Remote Senior Software Engineer Opportunity: Build the Future of AI",
-  },
-  {
-    initials: "ES",
-    name: "Emma S. · NextWave",
-    date: "Jun 1",
-    text: "InMail · ⭐ Exciting Developer Opportunities ⭐ Join a Fast-Growing Series C AI Startup",
-  },
-  {
-    initials: "HL",
-    name: "Hugo L. · Aurora Labs",
-    date: "May 8",
-    text: "Hi Léa! Resurfacing this role, we're scaling and need the best engineering minds shaping the…",
-  },
-  {
-    initials: "CW",
-    name: "Caroline W. · SignalWorks",
-    date: "Apr 11",
-    text: "Hey Léa, circling back on this founding and influential engineering opportunity. Still open…",
-  },
-  {
-    initials: "DS",
-    name: "Danielle S. · Stealth AI",
-    date: "Apr 2",
-    text: "Hi Léa, looping back to see if you're open to a founding SWE role at a well-funded AI…",
-  },
-];
-
 // The four steps of a search, the same four stations the machine draws: a
 // short name (the station's), an explicit title, one line on what it means
-// for the hire. On desktop they sit around the machine, each tied to its
+// for the hire. Azerit does the whole run, the client meets the result. On desktop they sit around the machine, each tied to its
 // station by a leader line the engine draws.
 const STEPS = [
   { short: "find", title: "Find them on GitHub", text: "The developers who already build what you're hiring for." },
   { short: "read code", title: "Read their code", text: "Commits, pull requests and reviews, not a CV." },
   { short: "match", title: "Keep the one who fits", text: "Not a list: one engineer whose work matches, each skill backed by a project." },
-  { short: "message", title: "Write the first message", text: "About their own work, ready to send. The kind engineers answer." },
+  { short: "reach out", title: "Reach out about their work", text: "We write to them about what they built. The kind of message engineers answer." },
 ];
 
 // Local brand assets. Aurel source: https://www.agilitesolutions.com/projects/a-multi-purpose-space-for-aurel-bgc/
@@ -238,8 +202,8 @@ export function Landing() {
                 Hire the engineers who actually <em>ship</em>
               </h1>
               <p className="sub">
-                Find the engineers who have already built what you need on GitHub.
-                We send you the one who fits, with a first message grounded in their code.
+                We search GitHub for the engineers who have already built what you're hiring for,
+                read their code and reach out. You meet the one who fits.
               </p>
               <div className="hero-cta">
                 <Link to="/try" className="btn-try">
@@ -344,13 +308,13 @@ export function Landing() {
           <span className="tag eyebrow">the match</span>
           <h2>The one who fits your role</h2>
           <p>
-            See the projects and contributions behind the match.
+            Not a shortlist: one engineer, with the projects and contributions behind the match.
           </p>
         </div>
         <div className="f-visual">
           <div className="cand-card" aria-hidden="true">
             <div className="cand-top">
-              <span className="vs-ava ok cand-ava">LF</span>
+              <span className="cand-ava">LF</span>
               <div className="cand-id">
                 <div className="cand-name">
                   Léa Fabre
@@ -401,7 +365,7 @@ export function Landing() {
               </div>
             </div>
             <div className="cand-foot">
-              lea.fabre@… <span className="ok">✓ verified</span>
+              replied in 2h <span className="ok">✓ open to a call</span>
             </div>
           </div>
         </div>
@@ -417,8 +381,8 @@ export function Landing() {
           <h2>How it works</h2>
           <p className="how-lede">
             You're hiring an engineer. We search GitHub for the people who have already built
-            what you need, read their code, and send you the one who fits, with a first message
-            about their work ready to send.
+            what you need, read their code, reach out about it, and send you the one who fits
+            and wants to talk.
           </p>
         </div>
       </section>
@@ -439,7 +403,7 @@ export function Landing() {
         />
         <div className="container how">
           {/* the search as a machine, downhill: rough blocks come out of GitHub
-              repositories, four stations find, read, match and message them,
+              repositories, four stations find, read, match and contact them,
               the one that fits is shown on the pedestal at the end
               (components/automation) */}
           <div className="how-machine">
@@ -461,105 +425,12 @@ export function Landing() {
 
       <Seam hatch />
 
-      {/* linkedin vs azerit — generic outreach versus a project connected
-          to the candidate's work */}
-      <section className="band band-head">
-        <div className="container how-title">
-          <span className="tag eyebrow">outreach</span>
-          <h2>A relevant project. A personalized message.</h2>
-        </div>
-      </section>
-      <section className="band">
-        <div className="container vs">
-          <div className="vs-cell vs-linkedin">
-            {/* the facts sit beside her phone, which is cropped at the cell
-                floor like vamo's panels */}
-            <div className="vs-info">
-              <div className="vs-title">
-                <span className="li-mark">in</span>
-                linkedin: léa's inbox
-              </div>
-              <div className="vs-stat">5 InMails · 0 replies</div>
-              <div className="vs-foot">response rate: 1–3%</div>
-            </div>
-            <div className="vs-stage" aria-hidden="true">
-              <div className="phone">
-                <div className="phone-screen">
-                  <span className="phone-island" />
-                  <div className="li-search">
-                    <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-                      <path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z" />
-                    </svg>
-                    Search messages
-                  </div>
-                  <div className="vs-inbox">
-                    {INMAILS.map((m) => (
-                      <div className="vs-row" key={m.name}>
-                        <span className="vs-ava">{m.initials}</span>
-                        <div className="vs-row-main">
-                          <div className="vs-row-top">
-                            <span className="n">{m.name}</span>
-                            <span className="d">{m.date}</span>
-                          </div>
-                          <div className="vs-prev">{m.text}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="vs-cell vs-azerit">
-            <div className="vs-info">
-              <div className="vs-title">
-                <LogoMark size={14} />
-                azerit: léa's inbox
-              </div>
-              <div className="vs-stat">1 email · 1 reply</div>
-              <div className="vs-foot">response rate: 30%+</div>
-            </div>
-            <div className="vs-stage" aria-hidden="true">
-              <div className="phone">
-                <div className="phone-screen">
-                  <span className="phone-island" />
-                  <div className="vs-mail">
-                    <div className="subj">
-                      re: <b>your matching engine in rt-order-matching</b>
-                    </div>
-                    <div className="vs-from">
-                      <span className="vs-ava ok">LF</span>
-                      <div>
-                        <div className="n">Léa Fabre</div>
-                        <div className="t">2h after our email</div>
-                      </div>
-                      <span className="vs-replied">replied ✓</span>
-                    </div>
-                    <p className="msg">
-                      Low-latency systems are exactly what I want to keep working on.
-                      What throughput are you targeting? Happy to talk Thursday.
-                    </p>
-                    <div className="vs-quote">
-                      &gt; Your lock-free matching engine caught my eye. We're building a
-                      trading system with similar latency challenges and looking for a
-                      Rust engineer. Interested?
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <Seam hatch />
-
       {/* book a demo — vamo-style: a live run on a real search, zero friction */}
       <section className="band">
         <div className="container demo-band">
           <span className="tag eyebrow">live demo</span>
-          <h2>See Azerit work on your open role</h2>
-          <p>A 30-minute live session with the founders.</p>
+          <h2>See who we'd find for your open role</h2>
+          <p>30 minutes with the founders, on your real job description.</p>
           <DemoLink className="btn-try">book a demo</DemoLink>
         </div>
       </section>
@@ -583,7 +454,7 @@ export function Landing() {
           <div className="cta-row">
             <span aria-hidden />
             <Link to="/try" className="cta-link">
-              Turn GitHub into your recruiting engine
+              Hire your next engineer from GitHub
             </Link>
             <span aria-hidden />
           </div>

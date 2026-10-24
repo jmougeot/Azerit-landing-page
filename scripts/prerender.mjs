@@ -108,7 +108,7 @@ const SITE_GRAPH = [
     url: `${SITE_URL}/`,
     logo: { "@type": "ImageObject", url: `${SITE_URL}/favicon.png`, width: 192, height: 192 },
     description:
-      "Azerit finds the engineers who have already built what you are hiring for, from their public code on GitHub, and writes the first email they answer.",
+      "Azerit recruits engineers from their code: it finds on GitHub the developers who have already built what you are hiring for, reads their work, reaches out, and sends you the one who fits.",
     sameAs: [COMPANY_LINKEDIN],
     founder: FOUNDERS.map((f) => ({ "@id": personId(f.name) })),
   },
@@ -136,7 +136,7 @@ const SITE_GRAPH = [
     applicationCategory: "BusinessApplication",
     operatingSystem: "Web",
     description:
-      "Azerit analyzes GitHub to find the developers who have already built what you are hiring for, scores them on their public code, and writes personalized outreach.",
+      "Azerit analyzes GitHub to find the developers who have already built what you are hiring for, scores them on their public code, contacts them about their work, and sends you the one who fits.",
     offers: {
       "@type": "Offer",
       price: String(PRICE_EUR_MONTHLY),
@@ -178,7 +178,7 @@ function pageGraph({ url, lang, title, desc, post, blog, lastmod }) {
           ? { "@id": personId(author.name), "@type": "Person", name: author.name, url: `${SITE_URL}/about` }
           : { "@type": "Person", name: post.author },
         publisher: { "@id": ORG_ID },
-        image: post.image ? `${SITE_URL}${post.image.src}` : `${SITE_URL}/og.png?v=2`,
+        image: post.image ? `${SITE_URL}${post.image.src}` : `${SITE_URL}/og.png?v=3`,
         mainEntityOfPage: url,
         isPartOf: { "@id": `${blogUrl}#blog` },
         articleSection: post.category,
@@ -319,13 +319,13 @@ console.log(`Sitemap with ${urls.length} URLs in dist/sitemap.xml`);
 const llmsPage = (path, title, desc) => `- [${title}](${SITE_URL}${path}): ${desc}`;
 const llms = `# Azerit
 
-> Azerit is a recruiting service for software engineers. Tell it the role you're hiring for; it searches GitHub for the developers who have already built what you need, reads their code (commits, pull requests, reviews), and sends you the one who fits, with skills proven by their work, a verified professional email and a first message about their work ready to send. Built by two engineers from Centrale, Paris. 300 € a month, up to 10 open roles, first search free.
+> Azerit is a recruiting service for software engineers. Tell it the role you're hiring for; it searches GitHub for the developers who have already built what you need, reads their code (commits, pull requests, reviews), contacts them about their own work, and sends you the one who fits and wants to talk, with skills proven by their work. Built by two engineers from Centrale, Paris. 300 € a month, up to 10 open roles, first search free.
 
-Azerit does not rank CVs or keywords: it starts from public code. Every match comes with the projects and contributions behind it. Candidates are contacted through the professional email they publish, with one personal message about their own work, which is why reply rates are around 30% instead of the 1 to 3% of LinkedIn InMails.
+Azerit does not rank CVs or keywords: it starts from public code. Every match comes with the projects and contributions behind it. Azerit does the outreach itself: candidates are contacted through the professional email they publish, with one personal message about their own work, which is why reply rates are around 30% instead of the 1 to 3% of LinkedIn InMails. The client meets the engineer who answered.
 
 ## Pages
 
-${llmsPage("/", "Home", "How Azerit finds, reads, matches and messages engineers from GitHub.")}
+${llmsPage("/", "Home", "How Azerit finds, reads, matches and contacts engineers from GitHub.")}
 ${Object.entries(PAGES)
   .filter(([path]) => !["/legal", "/terms"].includes(path))
   .map(([path, { title, desc }]) => llmsPage(path, title, desc))

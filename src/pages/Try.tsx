@@ -30,9 +30,9 @@ export function Try() {
             <div className="check">✓ request received</div>
             <h1>Your first search starts here.</h1>
             <p>
-              We're onboarding teams one by one so every search gets set up properly. You'll get an
-              email at <strong style={{ color: "var(--text)" }}>{email}</strong> when your dashboard
-              is ready.
+              We run searches one by one, so every role gets read properly. You'll hear from us
+              at <strong style={{ color: "var(--text)" }}>{email}</strong> within a few days with
+              the engineer we found.
             </p>
             <p style={{ fontSize: 13.5 }}>
               Early users get their first search free. We'll run your role as the test.
@@ -45,8 +45,8 @@ export function Try() {
           <div className="try-card">
             <h1>Try Azerit on your role</h1>
             <p className="sub">
-              Tell us who you're hiring. We're onboarding teams one by one and will email you
-              when your search and dashboard are ready.
+              Tell us who you're hiring. We search GitHub for the engineers who have already
+              built it, read their code, reach out, and come back with the one who fits.
             </p>
             <p className="try-benefit">Your first search is free.</p>
             <form onSubmit={submit}>

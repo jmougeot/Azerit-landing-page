@@ -12,7 +12,7 @@ export const HOME_TITLE = "Azerit · Recruit Engineers from GitHub with AI";
 export const PAGES = {
   "/try": {
     title: "Try Azerit on Your Role · Recruit Engineers from GitHub",
-    desc: "Tell us the role you're hiring for and get the GitHub engineer who has already built it: skills proven by their code, a verified email, a first message. Your first search is free.",
+    desc: "Tell us the role you're hiring for. We search GitHub for the engineer who has already built it, read their code, reach out, and send you the one who fits. Your first search is free.",
   },
   "/legal": {
     title: "Legal Notice & Privacy Policy · Azerit",

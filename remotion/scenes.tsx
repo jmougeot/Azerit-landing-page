@@ -188,7 +188,7 @@ export const SceneNewPosition: React.FC = () => {
           </div>
         </div>
       </AppWindow>
-      <StepTag num="1" label="Paste the job offer. That's the whole brief." />
+      <StepTag num="1" label="Send us the job offer. That's the whole brief." />
     </AbsoluteFill>
   );
 };
@@ -417,7 +417,7 @@ export const SceneMessage: React.FC = () => {
       >
         <JobPage state="open" selected={0} />
       </AppWindow>
-      <StepTag num="4" label="An email that reads her code, not a template" />
+      <StepTag num="4" label="We write to her about her code, not from a template" />
     </AbsoluteFill>
   );
 };
@@ -445,7 +445,7 @@ export const SceneReplies: React.FC = () => {
           }}
         />
       </AppWindow>
-      <StepTag num="5" label="9 replies in 3 days. You just book the calls." />
+      <StepTag num="5" label="9 replies in 3 days. You meet the one who fits." />
     </AbsoluteFill>
   );
 };
