@@ -4,7 +4,6 @@ import { TopBar, Footer } from "../components/Nav";
 import { HeroPicker } from "../components/HeroPicker";
 import { DotGridBand } from "../components/DotGridBand";
 import { DemoLink } from "../components/DemoLink";
-import { RepoFeed, type Repo } from "../components/RepoFeed";
 import { AutomationScene } from "../components/AutomationScene";
 import { CtaCommits } from "../components/CtaCommits";
 import { Seam } from "../components/Seam";
@@ -18,89 +17,16 @@ const DemoPlayer = lazy(() =>
 );
 
 // One imaginary search traced through the page: a senior real-time-systems
-// role. The feed shows the repos that prove the skill, the card shows the one
-// engineer we send back.
-const REPOS: Repo[] = [
-  {
-    name: "lea-fabre/rt-order-matching",
-    desc: "Real-time order matching engine, lock-free hot path",
-    lang: "Rust",
-    stars: "1.4k",
-    updated: "Updated yesterday",
-    hit: true,
-  },
-  {
-    name: "jdoe/dotfiles",
-    desc: "My personal dotfiles",
-    lang: "Shell",
-    stars: "3",
-    updated: "Updated on Nov 12, 2023",
-    hit: false,
-  },
-  {
-    name: "sami-dev/distributed-kv",
-    desc: "Raft-backed distributed key-value store",
-    lang: "Go",
-    stars: "892",
-    updated: "Updated 3 hours ago",
-    hit: true,
-  },
-  {
-    name: "nina-t/ws-gateway",
-    desc: "WebSocket gateway holding 50k conns per node",
-    lang: "Go",
-    stars: "487",
-    updated: "Updated 2 days ago",
-    hit: true,
-  },
-  {
-    name: "marc-o/lockfree-queue",
-    desc: "Lock-free MPMC queue + latency benchmarks",
-    lang: "Rust",
-    stars: "341",
-    updated: "Updated 5 hours ago",
-    hit: true,
-  },
-  {
-    name: "tomas-v/awesome-wallpapers",
-    desc: "Curated 4K wallpapers for devs",
-    lang: "JavaScript",
-    stars: "58",
-    updated: "Updated on Mar 2, 2024",
-    hit: false,
-  },
-  {
-    name: "aiko-labs/latency-lab",
-    desc: "Tail-latency profiling toolkit for services",
-    lang: "Python",
-    stars: "622",
-    updated: "Updated yesterday",
-    hit: true,
-  },
-  {
-    name: "elsa-k/replay-log",
-    desc: "Deterministic event replay for trading systems",
-    lang: "Rust",
-    stars: "214",
-    updated: "Updated 6 days ago",
-    hit: true,
-  },
-  {
-    name: "bob-m/todo-app-final-v2",
-    desc: "todo app (react)",
-    lang: "JavaScript",
-    stars: "1",
-    updated: "Updated on Jul 19, 2023",
-    hit: false,
-  },
-  {
-    name: "devpriya/chaos-harness",
-    desc: "Chaos-testing harness for k8s clusters",
-    lang: "Go",
-    stars: "1.1k",
-    updated: "Updated 40 minutes ago",
-    hit: true,
-  },
+// role. The first card is Léa as we read her, CV and code; the second ties
+// each line of the role to the code of hers that proves it.
+// The fit sheet under "the one who fits": the role's requirements on the
+// left, what proves each one in Léa's code on the right. One line is only
+// partly covered, so the sheet reads as a judgement, not a sales pitch.
+const FIT = [
+  { req: "Real-time systems in Rust or Go", proof: "hot_path.rs", note: "rt-order-matching, lock-free hot path, 2025" },
+  { req: "Lock-free data structures", proof: "lea-fabre/lockfree-ring", note: "341 stars, benchmarked against crossbeam" },
+  { req: "Backpressure under load", proof: "PR #612 · ws-gateway", note: "bounded channels, not in the matcher yet", part: true },
+  { req: "Reviews other people's code", proof: "212 pull requests reviewed", note: "this year, across 6 repositories" },
 ];
 
 // Mini contribution heatmap for the candidate card — same seeded-random
@@ -283,32 +209,15 @@ export function Landing() {
 
       <Seam />
 
-      {/* feature: code as the résumé */}
+      {/* feature: the CV, then the code behind it */}
       <section className="band">
         <div className="container feature">
         <div className="f-copy">
-          <span className="tag eyebrow">matching</span>
-          <h2>Read the work, not the CV</h2>
+          <span className="tag eyebrow">reading</span>
+          <h2>Read the work</h2>
           <p>
-            Match on <b>repository topics, languages and dependencies</b>.
-          </p>
-        </div>
-        <div className="f-visual flush">
-          <RepoFeed repos={REPOS} count="27 devs matched" hitLabel="✓ match" />
-        </div>
-        </div>
-      </section>
-
-      <Seam />
-
-      {/* feature: the deliverable — one proven engineer, not a pile of CVs */}
-      <section className="band">
-        <div className="container feature rev">
-        <div className="f-copy">
-          <span className="tag eyebrow">the match</span>
-          <h2>The one who fits your role</h2>
-          <p>
-            Not a shortlist: one engineer, with the projects and contributions behind the match.
+            We read the CV like everyone else. Then we find their code and read it:{" "}
+            <b>commits, pull requests and reviews</b>.
           </p>
         </div>
         <div className="f-visual">
@@ -320,7 +229,7 @@ export function Landing() {
                   Léa Fabre
                   <span className="cand-badge">match 94</span>
                 </div>
-                <div className="cand-handle">@lea-fabre · Lyon, France</div>
+                <div className="cand-handle">@lea-fabre · Staff engineer, Orbital Pay</div>
               </div>
             </div>
             <CandGraph />
@@ -365,8 +274,46 @@ export function Landing() {
               </div>
             </div>
             <div className="cand-foot">
-              replied in 2h <span className="ok">✓ open to a call</span>
+              last commit yesterday <span className="ok">✓ 4 repos read</span>
             </div>
+          </div>
+        </div>
+        </div>
+      </section>
+
+      <Seam />
+
+      {/* feature: the deliverable — one engineer, each line of the role proven */}
+      <section className="band">
+        <div className="container feature rev">
+        <div className="f-copy">
+          <span className="tag eyebrow">the match</span>
+          <h2>The one who fits your role</h2>
+          <p>
+            Not a shortlist: one engineer, already interested, with the proof behind the match.
+            You take the call.
+          </p>
+        </div>
+        <div className="f-visual">
+          {/* the fit sheet: each line of the role tied to the file, repo or
+              review record that proves it, the way the machine's leader lines
+              tie a step to its station */}
+          <div className="fit-card" aria-hidden="true">
+            <div className="fit-head">
+              <span>your role</span>
+              <span>her code</span>
+            </div>
+            {FIT.map((row) => (
+              <div className={`fit-row${row.part ? " part" : ""}`} key={row.req}>
+                <span className="fit-req">{row.req}</span>
+                <span className="fit-link" />
+                <span className="fit-proof">
+                  <b>{row.proof}</b>
+                  <small>{row.note}</small>
+                </span>
+              </div>
+            ))}
+            <div className="fit-foot">every line backed by code she wrote</div>
           </div>
         </div>
         </div>

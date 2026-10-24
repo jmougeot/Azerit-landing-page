@@ -1368,136 +1368,6 @@ main {
   }
 }
 
-/* ---- repo feed : auto-scrolling scan ---- */
-.repo-feed {
-  border: 1px solid var(--border);
-  background: var(--bg);
-}
-/* on desktop the feed IS the cell: no inner frame, the band hairlines, the
-   cell divider and the container border do the framing */
-@media (min-width: 801px) {
-  .f-visual.flush {
-    padding: 0;
-  }
-  .f-visual.flush .repo-feed {
-    /* fixed height: without it the window's auto height = the full track
-       (both copies of the list) and the whole cell explodes */
-    height: 520px;
-    border: none;
-    display: flex;
-    flex-direction: column;
-  }
-  .f-visual.flush .repo-feed-window {
-    flex: 1;
-    height: auto;
-    min-height: 0;
-  }
-  /* rows span a whole grid cell now: give them more air */
-  .f-visual.flush .repo-feed-head {
-    padding: 12px 24px;
-  }
-  .f-visual.flush .repo-row {
-    padding-left: 24px;
-    padding-right: 24px;
-  }
-}
-.repo-feed-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text-dim);
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-soft);
-}
-.repo-feed-head .feed-dot {
-  width: 7px;
-  height: 7px;
-  background: var(--green);
-  animation: feed-blink 1.6s ease-in-out infinite;
-}
-.repo-feed-head .count {
-  margin-left: auto;
-  color: var(--green);
-  font-weight: 700;
-}
-.repo-feed-window {
-  height: 430px;
-  overflow: hidden;
-  /* rows fade out against the frame instead of being cut mid-card */
-  -webkit-mask-image: linear-gradient(180deg, #000 82%, transparent);
-  mask-image: linear-gradient(180deg, #000 82%, transparent);
-}
-.repo-feed-track {
-  animation: feed-scroll 32s linear infinite;
-}
-.repo-feed:hover .repo-feed-track {
-  animation-play-state: paused;
-}
-@keyframes feed-scroll {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-50%);
-  }
-}
-@keyframes feed-blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.25;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .repo-feed-track {
-    animation: none;
-  }
-  .repo-feed-head .feed-dot {
-    animation: none;
-  }
-}
-
-/* feed rows: flat cells sharing hairlines, like the rest of the grid.
-   border-bottom (not border-top on siblings) so both track copies are
-   pixel-identical and the -50% loop point is seamless. */
-.repo-row {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--border);
-  font-size: 13px;
-}
-.repo-row.hit {
-  box-shadow: inset 2px 0 0 var(--green);
-}
-.repo-row .rname {
-  font-size: 13.5px;
-}
-.repo-row .gh-intent {
-  border-radius: 4px;
-}
-.repo-row .gh-desc {
-  margin: 4px 0 8px;
-  font-size: 12.5px;
-}
-.repo-row .gh-meta {
-  font-size: 11.5px;
-}
-
-/* on desktop the repo feed fills the whole cell, framed by the grid */
-@media (min-width: 801px) {
-  /* the .rev row's `.feature.rev .f-visual` padding rules are more specific
-     than `.f-visual.flush`, so zero the padding here with matching weight —
-     otherwise the cell padding shows as a tint band around the panel */
-  .feature .f-visual.flush,
-  .feature.rev .f-visual.flush {
-    padding: 0;
-  }
-}
-
 /* ---- stats band (hiring) : three big numbers in one rule cell ---- */
 .stats {
   display: grid;
@@ -1706,6 +1576,133 @@ main {
   color: var(--green);
   font-weight: 700;
   margin-left: 6px;
+}
+
+/* ---- the fit sheet : the role on the left, the code that proves each
+   line on the right, a dashed leader between them like the machine's ---- */
+.fit-card {
+  width: 100%;
+  max-width: 540px;
+  margin: 0 auto;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(31, 35, 40, 0.08);
+  overflow: hidden;
+  font-family: var(--font-mono);
+}
+.fit-head,
+.fit-row {
+  display: grid;
+  grid-template-columns: 1fr 44px 1fr;
+  align-items: center;
+  column-gap: 10px;
+  padding: 0 20px;
+}
+.fit-head {
+  padding-top: 11px;
+  padding-bottom: 11px;
+  border-bottom: 1px solid var(--border);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.fit-head span:last-child {
+  grid-column: 3;
+}
+.fit-row {
+  padding-top: 13px;
+  padding-bottom: 13px;
+}
+.fit-row + .fit-row {
+  border-top: 1px solid var(--border);
+}
+.fit-req {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text);
+}
+/* the leader: a dashed teal line ending on a dot, the proof's side */
+.fit-link {
+  position: relative;
+  height: 1px;
+  border-top: 1.5px dashed rgba(15, 118, 110, 0.55);
+}
+.fit-link::after {
+  content: "";
+  position: absolute;
+  right: -3px;
+  top: -4.5px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+}
+.fit-proof {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.fit-proof b {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--blue);
+  overflow-wrap: anywhere;
+}
+.fit-proof small {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+/* the line only partly covered: amber leader, amber dot */
+.fit-row.part .fit-link {
+  border-top-color: rgba(154, 103, 0, 0.55);
+}
+.fit-row.part .fit-link::after {
+  background: var(--yellow);
+}
+.fit-foot {
+  border-top: 1px dashed var(--border);
+  padding: 11px 20px;
+  font-size: 11.5px;
+  color: var(--text-dim);
+}
+.fit-foot::before {
+  content: "●";
+  color: var(--green);
+  font-size: 7px;
+  margin-right: 8px;
+  vertical-align: 2px;
+}
+@media (max-width: 480px) {
+  /* no room for two columns: the proof sits under its line, the leader
+     becomes a short vertical tick */
+  .fit-head {
+    grid-template-columns: 1fr;
+  }
+  .fit-head span:last-child {
+    display: none;
+  }
+  .fit-row {
+    grid-template-columns: 1fr;
+    row-gap: 6px;
+  }
+  .fit-link {
+    width: 14px;
+    height: 10px;
+    border-top: none;
+    border-left: 1.5px dashed rgba(15, 118, 110, 0.55);
+    margin-left: 3px;
+  }
+  .fit-link::after {
+    right: auto;
+    left: -4.5px;
+    top: auto;
+    bottom: -3px;
+  }
 }
 
 /* ---- book a demo (hiring) : one line, one button ---- */
