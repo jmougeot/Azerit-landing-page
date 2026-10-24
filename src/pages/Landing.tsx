@@ -215,16 +215,17 @@ export function Landing() {
       <main>
       {/* hero + demo video */}
       <div className="hero-zone">
-        {/* the white city behind the hero (public/hero/city.jpg): its skyline
-            sits at the top behind the title and the arm, its empty plaza runs
-            under the copy and fades into the page before the demo window */}
+        {/* the white city behind the hero (public/hero/city.jpg, 2:1): the
+            picture is white on its left, so the copy sits on plain white; the
+            city and the plaza sit on the right under the arm, and a mask fades
+            the bottom into the page before the demo window */}
         <img
           className="hero-bg"
           src="/hero/city.jpg"
-          srcSet="/hero/city-small.jpg 760w, /hero/city.jpg 1254w"
+          srcSet="/hero/city-small.jpg 900w, /hero/city.jpg 1774w"
           sizes="100vw"
-          width={1254}
-          height={1254}
+          width={1774}
+          height={887}
           alt=""
           fetchPriority="high"
           decoding="async"

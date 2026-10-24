@@ -117,10 +117,10 @@ const GREENS = ["#9be9a8", "#40c463", "#30a14e", "#216e39"]; // GitHub's graph
 // level, fills it while the horizon stays where the picture's is
 const CAM_DIR = new THREE.Vector3(0, 0, 1);
 const CAM_FOV = 52; // of the whole, unshifted image: a wide lens, like the picture
-const EYE = FLOOR + 3.2; // the camera's height: it looks down on the belts, as the picture looks down on its tables
+const EYE = FLOOR + 4.6; // the camera's height: it looks down on the belts, as the picture looks down on its tables
 // where the hall picture's eye level sits, as a share of its height, and how
 // the page shows it (public/how/hall.jpg behind `.how-band`)
-const PIC = { w: 1627, h: 967, horizon: 0.36, position: 0.38 };
+const PIC = { w: 1627, h: 967, horizon: 0.36, position: 0.9 }; // position = the CSS object-position of `.how-bg`
 const FACE_CAM = Math.atan2(CAM_DIR.x, CAM_DIR.z); // yaw of a panel facing the camera
 
 type Phase = "free" | "lane" | "track" | "carried" | "jump" | "stack" | "pop" | "drop";

@@ -197,18 +197,19 @@ main {
   position: relative;
   z-index: 1;
 }
-/* the white city (public/hero/city.jpg, square): pinned to the top of the
-   zone so the skyline is what shows behind the title and the arm; the
-   picture's own plaza is nearly white, and a mask fades the last stretch so
-   the dot grid takes over before the demo window */
+/* the white city (public/hero/city.jpg, 2:1, city on the right, white on
+   the left): pinned to the top right of the zone at its natural ratio, so
+   the towers stand behind the arm and the copy keeps a plain white page; a
+   mask fades the last stretch so the dot grid takes over before the demo
+   window */
 .hero-bg {
   position: absolute;
   top: 0;
-  left: 0;
+  right: 0;
   width: 100%;
-  height: min(100%, 115vw);
+  height: min(100%, 50vw);
   object-fit: cover;
-  object-position: center top;
+  object-position: right top;
   pointer-events: none;
   -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 92%);
   mask-image: linear-gradient(to bottom, #000 55%, transparent 92%);
@@ -1085,7 +1086,7 @@ main {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 38%;
+  object-position: center 90%;
   pointer-events: none;
 }
 .how-band > .container {
