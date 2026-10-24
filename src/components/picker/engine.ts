@@ -6,9 +6,10 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
 // in "how it works" explains that). Five engineer cards lie in a row. A robot
 // arm looks them over, picks the one that fits, raises it toward the reader,
 // and small blocks of that engineer's code gather around it. Then it puts the
-// card back and chooses again. Same language as the machine
-// (components/automation): rounded matte shapes, white and sage, teal on the
-// chosen one, soft shadows cast on the page, nothing around.
+// card back and chooses again. Drawn like the white city behind it
+// (public/hero/city.jpg): warm cream bodies, round and matte, a sage band
+// at the foot of each volume, mint glass strips for windows; teal on the
+// chosen one, soft sage-grey shadows cast on the plaza.
 
 const CARD = { w: 0.7, t: 0.04, d: 0.48 };
 const BASE = new THREE.Vector3(0, 0, -1.55); // where the arm stands
@@ -32,9 +33,11 @@ const CHIP = { w: 0.36, h: 0.24, t: 0.045 };
 const CHIP_N = 4;
 const BOB = 0.012;
 
-const COL_WHITE = "#f4f6f5";
-const COL_SAGE = "#a9c2b6";
-const COL_SAGE_DEEP = "#7f9d90";
+const COL_WHITE = "#efebe1"; // the city's cream
+const COL_SAGE = "#adc9b9"; // its bands
+const COL_SAGE_DEEP = "#86a596";
+const COL_GLASS = "#b9dccb"; // its windows
+const COL_FRAME = "#9dbfae"; // their mullions
 const COL_INK = "#2a3139";
 const COL_MUTE = "#9aa4ad";
 const COL_TEAL = "#0f766e";
@@ -103,8 +106,8 @@ export function initPicker(container: HTMLElement): () => void {
   scene.environment = envTex;
   scene.environmentIntensity = 0.45;
   pmrem.dispose();
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xcfd9e0, 1.0));
-  const sun = new THREE.DirectionalLight(0xffffff, 1.15);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xd5e2d9, 1.0));
+  const sun = new THREE.DirectionalLight(0xfff4e4, 1.15); // the picture's light is warm
   sun.position.set(-2, 18, -2.5); // high: a short shadow, like the plaza's soft light
   sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048);
@@ -137,9 +140,11 @@ export function initPicker(container: HTMLElement): () => void {
   const sageMat = matte(COL_SAGE, 0.78);
   const deepMat = matte(COL_SAGE_DEEP, 0.75);
   const scanMat = keep(new THREE.MeshBasicMaterial({ color: COL_SCAN, toneMapped: false }));
+  const glassMat = keep(new THREE.MeshStandardMaterial({ color: COL_GLASS, roughness: 0.18, metalness: 0.05 }));
+  const frameMat = matte(COL_FRAME, 0.6);
 
   // ---- the floor: only the shadows, cast on the page ---------------------
-  const floor = new THREE.Mesh(keep(new THREE.PlaneGeometry(30, 30)), keep(new THREE.ShadowMaterial({ opacity: 0.24 })));
+  const floor = new THREE.Mesh(keep(new THREE.PlaneGeometry(30, 30)), keep(new THREE.ShadowMaterial({ color: "#2f4a40", opacity: 0.26 })));
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = -0.005;
   floor.receiveShadow = true;
@@ -158,10 +163,10 @@ export function initPicker(container: HTMLElement): () => void {
     const chosen = mode === "chosen";
     const pal = chosen ? TEALS : SAGES;
     rrect(ctx, 4, 4, W - 8, H - 8, 22);
-    ctx.fillStyle = "#fbfcfc";
+    ctx.fillStyle = "#fbf8f1";
     ctx.fill();
     ctx.lineWidth = mode === "idle" ? 5 : 9;
-    ctx.strokeStyle = chosen ? COL_TEAL : mode === "scan" ? COL_SAGE_DEEP : "#cfdbd5";
+    ctx.strokeStyle = chosen ? COL_TEAL : mode === "scan" ? COL_SAGE_DEEP : "#cddccf";
     ctx.stroke();
     // avatar: a disc with a head and shoulders cut out of it
     const ax = 70;
@@ -174,7 +179,7 @@ export function initPicker(container: HTMLElement): () => void {
     ctx.beginPath();
     ctx.arc(ax, ay, 38, 0, Math.PI * 2);
     ctx.clip();
-    ctx.fillStyle = "#fbfcfc";
+    ctx.fillStyle = "#fbf8f1";
     ctx.beginPath();
     ctx.arc(ax, ay - 9, 13, 0, Math.PI * 2);
     ctx.fill();
@@ -252,12 +257,27 @@ export function initPicker(container: HTMLElement): () => void {
   const base = new THREE.Group();
   base.position.copy(BASE);
   world.add(base);
-  const foot = solid(new THREE.CylinderGeometry(0.46, 0.5, 0.12, 40), sageMat, base);
-  foot.position.y = 0.06;
-  const column = solid(new THREE.CylinderGeometry(0.3, 0.34, 0.3, 32), whiteMat, base);
-  column.position.y = 0.27;
-  const housing = solid(new RoundedBoxGeometry(0.5, 0.56, 0.42, 2, 0.08), whiteMat, base);
-  housing.position.y = 0.7;
+  // the foot: a round cream island on a sage band, like the city's
+  // buildings on their discs
+  const plinth = solid(new THREE.CylinderGeometry(0.56, 0.58, 0.05, 48), whiteMat, base);
+  plinth.position.y = 0.025;
+  const foot = solid(new THREE.CylinderGeometry(0.47, 0.49, 0.1, 40), sageMat, base);
+  foot.position.y = 0.1;
+  const column = solid(new THREE.CylinderGeometry(0.3, 0.33, 0.3, 32), whiteMat, base);
+  column.position.y = 0.3;
+  const housing = solid(new RoundedBoxGeometry(0.5, 0.56, 0.42, 3, 0.12), whiteMat, base);
+  housing.position.y = 0.72;
+  // a strip of mint glass on each flank of the housing, three panes
+  for (const side of [-1, 1]) {
+    const strip = solid(new RoundedBoxGeometry(0.38, 0.13, 0.02, 1, 0.01), glassMat, base);
+    strip.position.set(0, 0.62, side * 0.212);
+    for (const x of [-0.065, 0.065]) {
+      const mullion = solid(new THREE.BoxGeometry(0.012, 0.13, 0.024), frameMat, base);
+      mullion.position.set(x, 0.62, side * 0.213);
+    }
+  }
+  const band = solid(new THREE.CylinderGeometry(0.335, 0.335, 0.05, 32), sageMat, base);
+  band.position.y = 0.42;
   const jointGeo = (r: number, w: number) => {
     const g = keep(new THREE.CylinderGeometry(r, r, w, 32));
     g.rotateX(Math.PI / 2); // along z: the axis the links swing on
@@ -306,10 +326,10 @@ export function initPicker(container: HTMLElement): () => void {
     const H = ctx.canvas.height;
     ctx.clearRect(0, 0, W, H);
     rrect(ctx, 3, 3, W - 6, H - 6, 16);
-    ctx.fillStyle = "#fbfcfc";
+    ctx.fillStyle = "#fbf8f1";
     ctx.fill();
     ctx.lineWidth = 4;
-    ctx.strokeStyle = "#cfdbd5";
+    ctx.strokeStyle = "#cddccf";
     ctx.stroke();
     // three lines of tokens: keyword, names, a string, punctuation
     const tokenCols = [COL_TEAL, COL_INK, COL_SAGE_DEEP, COL_MUTE];

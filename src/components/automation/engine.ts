@@ -4,11 +4,11 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
 
 // The landing's "how it works" as a recruiting machine, read left to right
 // and downhill. Rough, tumbling blocks (developers as GitHub shows them)
-// come out of three dark repository towers up at the back left, each down
+// come out of three cream repository cabinets up at the back left, each down
 // its own lane onto the high belt, and go through four stations that each
 // look different: a scanner gate whose screen holds the brief, [ your role ]
 // (find), a reader with a light cone and a contribution-graph screen (read
-// code), then, after a tower crane has lowered them onto the low belt, a
+// code), then, after a robot arm has set them down on the low belt, a
 // matcher with a scoreboard whose paddle tips the ones that don't fit into a
 // bin (match), and a press that leaves an envelope badge on the one that does
 // (message). That one ends up straight, teal and badged on a turning pedestal
@@ -30,7 +30,7 @@ const BELTS: Belt[] = [
   { top: HIGH_TOP, slab0: -10.7, slab1: -0.6, x1: -1.2 },
   { top: LOW_TOP, slab0: 0.2, slab1: 8.0, x1: 7.6 },
 ];
-const DROP_X = 0.8; // the crane sets blocks down here on the low belt
+const DROP_X = 0.8; // the arm sets blocks down here on the low belt
 // the repositories: dark towers behind the start of the high belt, each
 // with a lane (a terrace as high as the belt) running to its back edge
 const REPOS = [
@@ -64,13 +64,17 @@ const SCREEN_H = 0.6;
 const PODIUM = { x0: 8.5, x1: 10.7, w: 1.8 };
 const PEDESTAL = { x: 9.6, r: 0.55, h: 0.3 };
 const QUEUE_GAP = 0.7; // blocks queue this far apart
-// the crane: mast behind the belts, between the two; its jib reaches the
-// end of the lower belt and the start of the upper one at the same radius
-const CRANE_X = -0.2;
-const CRANE_Z = -2.3;
-const MAST_TOP = 3.6;
-const JIB_LEN = 3.7;
-const COUNTER_LEN = 1.4;
+// the robot arm, the hero's (components/picker) on the machine's scale:
+// its column stands behind the gap between the belts, the end of the high
+// one and the drop point on the low one at the same distance from it
+const ARM_X = -0.2;
+const ARM_Z = -1.5;
+const ARM_SHOULDER = FLOOR + 1.6;
+const ARM_L1 = 1.35; // upper arm
+const ARM_L2 = 1.25; // forearm
+const ARM_WRIST = 0.3; // from the wrist joint down to the hand's pivot
+const ARM_REACH = ARM_WRIST + 0.1; // wrist joint to the cups' underside
+const ARM_HOVER = 0.5; // the cups this high over a block between moves
 // the bin the blocks that don't fit end up in: pushed off the front edge by
 // the matcher's paddle, they drift down the belt and tip over near its end
 const DROP_DX = 1.45; // how far a pushed block travels along the belt
@@ -86,29 +90,34 @@ const POP_TIME = 0.45; // s, the shown block leaves
 const DROP_TIME = 2.0; // s, a block that doesn't fit drifts and tips into the bin
 const REJECT_RATE = 0.65; // share of blocks the matcher turns away
 const SETTLE = 5; // 1/s, how fast a block straightens after a station
-const CRANE = { lower: 0.32, lift: 0.28, slew: 0.6, lower2: 0.26, lift2: 0.22, back: 0.55 };
-const HOOK_UP = 3.0; // the gripper's underside at rest
+const ARM = { lower: 0.3, lift: 0.26, swing: 0.62, lower2: 0.26, lift2: 0.22, back: 0.52 };
 const SPARKS = 14; // per station crossing
 const SPARK_LIFE = 0.65; // s
 const PRESS = { down: 0.14, hold: 0.12, up: 0.34 }; // s
 const PADDLE = { out: 0.4, back: 0.55, angle: 1.5 }; // s, s, rad
 
 // ---- palette --------------------------------------------------------------
-// a block's colour by the number of stations passed: GitHub's dark slate
-// to the gem's teal
-const STAGE = ["#2a3139", "#56656f", "#0f766e", "#129787", "#2ec4ad"].map((c) => new THREE.Color(c));
-const COL_REJECT = STAGE[1];
-const COL_TRACK = "#d8dde2"; // the conveyors' concrete frames
-const COL_RUBBER = "#30363d"; // the belts themselves
-const COL_TRIM = "#9aa4ad"; // rails, idlers, trims
-const COL_DARK = "#0f151d";
-const COL_GATE = "#0f766e";
+// the hall picture's: warm cream bodies, sage bases and frames, pale mint
+// boxes, dark sage-green screens with mint on them, the glow in mint-teal.
+// A block's colour by the number of stations passed: raw grey to the
+// picture's pale mint, then to the gem's teal for the one that fits
+const STAGE = ["#7b857d", "#a3b99c", "#acd187", "#6cc9a2", "#2ec4ad"].map((c) => new THREE.Color(c));
+const COL_REJECT = new THREE.Color("#b9bdb3");
+const COL_CREAM = "#ebe6d9"; // the cabinets, the conveyors' bodies
+const COL_TRACK = COL_CREAM;
+const COL_RUBBER = "#8dab9c"; // the belts themselves, sage like the picture's tables
+const COL_TRIM = "#c6d3ca"; // rails, bolts, trims: pale sage
+const COL_DARK = "#22302b"; // ink on the badges
+const COL_GATE = "#8db1a2"; // the gantries, the pipes' sage
 const COL_SCAN = "#2ec4ad";
-const COL_STEEL = "#2a3139";
-const COL_CRANE = "#9db03a"; // the gem's chartreuse, dark enough on white
+const COL_MINT = "#8fe0c4"; // the little lights along the conveyors
+const COL_STEEL = "#8aa99b"; // plinths, bases, housings: the deeper sage
+const COL_ARM = "#e9e7de"; // the picture's arms: a warm off-white
+const COL_SAGE = "#a9c2b6"; // its joints
 const COL_LIME = "#c6d36a";
-const COL_RED = "#ff6b6b";
-const COL_SCREEN_OFF = "#1c2530";
+const COL_RED = "#e2877c";
+const COL_SCREEN = "#2c3d37"; // a screen's glass, dark sage-green
+const COL_SCREEN_OFF = "#3b4f48";
 const GREENS = ["#9be9a8", "#40c463", "#30a14e", "#216e39"]; // GitHub's graph
 // the camera: level and square to the machine, at eye height, like the hall
 // picture behind it is seen: its horizontals stay horizontal, its verticals
@@ -140,7 +149,7 @@ type Block = {
   t: number;
   from: THREE.Vector3;
 };
-type CraneState = "idle" | "lower" | "lift" | "slew" | "lower2" | "lift2" | "back";
+type ArmState = "idle" | "lower" | "lift" | "swing" | "lower2" | "lift2" | "back";
 type Spark = { life: number; pos: THREE.Vector3; vel: THREE.Vector3; color: THREE.Color };
 type Ring = { t: number; mesh: THREE.Mesh<THREE.RingGeometry, THREE.MeshBasicMaterial> };
 type Screen = { g: THREE.Group; ctx: CanvasRenderingContext2D; tex: THREE.CanvasTexture; w: number; h: number };
@@ -238,11 +247,11 @@ export function initAutomation(container: HTMLElement): () => void {
   scene.environment = envTex;
   scene.environmentIntensity = 0.55;
   pmrem.dispose();
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xcfd9e0, 1.15));
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xd3dfd6, 1.15));
   // the sun comes through the hall's windows: behind, a little to the left,
   // at about 45°, so the shadows fall toward the viewer and slightly right,
   // like the patches of light on the picture's floor
-  const sun = new THREE.DirectionalLight(0xffffff, 1.15);
+  const sun = new THREE.DirectionalLight(0xfff3e0, 1.15); // warm, like the light patches on its floor
   sun.position.set(-4, 10, -8);
   sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048);
@@ -287,15 +296,6 @@ export function initAutomation(container: HTMLElement): () => void {
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = 4;
     return keep(new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false }));
-  };
-  // a thin rod from a to b
-  const rod = (a: THREE.Vector3, b: THREE.Vector3, r: number, mat: THREE.Material, parent: THREE.Object3D = world) => {
-    const dir = new THREE.Vector3().subVectors(b, a);
-    const m = new THREE.Mesh(keep(new THREE.CylinderGeometry(r, r, dir.length(), 6)), mat);
-    m.position.copy(a).addScaledVector(dir, 0.5);
-    m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.normalize());
-    parent.add(m);
-    return m;
   };
 
   const tmpColor = new THREE.Color();
@@ -427,11 +427,11 @@ export function initAutomation(container: HTMLElement): () => void {
     );
     return keep(new THREE.MeshStandardMaterial({ map: albedo, bumpMap: bump, bumpScale: opts.bump, roughnessMap: rough, roughness: 1, metalness: opts.metal }));
   };
-  // cast concrete for the frames; painted steel, slightly worn, for the dark
-  // parts; brushed metal for rails and trims
-  const slabMat = surface({ base: COL_TRACK, tint: "#d0d4cf", vary: 0.2, speckle: 0.18, stains: 0.18, grime: 0.14, bump: 0.025, roughBase: 0.88, roughVary: 0.35, metal: 0, seedK: 1, repeat: 3, repeatY: 1 });
-  const steelMat = surface({ base: COL_STEEL, tint: "#333940", vary: 0.12, speckle: 0.03, bump: 0.004, roughBase: 0.4, roughVary: 0.2, metal: 0.7, seedK: 2, repeat: 2 });
-  const trimMat = surface({ base: COL_TRIM, vary: 0.08, speckle: 0.02, bump: 0.003, roughBase: 0.3, roughVary: 0.18, metal: 0.85, stretch: 14, seedK: 3, repeat: 2 });
+  // the picture's materials: matte cream panels for the bodies, satin sage
+  // paint for the bases and frames, pale sage for rails and trims
+  const slabMat = surface({ base: COL_TRACK, tint: "#e4ddcd", vary: 0.08, speckle: 0.05, grime: 0.05, bump: 0.004, roughBase: 0.78, roughVary: 0.15, metal: 0, seedK: 1, repeat: 3, repeatY: 1 });
+  const steelMat = surface({ base: COL_STEEL, tint: "#86a698", vary: 0.07, speckle: 0.02, bump: 0.002, roughBase: 0.55, roughVary: 0.15, metal: 0.08, seedK: 2, repeat: 2 });
+  const trimMat = surface({ base: COL_TRIM, vary: 0.05, speckle: 0.02, bump: 0.002, roughBase: 0.5, roughVary: 0.15, metal: 0.1, seedK: 3, repeat: 2 });
   // the belts: dark rubber with ribs across, which scroll with the blocks
   const ribs = (vertical: boolean) => {
     const c = document.createElement("canvas");
@@ -443,7 +443,7 @@ export function initAutomation(container: HTMLElement): () => void {
     // scuffs and dust
     for (let k = 0; k < 900; k++) {
       const a = seeded(k * 0.7 + 1) * 0.16;
-      ctx.fillStyle = `rgba(${seeded(k) > 0.5 ? "120,128,136" : "10,14,18"},${a.toFixed(3)})`;
+      ctx.fillStyle = `rgba(${seeded(k) > 0.5 ? "214,230,220" : "60,84,74"},${(a * 0.6).toFixed(3)})`;
       ctx.fillRect(seeded(k + 0.3) * 128, seeded(k + 0.6) * 128, 1 + seeded(k + 0.9) * 3, 1 + seeded(k + 1.2) * 2);
     }
     // the middle of the belt is polished by the blocks: lighter, smoother
@@ -453,10 +453,10 @@ export function initAutomation(container: HTMLElement): () => void {
     shine.addColorStop(1, "rgba(255,255,255,0)");
     ctx.fillStyle = shine;
     ctx.fillRect(0, 0, 128, 128);
-    ctx.fillStyle = "#454d56";
+    ctx.fillStyle = "#b3cbbd";
     if (vertical) ctx.fillRect(0, 0, 128, 12);
     else ctx.fillRect(0, 0, 12, 128);
-    ctx.fillStyle = "#1f2429";
+    ctx.fillStyle = "#83a192";
     if (vertical) ctx.fillRect(0, 12, 128, 6);
     else ctx.fillRect(12, 0, 6, 128);
     const tex = keep(new THREE.CanvasTexture(c));
@@ -478,7 +478,7 @@ export function initAutomation(container: HTMLElement): () => void {
     const cap = solid(boltCapGeo, trimMat, parent);
     cap.position.set(x + (axis === "x" ? 0.01 : 0), y + (axis === "y" ? 0.01 : 0), z + (axis === "z" ? 0.01 : 0));
   };
-  const grooveMat = keep(new THREE.MeshStandardMaterial({ color: "#5a6570", roughness: 0.9, metalness: 0.1 }));
+  const grooveMat = keep(new THREE.MeshStandardMaterial({ color: "#cfc8b8", roughness: 0.9, metalness: 0 }));
   const gussetGeo = keep(
     (() => {
       const shape = new THREE.Shape();
@@ -489,13 +489,6 @@ export function initAutomation(container: HTMLElement): () => void {
       return new THREE.ExtrudeGeometry(shape, { depth: 0.05, bevelEnabled: false });
     })()
   );
-  const brace = (a: THREE.Vector3, b: THREE.Vector3, r: number, mat: THREE.Material, parent: THREE.Object3D = world) => {
-    const dir = new THREE.Vector3().subVectors(b, a);
-    const m = solid(new THREE.CylinderGeometry(r, r, dir.length(), 8), mat, parent);
-    m.position.copy(a).addScaledVector(dir, 0.5);
-    m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.normalize());
-    return m;
-  };
   const RIB_PERIOD = 0.32;
   const beltTexes: { tex: THREE.Texture; vertical: boolean }[] = [];
   const beltStrip = (len: number, width: number, vertical: boolean) => {
@@ -509,15 +502,20 @@ export function initAutomation(container: HTMLElement): () => void {
     world.add(m);
     return m;
   };
-  const darkMat = surface({ base: COL_DARK, tint: "#151c24", vary: 0.16, speckle: 0.04, grime: 0.08, bump: 0.006, roughBase: 0.5, roughVary: 0.25, metal: 0.3, seedK: 4, repeat: 2, repeatY: 1 });
-  const gateMat = keep(
-    new THREE.MeshStandardMaterial({ color: COL_GATE, roughness: 0.35, metalness: 0.5, emissive: new THREE.Color(COL_GATE), emissiveIntensity: 0.1 })
-  );
-  // a dark screen turned to the camera, with a canvas we draw on
+  // the cabinets: cream panels, like the lockers along the picture's wall
+  const cabinetMat = surface({ base: COL_CREAM, tint: "#e6dfcf", vary: 0.06, speckle: 0.03, grime: 0.04, bump: 0.002, roughBase: 0.72, roughVary: 0.12, metal: 0, seedK: 4, repeat: 2, repeatY: 1 });
+  const gateMat = keep(new THREE.MeshStandardMaterial({ color: COL_GATE, roughness: 0.55, metalness: 0.08 }));
+  const glassMat = keep(new THREE.MeshStandardMaterial({ color: COL_SCREEN, roughness: 0.25, metalness: 0.1 }));
+  const mintMat = keep(new THREE.MeshBasicMaterial({ color: COL_MINT }));
+  // a screen turned to the camera, like the picture's: dark sage glass in a
+  // rounded cream bezel, with a canvas we draw on
   const screen = (w: number, h: number) => {
     const g = new THREE.Group();
-    const panel = solid(new RoundedBoxGeometry(w + 0.1, h + 0.1, 0.06, 1, 0.02), darkMat, g);
-    panel.position.z = 0;
+    const panel = solid(new RoundedBoxGeometry(w + 0.16, h + 0.16, 0.08, 2, 0.05), cabinetMat, g);
+    panel.position.z = -0.01;
+    const glass = new THREE.Mesh(keep(new THREE.PlaneGeometry(w + 0.02, h + 0.02)), glassMat);
+    glass.position.z = 0.031;
+    g.add(glass);
     const c = document.createElement("canvas");
     c.width = 320;
     c.height = 200;
@@ -526,7 +524,7 @@ export function initAutomation(container: HTMLElement): () => void {
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = 4;
     const face = new THREE.Mesh(keep(new THREE.PlaneGeometry(w, h)), keep(new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false })));
-    face.position.z = 0.034;
+    face.position.z = 0.036;
     g.add(face);
     g.rotation.y = FACE_CAM;
     world.add(g);
@@ -547,9 +545,9 @@ export function initAutomation(container: HTMLElement): () => void {
     c.height = 256;
     const ctx = c.getContext("2d")!;
     const grd = ctx.createRadialGradient(128, 128, 40, 128, 128, 128);
-    grd.addColorStop(0, "rgba(20, 26, 32, 0.42)");
-    grd.addColorStop(0.55, "rgba(20, 26, 32, 0.18)");
-    grd.addColorStop(1, "rgba(20, 26, 32, 0)");
+    grd.addColorStop(0, "rgba(47, 74, 64, 0.36)");
+    grd.addColorStop(0.55, "rgba(47, 74, 64, 0.15)");
+    grd.addColorStop(1, "rgba(47, 74, 64, 0)");
     ctx.fillStyle = grd;
     ctx.fillRect(0, 0, 256, 256);
     return keep(new THREE.CanvasTexture(c));
@@ -569,9 +567,9 @@ export function initAutomation(container: HTMLElement): () => void {
   // each edge and a row of idler rollers on the near face ------------------
   const terrace = (x0: number, x1: number, top: number, w = TRACK_W, conveyor = true) => {
     const h = top - FLOOR;
-    const m = solid(new RoundedBoxGeometry(x1 - x0, h - (conveyor ? 0.06 : 0), w, 2, 0.05), slabMat);
+    const m = solid(new RoundedBoxGeometry(x1 - x0, h - (conveyor ? 0.06 : 0), w, 3, 0.1), slabMat);
     m.position.set((x0 + x1) / 2, FLOOR + (h - (conveyor ? 0.06 : 0)) / 2, 0);
-    const plinth = solid(new THREE.BoxGeometry(x1 - x0 - 0.1, 0.14, w + 0.04), steelMat);
+    const plinth = solid(new RoundedBoxGeometry(x1 - x0 - 0.1, 0.14, w + 0.04, 1, 0.04), steelMat);
     plinth.position.set((x0 + x1) / 2, FLOOR + 0.07, 0);
     if (!conveyor) return;
     const belt = beltStrip(x1 - x0 - 0.3, w - 0.36, false);
@@ -581,11 +579,15 @@ export function initAutomation(container: HTMLElement): () => void {
       const rail = solid(railGeo, trimMat);
       rail.position.set((x0 + x1) / 2, top + 0.01, z);
     }
-    const idlerGeo = keep(new THREE.CylinderGeometry(0.055, 0.055, 0.2, 14));
-    for (let x = x0 + 0.5; x < x1 - 0.3; x += 0.62) {
-      const idler = solid(idlerGeo, trimMat);
-      idler.rotation.x = Math.PI / 2;
-      idler.position.set(x, top - 0.2, w / 2 + 0.02);
+    // a sage band under the top edge with a row of small mint lights,
+    // like the picture's tables
+    const band = solid(new RoundedBoxGeometry(x1 - x0 - 0.06, 0.16, 0.04, 1, 0.02), steelMat);
+    band.position.set((x0 + x1) / 2, top - 0.2, w / 2 + 0.01);
+    const dotGeo = keep(new THREE.CircleGeometry(0.03, 14));
+    for (let x = x0 + 0.3; x < x1 - 0.2; x += 0.42) {
+      const dot = new THREE.Mesh(dotGeo, mintMat);
+      dot.position.set(x, top - 0.2, w / 2 + 0.032);
+      world.add(dot);
     }
     // panel seams down the near face, a bolt at each corner of each panel
     const faceZ = w / 2 + 0.002;
@@ -615,11 +617,13 @@ export function initAutomation(container: HTMLElement): () => void {
   const topBelt = BELTS[BELTS.length - 1].top;
   terrace(PODIUM.x0, PODIUM.x1, topBelt, PODIUM.w, false);
   contact((PODIUM.x0 + PODIUM.x1) / 2, 0, PODIUM.x1 - PODIUM.x0 + 1.4, PODIUM.w + 1.4);
-  contact(CRANE_X, CRANE_Z, 2.4, 2.4);
+  contact(ARM_X, ARM_Z, 1.5, 1.5);
   contact(BIN.x, BIN.z, BIN.w + 1.2, BIN.w + 1.2);
   for (const r of REPOS) contact(r.x, REPO_Z, r.w + 1.4, REPO_D + 1.4);
   // the pedestal: a low drum with a teal ring, the block on it turns slowly
-  const pedestal = solid(new THREE.CylinderGeometry(PEDESTAL.r, PEDESTAL.r + 0.05, PEDESTAL.h, 36), steelMat);
+  const pedestal = solid(new THREE.CylinderGeometry(PEDESTAL.r, PEDESTAL.r + 0.05, PEDESTAL.h, 36), cabinetMat);
+  const pedestalFoot = solid(new THREE.CylinderGeometry(PEDESTAL.r + 0.09, PEDESTAL.r + 0.11, 0.08, 36), steelMat);
+  pedestalFoot.position.set(PEDESTAL.x, topBelt + 0.04, 0);
   pedestal.position.set(PEDESTAL.x, topBelt + PEDESTAL.h / 2, 0);
   const pedestalTop = topBelt + PEDESTAL.h;
   const pedestalRing = new THREE.Mesh(keep(new THREE.RingGeometry(PEDESTAL.r - 0.09, PEDESTAL.r - 0.04, 48)), glow(COL_SCAN, 0.8));
@@ -632,15 +636,15 @@ export function initAutomation(container: HTMLElement): () => void {
   stripeCanvas.width = 64;
   stripeCanvas.height = 8;
   const sctx = stripeCanvas.getContext("2d")!;
-  sctx.fillStyle = "#b9c4cc";
+  sctx.fillStyle = "#e3ddcf";
   sctx.fillRect(0, 0, 64, 8);
-  sctx.fillStyle = "#59636e";
+  sctx.fillStyle = "#9dbcae";
   for (let i = 0; i < 64; i += 16) sctx.fillRect(i, 0, 8, 8);
   const stripeTex = keep(new THREE.CanvasTexture(stripeCanvas));
   stripeTex.colorSpace = THREE.SRGBColorSpace;
   stripeTex.wrapS = THREE.RepeatWrapping;
   stripeTex.repeat.set(3, 1);
-  const rollerMat = keep(new THREE.MeshStandardMaterial({ map: stripeTex, roughness: 0.6, metalness: 0.2 }));
+  const rollerMat = keep(new THREE.MeshStandardMaterial({ map: stripeTex, roughness: 0.6, metalness: 0.05 }));
   const rollerGeo = keep(new THREE.CylinderGeometry(0.13, 0.13, TRACK_W - 0.1, 20));
   const rollers: THREE.Mesh[] = [];
   const roller = (x: number, top: number) => {
@@ -662,7 +666,7 @@ export function initAutomation(container: HTMLElement): () => void {
     c.width = vertical ? 8 : 64;
     c.height = vertical ? 64 : 8;
     const ctx = c.getContext("2d")!;
-    ctx.fillStyle = COL_GATE;
+    ctx.fillStyle = "#eef8ee";
     if (vertical) ctx.fillRect(0, 0, 8, 36);
     else ctx.fillRect(0, 0, 36, 8);
     return c;
@@ -679,7 +683,7 @@ export function initAutomation(container: HTMLElement): () => void {
     else tex.repeat.set(len / DASH_PERIOD, 1);
     const mesh = new THREE.Mesh(
       keep(vertical ? new THREE.PlaneGeometry(0.05, len) : new THREE.PlaneGeometry(len, 0.05)),
-      keep(new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.45, depthWrite: false }))
+      keep(new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.7, depthWrite: false }))
     );
     mesh.rotation.x = -Math.PI / 2;
     world.add(mesh);
@@ -693,7 +697,7 @@ export function initAutomation(container: HTMLElement): () => void {
     return l;
   });
 
-  // ---- the repositories: dark towers the blocks come out of, each
+  // ---- the repositories: cream cabinets the blocks come out of, each
   // with a lane down to the belt, a lit door, GitHub's green squares on
   // the face, a radar, blinking lights, an antenna --------------------------
   const blinks: Blink[] = [];
@@ -704,11 +708,11 @@ export function initAutomation(container: HTMLElement): () => void {
   const laneLines: { mesh: THREE.Mesh; tex: THREE.Texture }[] = [];
   const repoTop = (i: number) => FLOOR + REPOS[i].h;
   REPOS.forEach((r, i) => {
-    const tower = solid(new RoundedBoxGeometry(r.w, r.h, REPO_D, 2, 0.06), darkMat);
+    const tower = solid(new RoundedBoxGeometry(r.w, r.h, REPO_D, 3, 0.1), cabinetMat);
     tower.position.set(r.x, FLOOR + r.h / 2, REPO_Z);
-    const cornice = solid(new THREE.BoxGeometry(r.w + 0.1, 0.08, REPO_D + 0.1), steelMat);
+    const cornice = solid(new RoundedBoxGeometry(r.w + 0.1, 0.08, REPO_D + 0.1, 1, 0.03), steelMat);
     cornice.position.set(r.x, FLOOR + r.h - 0.04, REPO_Z);
-    const skirt = solid(new THREE.BoxGeometry(r.w + 0.08, 0.2, REPO_D + 0.08), steelMat);
+    const skirt = solid(new RoundedBoxGeometry(r.w + 0.08, 0.2, REPO_D + 0.08, 1, 0.04), steelMat);
     skirt.position.set(r.x, FLOOR + 0.1, REPO_Z);
     const seamGeoT = keep(new THREE.BoxGeometry(r.w - 0.1, 0.02, 0.02));
     for (let y = BELTS[0].top + 0.75; y < FLOOR + r.h - 0.9; y += 0.55) {
@@ -743,7 +747,7 @@ export function initAutomation(container: HTMLElement): () => void {
         const m = new THREE.Mesh(cellGeo, mat);
         m.position.set(r.x - 0.21 + (k % cols) * 0.14, repoTop(i) - 0.3 - Math.floor(k / cols) * 0.14, front);
         world.add(m);
-        blinks.push({ mat, on, off: on.clone().multiplyScalar(0.25), rate: 0.5 + seeded(k * 1.7 + i) * 1.2, phase: seeded(k + 0.4 + i) * 6.3 });
+        blinks.push({ mat, on, off: new THREE.Color("#d3dccf"), rate: 0.5 + seeded(k * 1.7 + i) * 1.2, phase: seeded(k + 0.4 + i) * 6.3 });
       }
     } else {
       // a row of blinking lights
@@ -754,12 +758,12 @@ export function initAutomation(container: HTMLElement): () => void {
         const m = new THREE.Mesh(ledGeo, mat);
         m.position.set(r.x - 0.2 + (k % 3) * 0.2, repoTop(i) - 0.3 - Math.floor(k / 3) * 0.17, front);
         world.add(m);
-        blinks.push({ mat, on, off: on.clone().multiplyScalar(0.22), rate: 1.6 + seeded(k + 3) * 3, phase: seeded(k + 9) * 6.3 });
+        blinks.push({ mat, on, off: new THREE.Color("#d3dccf"), rate: 1.6 + seeded(k + 3) * 3, phase: seeded(k + 9) * 6.3 });
       });
     }
   });
   // the sign on the tallest tower
-  const sourceSign = new THREE.Mesh(keep(new THREE.PlaneGeometry(1.0, 0.25)), stencil("[ github ]", 56, 512, 128, COL_SCAN));
+  const sourceSign = new THREE.Mesh(keep(new THREE.PlaneGeometry(1.0, 0.25)), stencil("[ github ]", 56, 512, 128, "#4f8a78"));
   sourceSign.position.set(REPOS[0].x, BELTS[0].top + 1.15, REPO_FRONT + 0.004);
   world.add(sourceSign);
   // the radar on its roof
@@ -788,7 +792,7 @@ export function initAutomation(container: HTMLElement): () => void {
   const paneGeo = keep(new THREE.PlaneGeometry(GATE_H - BAR, GATE_W - BAR));
   const lineGeo = keep(new THREE.PlaneGeometry(0.035, GATE_W - BAR - 0.02));
   const lampOn = new THREE.Color(COL_SCAN);
-  const lampDim = new THREE.Color(COL_GATE);
+  const lampDim = new THREE.Color("#5f9c88");
   const stations: Station[] = STATIONS.map((sd) => {
     const belt = BELTS[sd.belt];
     const g = new THREE.Group();
@@ -885,12 +889,12 @@ export function initAutomation(container: HTMLElement): () => void {
     } else if (sd.kind === "verify") {
       // a press comes down on each block and leaves a badge; the screen on
       // the housing shows the envelope getting its check
-      const housing = solid(new RoundedBoxGeometry(0.56, 0.3, 0.56, 1, 0.04), steelMat, g);
+      const housing = solid(new RoundedBoxGeometry(0.56, 0.3, 0.56, 2, 0.08), cabinetMat, g);
       housing.position.set(0, GATE_H + 0.15 - BAR / 2, 0);
       s.rod = solid(keep(new THREE.CylinderGeometry(0.045, 0.045, 1, 10)), steelMat, g);
       s.head = new THREE.Group();
       g.add(s.head);
-      solid(new RoundedBoxGeometry(0.5, 0.12, 0.5, 1, 0.03), steelMat, s.head);
+      solid(new RoundedBoxGeometry(0.5, 0.12, 0.5, 1, 0.04), cabinetMat, s.head);
       const headGlow = new THREE.Mesh(keep(new THREE.PlaneGeometry(0.42, 0.42)), glow(COL_SCAN, 0.9));
       headGlow.rotation.x = Math.PI / 2;
       headGlow.position.y = -0.064;
@@ -914,7 +918,7 @@ export function initAutomation(container: HTMLElement): () => void {
       s.arm = new THREE.Group();
       s.arm.position.y = 0.32;
       pivot.add(s.arm);
-      const paddle = solid(new RoundedBoxGeometry(1.3, 0.4, 0.06, 1, 0.02), steelMat, s.arm);
+      const paddle = solid(new RoundedBoxGeometry(1.3, 0.4, 0.06, 1, 0.025), cabinetMat, s.arm);
       paddle.position.set(-0.65, 0, 0.1);
       const paddleGlow = new THREE.Mesh(keep(new THREE.PlaneGeometry(1.2, 0.3)), glow(COL_SCAN, 0.6));
       paddleGlow.position.set(-0.65, 0, 0.132);
@@ -1024,11 +1028,11 @@ export function initAutomation(container: HTMLElement): () => void {
   const binSideGeo = keep(new RoundedBoxGeometry(0.06, BIN.h, BIN.w, 1, 0.02));
   const binY = FLOOR + BIN.h / 2;
   for (const dz of [-1, 1]) {
-    const w = solid(binWallGeo, steelMat);
+    const w = solid(binWallGeo, cabinetMat);
     w.position.set(BIN.x, binY, BIN.z + (dz * (BIN.w - 0.06)) / 2);
   }
   for (const dx of [-1, 1]) {
-    const w = solid(binSideGeo, steelMat);
+    const w = solid(binSideGeo, cabinetMat);
     w.position.set(BIN.x + (dx * (BIN.w - 0.06)) / 2, binY, BIN.z);
   }
   const binFloor = solid(new RoundedBoxGeometry(BIN.w, 0.06, BIN.w, 1, 0.02), steelMat);
@@ -1057,104 +1061,92 @@ export function initAutomation(container: HTMLElement): () => void {
     sc.tex.needsUpdate = true;
   };
 
-  // ---- the crane: a tower crane behind the belts -----------------------
-  const craneMat = surface({ base: COL_CRANE, tint: "#93a63a", vary: 0.14, speckle: 0.04, bump: 0.004, roughBase: 0.48, roughVary: 0.2, metal: 0.3, seedK: 5, repeat: 4 });
-  const base = solid(new RoundedBoxGeometry(1.1, 0.3, 1.1, 1, 0.03), steelMat);
-  base.position.set(CRANE_X, FLOOR + 0.15, CRANE_Z);
-  const MAST_W = 0.36;
-  const mastH = MAST_TOP - FLOOR;
-  const chordGeo = keep(new RoundedBoxGeometry(0.06, mastH, 0.06, 1, 0.01));
-  for (const sx of [-1, 1]) {
-    for (const sz of [-1, 1]) {
-      const chord = solid(chordGeo, craneMat);
-      chord.position.set(CRANE_X + (sx * MAST_W) / 2, FLOOR + mastH / 2, CRANE_Z + (sz * MAST_W) / 2);
-    }
+  // ---- the arm: the hero's robot arm, white with sage joints. A sage foot
+  // and a white column behind the belts, a housing that turns on it, two
+  // links, a short wrist and a hand with suction cups; a teal light under
+  // the hand while it holds a block --------------------------------------
+  const armMat = surface({ base: COL_ARM, tint: "#e6ebe8", vary: 0.06, speckle: 0.02, bump: 0.002, roughBase: 0.6, roughVary: 0.15, metal: 0, seedK: 5, repeat: 2 });
+  const sageMat = surface({ base: COL_SAGE, tint: "#9fb9ad", vary: 0.08, speckle: 0.02, bump: 0.002, roughBase: 0.62, roughVary: 0.15, metal: 0.05, seedK: 6, repeat: 2 });
+  const foot = solid(new THREE.CylinderGeometry(0.44, 0.48, 0.12, 40), sageMat);
+  foot.position.set(ARM_X, FLOOR + 0.06, ARM_Z);
+  const columnH = ARM_SHOULDER - 0.36 - (FLOOR + 0.12);
+  const column = solid(new THREE.CylinderGeometry(0.26, 0.3, columnH, 32), armMat);
+  column.position.set(ARM_X, FLOOR + 0.12 + columnH / 2, ARM_Z);
+  const armBase = new THREE.Group(); // turns about the column
+  armBase.position.set(ARM_X, 0, ARM_Z);
+  world.add(armBase);
+  const collar = solid(new THREE.CylinderGeometry(0.32, 0.32, 0.1, 32), sageMat, armBase);
+  collar.position.y = ARM_SHOULDER - 0.31;
+  const housing = solid(new RoundedBoxGeometry(0.5, 0.5, 0.44, 2, 0.08), armMat, armBase);
+  housing.position.y = ARM_SHOULDER - 0.05;
+  const jointGeo = (r: number, w: number) => {
+    const g = keep(new THREE.CylinderGeometry(r, r, w, 32));
+    g.rotateX(Math.PI / 2); // along z: the axis the links swing on
+    return g;
+  };
+  const shoulder = new THREE.Group();
+  shoulder.position.y = ARM_SHOULDER;
+  armBase.add(shoulder);
+  solid(jointGeo(0.19, 0.52), sageMat, shoulder);
+  const upper = solid(new RoundedBoxGeometry(ARM_L1, 0.25, 0.21, 2, 0.09), armMat, shoulder);
+  upper.position.x = ARM_L1 / 2;
+  const elbow = new THREE.Group();
+  elbow.position.x = ARM_L1;
+  shoulder.add(elbow);
+  solid(jointGeo(0.15, 0.3), sageMat, elbow);
+  const fore = solid(new RoundedBoxGeometry(ARM_L2, 0.19, 0.17, 2, 0.08), armMat, elbow);
+  fore.position.x = ARM_L2 / 2;
+  const wrist = new THREE.Group();
+  wrist.position.x = ARM_L2;
+  elbow.add(wrist);
+  solid(jointGeo(0.12, 0.26), sageMat, wrist);
+  const wristLink = solid(new THREE.CylinderGeometry(0.07, 0.07, ARM_WRIST, 24), armMat, wrist);
+  wristLink.position.y = -ARM_WRIST / 2;
+  const hand = new THREE.Group();
+  hand.position.y = -ARM_WRIST;
+  wrist.add(hand);
+  solid(new THREE.SphereGeometry(0.085, 24, 16), sageMat, hand);
+  const handPlate = solid(new RoundedBoxGeometry(0.44, 0.06, 0.44, 1, 0.02), armMat, hand);
+  handPlate.position.y = -0.04;
+  for (const [cx, cz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+    const cup = solid(new THREE.CylinderGeometry(0.045, 0.06, 0.03, 20), sageMat, hand);
+    cup.position.set(cx * 0.13, -ARM_REACH + ARM_WRIST + 0.015, cz * 0.13);
   }
-  const rungX = keep(new RoundedBoxGeometry(MAST_W, 0.045, 0.045, 1, 0.01));
-  const rungZ = keep(new RoundedBoxGeometry(0.045, 0.045, MAST_W, 1, 0.01));
-  let flip = 1;
-  for (let y = FLOOR + 0.5; y < MAST_TOP - 0.1; y += 0.5) {
-    for (const sgn of [-1, 1]) {
-      const a = solid(rungX, craneMat);
-      a.position.set(CRANE_X, y, CRANE_Z + (sgn * MAST_W) / 2);
-      const b = solid(rungZ, craneMat);
-      b.position.set(CRANE_X + (sgn * MAST_W) / 2, y, CRANE_Z);
-      // a diagonal in each bay, alternating direction up the mast
-      const hw = MAST_W / 2;
-      brace(
-        new THREE.Vector3(CRANE_X - flip * hw, y - 0.5, CRANE_Z + sgn * hw),
-        new THREE.Vector3(CRANE_X + flip * hw, y, CRANE_Z + sgn * hw),
-        0.014,
-        craneMat
-      );
-      brace(
-        new THREE.Vector3(CRANE_X + sgn * hw, y - 0.5, CRANE_Z - flip * hw),
-        new THREE.Vector3(CRANE_X + sgn * hw, y, CRANE_Z + flip * hw),
-        0.014,
-        craneMat
-      );
-    }
-    flip = -flip;
-  }
-  const slew = new THREE.Group();
-  slew.position.set(CRANE_X, MAST_TOP, CRANE_Z);
-  world.add(slew);
-  const turntable = solid(new THREE.CylinderGeometry(0.3, 0.3, 0.14, 24), steelMat, slew);
-  turntable.position.y = 0.07;
-  const cab = solid(new RoundedBoxGeometry(0.42, 0.36, 0.4, 1, 0.04), steelMat, slew);
-  cab.position.set(0.45, 0.4, 0.34);
-  const cabGlass = new THREE.Mesh(keep(new THREE.PlaneGeometry(0.3, 0.2)), glow(COL_SCAN, 0.8));
-  cabGlass.position.set(0.45, 0.44, 0.545);
-  slew.add(cabGlass);
-  const beaconMat = keep(new THREE.MeshBasicMaterial({ color: COL_RED }));
-  const beacon = new THREE.Mesh(lampGeo, beaconMat);
-  const JIB_Y = 0.32;
-  const JIB_H = 0.34;
-  const chordLong = keep(new RoundedBoxGeometry(JIB_LEN, 0.055, 0.055, 1, 0.01));
-  for (const z of [-0.13, 0.13]) {
-    const c = solid(chordLong, craneMat, slew);
-    c.position.set(JIB_LEN / 2, JIB_Y, z);
-  }
-  const topChord = solid(keep(new RoundedBoxGeometry(JIB_LEN - 0.3, 0.055, 0.055, 1, 0.01)), craneMat, slew);
-  topChord.position.set((JIB_LEN - 0.3) / 2, JIB_Y + JIB_H, 0);
-  const postGeo = keep(new RoundedBoxGeometry(0.04, JIB_H, 0.04, 1, 0.01));
-  const braceGeo = keep(new RoundedBoxGeometry(0.04, 0.04, 0.26, 1, 0.01));
-  for (let x = 0.2; x < JIB_LEN - 0.3; x += 0.45) {
-    const p = solid(postGeo, craneMat, slew);
-    p.position.set(x, JIB_Y + JIB_H / 2, 0);
-    const br = solid(braceGeo, craneMat, slew);
-    br.position.set(x, JIB_Y, 0);
-  }
-  const counter = solid(keep(new RoundedBoxGeometry(COUNTER_LEN, 0.06, 0.3, 1, 0.01)), craneMat, slew);
-  counter.position.set(-COUNTER_LEN / 2, JIB_Y, 0);
-  const weight = solid(new RoundedBoxGeometry(0.5, 0.5, 0.42, 1, 0.03), steelMat, slew);
-  weight.position.set(-COUNTER_LEN + 0.25, JIB_Y - 0.28, 0);
-  const APEX = 1.0;
-  const apex = solid(keep(new RoundedBoxGeometry(0.07, APEX, 0.07, 1, 0.01)), craneMat, slew);
-  apex.position.set(0, JIB_Y + APEX / 2, 0);
-  beacon.position.set(0, JIB_Y + APEX + 0.06, 0);
-  slew.add(beacon);
-  const pendant = (x: number, y: number) =>
-    rod(new THREE.Vector3(0, JIB_Y + APEX, 0), new THREE.Vector3(x, y, 0), 0.012, steelMat, slew);
-  pendant(JIB_LEN * 0.62, JIB_Y + JIB_H);
-  pendant(-COUNTER_LEN + 0.15, JIB_Y);
-  const R = Math.hypot(BELTS[0].x1 - CRANE_X, 0 - CRANE_Z);
-  const trolley = solid(new RoundedBoxGeometry(0.3, 0.16, 0.34, 1, 0.03), steelMat, slew);
-  trolley.position.set(R, JIB_Y - 0.1, 0);
-  const cable = new THREE.Mesh(keep(new THREE.CylinderGeometry(0.014, 0.014, 1, 6)), steelMat);
-  slew.add(cable);
-  const gripper = new THREE.Group();
-  const plate = solid(new RoundedBoxGeometry(0.64, 0.1, 0.64, 1, 0.02), steelMat, gripper);
-  plate.position.y = 0.05;
-  for (const side of [-1, 1]) {
-    const finger = solid(keep(new RoundedBoxGeometry(0.08, 0.34, 0.6, 1, 0.02)), steelMat, gripper);
-    finger.position.set(side * 0.31, -0.17, 0);
-  }
-  slew.add(gripper);
-  const headingTo = (x: number, z: number) => Math.atan2(-(z - CRANE_Z), x - CRANE_X);
+  const holdMat = keep(new THREE.MeshBasicMaterial({ color: COL_SCAN }));
+  const holdLight = new THREE.Mesh(keep(new THREE.CylinderGeometry(0.04, 0.04, 0.012, 20)), holdMat);
+  holdLight.position.y = -0.074;
+  hand.add(holdLight);
+  const holdOff = new THREE.Color("#5f7d71");
+  const holdOn = new THREE.Color(COL_SCAN);
+  // the arm's place in polar terms around the column: heading, distance
+  const headingTo = (x: number, z: number) => Math.atan2(-(z - ARM_Z), x - ARM_X);
   const thetaPick = headingTo(BELTS[0].x1, 0);
   const thetaDrop = headingTo(DROP_X, 0);
-  const crane = { state: "idle" as CraneState, t: 0, theta: thetaPick, hookY: HOOK_UP, swing: 0, block: null as Block | null };
+  const rPick = Math.hypot(BELTS[0].x1 - ARM_X, ARM_Z);
+  const rDrop = Math.hypot(DROP_X - ARM_X, ARM_Z);
+  const hoverPick = BELTS[0].top + CUBE + ARM_REACH + ARM_HOVER;
+  const hoverDrop = BELTS[1].top + CUBE + ARM_REACH + ARM_HOVER;
+  // the wrist joint, in polar terms: heading, reach and height
+  const arm = { state: "idle" as ArmState, t: 0, theta: thetaPick, r: rPick, y: hoverPick, from: 0, to: 0, block: null as Block | null };
+  const armWrist = (out: THREE.Vector3) => out.set(ARM_X + arm.r * Math.cos(arm.theta), arm.y, ARM_Z - arm.r * Math.sin(arm.theta));
+  const wristAt = new THREE.Vector3();
+  const solveArm = () => {
+    armWrist(wristAt);
+    const h = wristAt.y - ARM_SHOULDER;
+    const d = Math.min(Math.hypot(arm.r, h), ARM_L1 + ARM_L2 - 0.02);
+    const phi = Math.atan2(h, arm.r);
+    const cA = THREE.MathUtils.clamp((ARM_L1 * ARM_L1 + d * d - ARM_L2 * ARM_L2) / (2 * ARM_L1 * d), -1, 1);
+    const cB = THREE.MathUtils.clamp((ARM_L1 * ARM_L1 + ARM_L2 * ARM_L2 - d * d) / (2 * ARM_L1 * ARM_L2), -1, 1);
+    const a1 = phi + Math.acos(cA); // elbow up
+    const a2 = -(Math.PI - Math.acos(cB));
+    armBase.rotation.y = arm.theta;
+    shoulder.rotation.z = a1;
+    elbow.rotation.z = a2;
+    wrist.rotation.z = -(a1 + a2); // the hand hangs straight down
+    hand.rotation.y = -arm.theta; // and stays square to the belts, like the block it holds
+  };
+  // where a block's top is, as drawn on a belt (rough ones ride high)
+  const blockTop = (c: Block, beltTop: number) => beltTop + CUBE * THREE.MathUtils.lerp(c.size, 1, c.order) + (1 - c.order) * 0.09;
 
   // ---- sparks: tiny bits that fly off at every station ------------------
   const SPARK_N = 160;
@@ -1198,7 +1190,7 @@ export function initAutomation(container: HTMLElement): () => void {
   const N = 28;
   const blocks = new THREE.InstancedMesh(
     keep(new RoundedBoxGeometry(CUBE, CUBE, CUBE, 3, 0.07)),
-    keep(new THREE.MeshStandardMaterial({ roughness: 0.6, metalness: 0.05 })),
+    keep(new THREE.MeshStandardMaterial({ roughness: 0.75, metalness: 0 })),
     N
   );
   keep(blocks);
@@ -1409,82 +1401,90 @@ export function initAutomation(container: HTMLElement): () => void {
       }
       s.fill = near ? fill : Math.max(0, s.fill - dt * 1.6);
     }
-    // the crane
+    // the arm: down onto the block at the end of the high belt, up, swing
+    // over, down onto the low belt, up, back
     {
-      const pickY = BELTS[0].top + CUBE;
-      const dropY = BELTS[1].top + CUBE;
-      const cr = crane;
-      switch (cr.state) {
+      const ar = arm;
+      const step = (dur: number) => {
+        ar.t += dt / dur;
+        return easeInOut(Math.min(1, ar.t));
+      };
+      // the cups touch the block's top: the wrist this high over it
+      const onTop = (c: Block, beltTop: number) => blockTop(c, beltTop) + ARM_REACH;
+      // swing in polar terms, over a hump, so the hand travels like a real arm's
+      const swing = (k: number, th0: number, th1: number, r0: number, r1: number, y0: number, y1: number) => {
+        ar.theta = THREE.MathUtils.lerp(th0, th1, k);
+        ar.r = THREE.MathUtils.lerp(r0, r1, k);
+        ar.y = THREE.MathUtils.lerp(y0, y1, k) + Math.sin(Math.PI * k) * 0.3;
+      };
+      switch (ar.state) {
         case "idle": {
+          ar.y = hoverPick + Math.sin(clock * 1.6) * 0.02;
           const waiting = pool.find((c) => c.phase === "track" && c.belt === 0 && c.x >= BELTS[0].x1 - 1e-3);
           if (waiting) {
-            cr.state = "lower";
-            cr.t = 0;
-            cr.block = waiting;
+            ar.state = "lower";
+            ar.t = 0;
+            ar.block = waiting;
+            ar.from = ar.y;
+            ar.to = onTop(waiting, BELTS[0].top);
           }
           break;
         }
         case "lower": {
-          cr.t += dt / CRANE.lower;
-          cr.hookY = THREE.MathUtils.lerp(HOOK_UP, pickY, easeInOut(Math.min(1, cr.t)));
-          if (cr.t >= 1 && cr.block) {
-            cr.block.phase = "carried";
-            cr.state = "lift";
-            cr.t = 0;
+          ar.y = THREE.MathUtils.lerp(ar.from, ar.to, step(ARM.lower));
+          if (ar.t >= 1 && ar.block) {
+            ar.block.phase = "carried";
+            ar.state = "lift";
+            ar.t = 0;
+            ar.from = ar.y;
           }
           break;
         }
         case "lift": {
-          cr.t += dt / CRANE.lift;
-          cr.hookY = THREE.MathUtils.lerp(pickY, HOOK_UP, easeInOut(Math.min(1, cr.t)));
-          if (cr.t >= 1) {
-            cr.state = "slew";
-            cr.t = 0;
+          ar.y = THREE.MathUtils.lerp(ar.from, hoverPick, step(ARM.lift));
+          if (ar.t >= 1) {
+            ar.state = "swing";
+            ar.t = 0;
           }
           break;
         }
-        case "slew": {
-          cr.t += dt / CRANE.slew;
-          const k = Math.min(1, cr.t);
-          cr.theta = THREE.MathUtils.lerp(thetaPick, thetaDrop, easeInOut(k));
-          cr.swing = 0.2 * (1 - 2 * k) * Math.sign(thetaDrop - thetaPick);
-          if (cr.t >= 1) {
-            cr.state = "lower2";
-            cr.t = 0;
+        case "swing": {
+          swing(step(ARM.swing), thetaPick, thetaDrop, rPick, rDrop, hoverPick, hoverDrop);
+          if (ar.t >= 1 && ar.block) {
+            ar.state = "lower2";
+            ar.t = 0;
+            ar.from = ar.y;
+            ar.to = onTop(ar.block, BELTS[1].top);
           }
           break;
         }
         case "lower2": {
-          cr.t += dt / CRANE.lower2;
-          cr.swing *= Math.exp(-dt * 8);
-          cr.hookY = THREE.MathUtils.lerp(HOOK_UP, dropY, easeInOut(Math.min(1, cr.t)));
-          if (cr.t >= 1 && cr.block) {
-            cr.block.phase = "track";
-            cr.block.belt = 1;
-            cr.block.x = DROP_X;
-            cr.block = null;
+          ar.y = THREE.MathUtils.lerp(ar.from, ar.to, step(ARM.lower2));
+          if (ar.t >= 1 && ar.block) {
+            ar.block.phase = "track";
+            ar.block.belt = 1;
+            ar.block.x = DROP_X;
+            ar.block = null;
             pulse(DROP_X, BELTS[1].top, 0);
-            cr.state = "lift2";
-            cr.t = 0;
+            ar.state = "lift2";
+            ar.t = 0;
+            ar.from = ar.y;
           }
           break;
         }
         case "lift2": {
-          cr.t += dt / CRANE.lift2;
-          cr.hookY = THREE.MathUtils.lerp(dropY, HOOK_UP, easeInOut(Math.min(1, cr.t)));
-          if (cr.t >= 1) {
-            cr.state = "back";
-            cr.t = 0;
+          ar.y = THREE.MathUtils.lerp(ar.from, hoverDrop, step(ARM.lift2));
+          if (ar.t >= 1) {
+            ar.state = "back";
+            ar.t = 0;
           }
           break;
         }
         case "back": {
-          cr.t += dt / CRANE.back;
-          cr.theta = THREE.MathUtils.lerp(thetaDrop, thetaPick, easeInOut(Math.min(1, cr.t)));
-          cr.swing = 0;
-          if (cr.t >= 1) {
-            cr.state = "idle";
-            cr.t = 0;
+          swing(step(ARM.back), thetaDrop, thetaPick, rDrop, rPick, hoverDrop, hoverPick);
+          if (ar.t >= 1) {
+            ar.state = "idle";
+            ar.t = 0;
           }
           break;
         }
@@ -1609,7 +1609,6 @@ export function initAutomation(container: HTMLElement): () => void {
   const straight = new THREE.Quaternion();
   const tilted = new THREE.Quaternion();
   const euler = new THREE.Euler();
-  const hookWorld = () => tmpPos.set(CRANE_X + R * Math.cos(crane.theta), crane.hookY, CRANE_Z - R * Math.sin(crane.theta));
   const draw = () => {
     for (let i = 0; i < N; i++) {
       const c = pool[i];
@@ -1636,10 +1635,10 @@ export function initAutomation(container: HTMLElement): () => void {
           dummy.quaternion.copy(tmpQuat);
           dummy.scale.setScalar(s);
         } else if (c.phase === "carried") {
-          hookWorld();
-          dummy.position.set(tmpPos.x, tmpPos.y - (CUBE * s) / 2, tmpPos.z);
-          euler.set(crane.swing, crane.theta, 0, "YXZ");
-          dummy.quaternion.setFromEuler(euler).multiply(tmpQuat);
+          // hangs from the cups, square to the belts as it was on them
+          armWrist(tmpPos);
+          dummy.position.set(tmpPos.x, tmpPos.y - ARM_REACH - (CUBE * s) / 2, tmpPos.z);
+          dummy.quaternion.copy(tmpQuat);
           dummy.scale.setScalar(s);
         } else if (c.phase === "jump") {
           const k = easeOut(c.t);
@@ -1788,15 +1787,10 @@ export function initAutomation(container: HTMLElement): () => void {
     }
     // the rollers turn with the belts
     for (const r of rollers) r.rotation.y = -clock * (SPEED / 0.13);
-    // the crane: the jib turns, the cable pays out, the gripper swings
-    slew.rotation.y = crane.theta;
-    const hookLocal = crane.hookY - MAST_TOP;
-    const top = JIB_Y - 0.18;
-    cable.position.set(R, (top + hookLocal) / 2, 0);
-    cable.scale.y = Math.max(0.01, top - hookLocal);
-    gripper.position.set(R, hookLocal, 0);
-    gripper.rotation.x = crane.swing + (crane.state === "idle" ? Math.sin(clock * 1.4) * 0.03 : 0);
-    beaconMat.color.setStyle(Math.sin(clock * 4) > 0 ? COL_RED : "#7a2c2c");
+    // the arm: its joints solved for the wrist's place, the light under
+    // the hand on while it holds a block
+    solveArm();
+    holdMat.color.copy(arm.block && arm.block.phase === "carried" ? holdOn : holdOff);
   };
 
   // the lamps, screens, dashes, sparks and badges are unlit: keep them out
@@ -1915,13 +1909,9 @@ export function initAutomation(container: HTMLElement): () => void {
     [PODIUM.x1 + 0.1, pedestalTop + CUBE, -PODIUM.w / 2],
     [PEDESTAL.x, pedestalTop + CUBE + 1.55, 0],
     [BIN.x, FLOOR, BIN.z + BIN.w / 2 + 0.1],
-    [CRANE_X, MAST_TOP + JIB_Y + APEX + 0.3, CRANE_Z],
+    [ARM_X, hoverPick + 1.0, ARM_Z],
     ...stations.map((s) => [s.x, s.labelY + 0.5, 0]),
   ];
-  for (const th of [thetaPick, thetaDrop, (thetaPick + thetaDrop) / 2]) {
-    extremes.push([CRANE_X + JIB_LEN * Math.cos(th), MAST_TOP + JIB_Y + JIB_H, CRANE_Z - JIB_LEN * Math.sin(th)]);
-    extremes.push([CRANE_X - COUNTER_LEN * Math.cos(th), MAST_TOP + JIB_Y, CRANE_Z + COUNTER_LEN * Math.sin(th)]);
-  }
   const FRAME = { x0: -0.95, x1: 0.95, y0: -0.52, y1: 0.72 }; // in clip space
   const camRight = new THREE.Vector3();
   const camUp = new THREE.Vector3();

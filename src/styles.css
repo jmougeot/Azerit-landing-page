@@ -206,10 +206,10 @@ main {
   position: absolute;
   /* lifted so the plaza's parapet runs above the arm's foot: the sky it
      loses at the top is empty anyway */
-  top: -7vw;
+  top: -5vw;
   right: 0;
   width: 100%;
-  height: min(calc(100% + 7vw), 57vw);
+  height: min(calc(100% + 5vw), 55vw);
   object-fit: cover;
   object-position: right top;
   pointer-events: none;
@@ -1022,8 +1022,9 @@ main {
   padding-top: 44px;
   padding-bottom: 44px;
   /* the title cell reads as a tinted cell: strongest under the top hairline,
-     settling into a light teal rather than fading to white */
-  background: linear-gradient(180deg, rgba(15, 118, 110, 0.13), rgba(15, 118, 110, 0.03));
+     fading to the page's white at the bottom, where the hall picture rises
+     out of the same white */
+  background: linear-gradient(180deg, rgba(15, 118, 110, 0.13), rgba(15, 118, 110, 0) 92%);
 }
 .how-title h2 {
   /* same face as the hero h1; mono only ships 400/500/700 so cap at 700 */
@@ -1081,8 +1082,18 @@ main {
    white industrial hall, windows and a back wall at the top, a nearly white
    floor where the step cards sit; the machine's canvas is transparent over it */
 .how-band {
-  background: #f4f7f6;
+  background: var(--bg);
   overflow: hidden;
+}
+/* glued to its title above: no hairline and no rail crossings between
+   them, the picture rises out of the white instead */
+.band-head + .how-band,
+.band-head + .how-band > .container {
+  border-top: none;
+}
+.band-head + .how-band > .container::before,
+.band-head + .how-band > .container::after {
+  content: none;
 }
 .how-bg {
   position: absolute;
@@ -1092,6 +1103,33 @@ main {
   object-fit: cover;
   object-position: center 90%;
   pointer-events: none;
+  /* the top fades into the page's white on an eased curve (no visible
+     edge where the fade starts or ends): white over the title, the windows
+     coming in gradually */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.04) 6%,
+    rgba(0, 0, 0, 0.14) 12%,
+    rgba(0, 0, 0, 0.3) 18%,
+    rgba(0, 0, 0, 0.5) 24%,
+    rgba(0, 0, 0, 0.7) 30%,
+    rgba(0, 0, 0, 0.86) 36%,
+    rgba(0, 0, 0, 0.96) 42%,
+    #000 48%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.04) 6%,
+    rgba(0, 0, 0, 0.14) 12%,
+    rgba(0, 0, 0, 0.3) 18%,
+    rgba(0, 0, 0, 0.5) 24%,
+    rgba(0, 0, 0, 0.7) 30%,
+    rgba(0, 0, 0, 0.86) 36%,
+    rgba(0, 0, 0, 0.96) 42%,
+    #000 48%
+  );
 }
 .how-band > .container {
   position: relative;
