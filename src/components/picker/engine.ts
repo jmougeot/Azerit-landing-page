@@ -42,9 +42,11 @@ const COL_SCAN = "#2ec4ad";
 const SAGES = ["#e3eae6", "#c7d7cf", "#a6c0b4", "#82a596"];
 const TEALS = ["#d6f0ec", "#8fd8cc", "#2ec4ad", "#0f766e"];
 
-// the camera: a little off the front, pitched higher than the machine's
-// (37°) so the cards lying flat still read
-const CAM_DIR = new THREE.Vector3(-0.3, 0.6, 0.74).normalize();
+// the camera: a little off the front, pitched about as low as the hero
+// picture looks at its plaza (~22°), so the arm stands on that floor instead
+// of on a steeper one of its own; the cards lying flat foreshorten but the
+// chosen one is shown face on anyway
+const CAM_DIR = new THREE.Vector3(-0.3, 0.38, 0.86).normalize();
 const CAM_FOV = 40;
 const FACE_CAM = Math.atan2(CAM_DIR.x, CAM_DIR.z); // yaw of a face turned to the camera
 
@@ -103,7 +105,7 @@ export function initPicker(container: HTMLElement): () => void {
   pmrem.dispose();
   scene.add(new THREE.HemisphereLight(0xffffff, 0xcfd9e0, 1.0));
   const sun = new THREE.DirectionalLight(0xffffff, 1.15);
-  sun.position.set(-3, 14, -4);
+  sun.position.set(-2, 18, -2.5); // high: a short shadow, like the plaza's soft light
   sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048);
   sun.shadow.camera.left = -5;
@@ -137,7 +139,7 @@ export function initPicker(container: HTMLElement): () => void {
   const scanMat = keep(new THREE.MeshBasicMaterial({ color: COL_SCAN, toneMapped: false }));
 
   // ---- the floor: only the shadows, cast on the page ---------------------
-  const floor = new THREE.Mesh(keep(new THREE.PlaneGeometry(30, 30)), keep(new THREE.ShadowMaterial({ opacity: 0.18 })));
+  const floor = new THREE.Mesh(keep(new THREE.PlaneGeometry(30, 30)), keep(new THREE.ShadowMaterial({ opacity: 0.24 })));
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = -0.005;
   floor.receiveShadow = true;
