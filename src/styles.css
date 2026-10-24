@@ -197,6 +197,22 @@ main {
   position: relative;
   z-index: 1;
 }
+/* the white city (public/hero/city.jpg, square): pinned to the top of the
+   zone so the skyline is what shows behind the title and the arm; the
+   picture's own plaza is nearly white, and a mask fades the last stretch so
+   the dot grid takes over before the demo window */
+.hero-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: min(100%, 115vw);
+  object-fit: cover;
+  object-position: center top;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 92%);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent 92%);
+}
 .gh-bg {
   position: absolute;
   inset: 0;
