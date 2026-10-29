@@ -1,5 +1,6 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { LogoMark } from "./Logo";
+import { Email } from "./Email";
 
 export function TopBar() {
   // on the French blog, "blog" stays on the French front page
@@ -23,14 +24,8 @@ export function TopBar() {
           >
             about
           </NavLink>
-          <NavLink
-            to="/pricing"
-            className={({ isActive }) => `nav-link nav-secondary${isActive ? " active" : ""}`}
-          >
-            pricing
-          </NavLink>
           <Link to="/try" className="try-link">
-            try it
+            find my engineer
           </Link>
         </div>
       </div>
@@ -40,20 +35,24 @@ export function TopBar() {
 
 // `plain` is for the reading pages (/about, /blog): no rails or crossings,
 // just a hairline above the line of links.
+// The footer carries the address: a recruiting firm you can't write to is
+// one you don't trust with a hire. "for engineers" is for the developers we
+// contact, who look us up before they answer.
 export function Footer({ plain = false }: { plain?: boolean }) {
   return (
     <footer className={plain ? "footer footer-plain" : "footer band"}>
       <div className="container" style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <LogoMark size={13} /> azerit © {new Date().getFullYear()} · the proof is already on
         GitHub.
+        <Email user="jacques" domain="azerit.tech" className="footer-mail" />
         <Link to="/about" style={{ marginLeft: "auto", color: "inherit" }}>
           about
         </Link>
         <Link to="/blog/" style={{ color: "inherit" }}>
           blog
         </Link>
-        <Link to="/pricing" style={{ color: "inherit" }}>
-          pricing
+        <Link to="/engineers" style={{ color: "inherit" }}>
+          for engineers
         </Link>
         <Link to="/terms" style={{ color: "inherit" }}>
           terms

@@ -4,8 +4,11 @@ import { TopBar, Footer } from "../components/Nav";
 import { ContribBg } from "../components/ContribBg";
 import { LogoMark } from "../components/Logo";
 import { DemoLink } from "../components/DemoLink";
-import { STRIPE_CHECKOUT_URL, PRICE_EUR_MONTHLY } from "../links";
 
+// Azerit is a recruiting service: the fee comes with the hire, not before.
+// The amount depends on the role and is set on the first call, so this page
+// says how we charge, not how much. (The page stays at /pricing for the
+// links already out there; it is no longer in the nav.)
 export function Pricing() {
   usePageTitle(PAGES["/pricing"].title);
 
@@ -26,43 +29,36 @@ export function Pricing() {
 
           <div className="price-grid price-grid-single">
             <div className="price-card price-card-pro">
-              <h2>Azerit</h2>
+              <h2>Per hire</h2>
               <p className="price-sub">
-                Source engineers from what they've built, and reach them with a message
-                they'll actually answer.
+                We find the engineer, read the code, make the introduction. You pay when
+                you hire, nothing before.
               </p>
 
               <div className="price-amount">
-                <span className="amount">{PRICE_EUR_MONTHLY} €</span>
-                <span className="per">/ month</span>
+                <span className="amount amount-text">No hire, no fee</span>
               </div>
               <div className="price-included">
-                <p><strong>Up to 10</strong> open roles / month</p>
-                <p><strong>20+ candidates</strong> per role</p>
+                <p><strong>One fee</strong> per engineer hired, set on our first call from the role</p>
+                <p><strong>Nothing</strong> to start a search, no retainer, no subscription</p>
               </div>
-              <p className="price-billed">Billed monthly · cancel anytime · VAT not applicable</p>
+              <p className="price-billed">Invoiced when the engineer signs · VAT not applicable</p>
 
               <ul className="price-features">
-                <li>Candidates matched across 145M+ GitHub developers on the code they write</li>
-                <li>The engineer who fits each role, with the projects and contributions behind the match</li>
-                <li>Verified professional emails</li>
-                <li>A personalized first email for every candidate, opening on their own work</li>
-                <li>Direct support from the founders</li>
+                <li>A search across the GitHub developers who have already built what you need</li>
+                <li>Their code read: commits, pull requests and reviews, not a CV</li>
+                <li>The one who fits, with the projects behind each skill in the role</li>
+                <li>Already contacted about their work, already interested when you meet</li>
+                <li>The founders on the call, from the job description to the signature</li>
               </ul>
 
               <div className="price-cta">
-                <a
-                  href={STRIPE_CHECKOUT_URL}
-                  className="btn-try"
-                  style={{ display: "block", textAlign: "center" }}
-                >
-                  Subscribe
-                </a>
+                <Link to="/try" className="btn-try" style={{ display: "block", textAlign: "center" }}>
+                  Find my engineer
+                </Link>
                 <p className="price-nocard">
-                  Secure payment by Stripe · or <DemoLink className="demo-link">book a demo</DemoLink>
-                </p>
-                <p className="price-nocard">
-                  By subscribing, you accept our <Link to="/terms">terms of sale</Link>.
+                  Or <DemoLink className="demo-link">book 30 minutes</DemoLink> and we'll quote
+                  the fee on your role.
                 </p>
               </div>
             </div>

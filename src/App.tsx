@@ -14,6 +14,9 @@ const Pricing = lazy(() =>
   import("./pages/Pricing").then((m) => ({ default: m.Pricing }))
 );
 const About = lazy(() => import("./pages/About").then((m) => ({ default: m.About })));
+const Engineers = lazy(() =>
+  import("./pages/Engineers").then((m) => ({ default: m.Engineers }))
+);
 const Blog = lazy(() => import("./pages/Blog").then((m) => ({ default: m.Blog })));
 const BlogPost = lazy(() =>
   import("./pages/BlogPost").then((m) => ({ default: m.BlogPost }))
@@ -51,6 +54,7 @@ export function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/about" element={<About />} />
+          <Route path="/engineers" element={<Engineers />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           {/* the same blog in French, see src/blog/lang.ts */}

@@ -28,14 +28,15 @@ export function Try() {
         {done ? (
           <div className="confirm">
             <div className="check">✓ request received</div>
-            <h1>Your first search starts here.</h1>
+            <h1>We're on your role.</h1>
             <p>
-              We run searches one by one, so every role gets read properly. You'll hear from us
-              at <strong style={{ color: "var(--text)" }}>{email}</strong> within a few days with
-              the engineer we found.
+              One of us writes back to{" "}
+              <strong style={{ color: "var(--text)" }}>{email}</strong> within one business day
+              to go through the role with you. Then we search, read, reach out, and come back
+              with the engineer who fits.
             </p>
             <p style={{ fontSize: 13.5 }}>
-              Early users get their first search free. We'll run your role as the test.
+              Nothing to pay to start. The fee comes with the hire.
             </p>
             <Link to="/" className="btn-ghost" style={{ display: "inline-block", marginTop: 20 }}>
               back
@@ -43,12 +44,12 @@ export function Try() {
           </div>
         ) : (
           <div className="try-card">
-            <h1>Try Azerit on your role</h1>
+            <h1>Find my engineer</h1>
             <p className="sub">
               Tell us who you're hiring. We search GitHub for the engineers who have already
               built it, read their code, reach out, and come back with the one who fits.
             </p>
-            <p className="try-benefit">Your first search is free.</p>
+            <p className="try-benefit">No fee until you hire. We reply within one business day.</p>
             <form onSubmit={submit}>
               <div className="field">
                 <label htmlFor="email">work email</label>

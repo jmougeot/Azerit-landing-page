@@ -25,8 +25,8 @@ export function About() {
             </h1>
             <p className="lede">
               Azerit recruits the engineers who have already built what you're hiring for. We find
-              them on GitHub, read their code and open the conversation on their work. Every step
-              in between is automated.
+              them on GitHub, read their code and open the conversation on their work. We automate
+              the search, and we do the judgement.
             </p>
           </div>
           <div className="about-hero-visual">
@@ -57,13 +57,15 @@ export function About() {
           </div>
           <div className="beat">
             <span className="tag eyebrow">method</span>
-            <h2>Automated end to end</h2>
+            <h2>We automate the search. The judgement is ours.</h2>
             <p>
-              Everything at Azerit that can be automated is, with AI on the repetitive work:
-              sourcing, enrichment, scoring, outreach, and most of how we run the company. Two
-              people deliver what used to take a team, and the difference goes to you: the
-              right engineer in days, not weeks, already interested when you meet them, and the
-              founders on the line when you need them.
+              Everything repetitive at Azerit is automated, with AI on the heavy lifting:
+              finding the repositories, reading them at scale, enrichment, the first draft of a
+              message. What isn't automated is the part you pay for: deciding that this engineer
+              fits your role, writing to them about their own work, and being on the call with
+              you from the job description to the signature. Two people deliver what used to take
+              a team, and the difference goes to you: the right engineer in days, not weeks,
+              already interested when you meet them.
             </p>
           </div>
         </section>

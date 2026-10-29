@@ -12,7 +12,7 @@ export const HOME_TITLE = "Azerit · Recruit Engineers from GitHub with AI";
 export const PAGES = {
   "/try": {
     title: "Try Azerit on Your Role · Recruit Engineers from GitHub",
-    desc: "Tell us the role you're hiring for. We search GitHub for the engineer who has already built it, read their code, reach out, and send you the one who fits. Your first search is free.",
+    desc: "Tell us the role you're hiring for. We search GitHub for the engineer who has already built it, read their code, reach out, and send you the one who fits. No fee until you hire.",
   },
   "/legal": {
     title: "Legal Notice & Privacy Policy · Azerit",
@@ -20,15 +20,19 @@ export const PAGES = {
   },
   "/terms": {
     title: "Terms of Sale · Azerit",
-    desc: "Terms of sale for Azerit subscriptions: what the service includes, price and payment, term and cancellation, liability and use of candidate data.",
+    desc: "Terms of sale for Azerit: what the service includes, price and payment, term and cancellation, liability and use of candidate data.",
   },
   "/pricing": {
-    title: "Pricing · Azerit · 300 € / month",
-    desc: "Azerit costs 300 € a month: up to 10 open roles, 20+ GitHub candidates per role with skills proven by their code, verified emails and a personalized first email for each one.",
+    title: "Pricing · Azerit · A Fee per Hire, Nothing Before",
+    desc: "Azerit charges one fee per engineer hired, set on the first call from the role. No retainer, no subscription, nothing to start a search: no hire, no fee.",
+  },
+  "/engineers": {
+    title: "Got a Message from Azerit? · For Engineers",
+    desc: "Why Azerit wrote to you about your code, what we looked at on GitHub, what happens if you answer, and how to never hear from us again.",
   },
   "/about": {
     title: "About · Azerit",
-    desc: "Better engineers, faster, proven by their code. Azerit is two engineers from Centrale who read GitHub instead of CVs and automate everything they can.",
+    desc: "Better engineers, faster, proven by their code. Azerit is two engineers from Centrale who read GitHub instead of CVs: the search is automated, the judgement is theirs.",
   },
 } as const;
 

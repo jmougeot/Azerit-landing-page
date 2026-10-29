@@ -1,4 +1,3 @@
-import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { TopBar, Footer } from "../components/Nav";
 import { HeroPicker } from "../components/HeroPicker";
@@ -8,13 +7,6 @@ import { AutomationScene } from "../components/AutomationScene";
 import { CtaCommits } from "../components/CtaCommits";
 import { Seam } from "../components/Seam";
 import { Founders } from "../components/Founders";
-
-// The Remotion player + demo scenes are the heaviest dependency and sit below
-// the fold. lazy() defers the download until the component renders, so we also
-// gate rendering on scroll visibility — otherwise the chunk loads immediately.
-const DemoPlayer = lazy(() =>
-  import("../components/DemoPlayer").then((m) => ({ default: m.DemoPlayer }))
-);
 
 // One imaginary search traced through the page: a senior real-time-systems
 // role. The first card is Léa as we read her, CV and code; the second ties
@@ -77,27 +69,6 @@ const CLIENTS = [
 ];
 
 export function Landing() {
-  const videoWrapRef = useRef<HTMLDivElement>(null);
-  const [showPlayer, setShowPlayer] = useState(false);
-
-  // Mount (and therefore download) the demo player only as it nears the
-  // viewport. rootMargin gives the chunk a head start so it's ready to play.
-  useEffect(() => {
-    const el = videoWrapRef.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShowPlayer(true);
-          obs.disconnect();
-        }
-      },
-      { rootMargin: "400px" }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
   return (
     <>
       <TopBar />
@@ -156,57 +127,11 @@ export function Landing() {
             </div>
           </header>
 
-          {/* demo video — the real app in a browser window, tight under the
-              hero copy, lifted off the dot grid by its shadow */}
-          <div className="video-wrap" id="demo" ref={videoWrapRef}>
-            <div className="video-window">
-              <div className="video-chrome" aria-hidden="true">
-                <span className="video-chrome-dots">
-                  <i />
-                  <i />
-                  <i />
-                </span>
-                <span className="video-chrome-url">
-                  <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                    <path d="M4 7V5a4 4 0 1 1 8 0v2h.5A1.5 1.5 0 0 1 14 8.5v5A1.5 1.5 0 0 1 12.5 15h-9A1.5 1.5 0 0 1 2 13.5v-5A1.5 1.5 0 0 1 3.5 7H4Zm1.5 0h5V5a2.5 2.5 0 0 0-5 0v2Z" />
-                  </svg>
-                  app.azerit.tech
-                </span>
-              </div>
-              {showPlayer ? (
-                <Suspense fallback={<div className="app-frame demo-placeholder" />}>
-                  <DemoPlayer />
-                </Suspense>
-              ) : (
-                <div className="app-frame demo-placeholder" />
-              )}
-            </div>
-          </div>
         </DotGridBand>
       </div>
 
-      {/* the rule grid starts here: a hatched chapter break closes the hero,
-          and from this line down the rails run unbroken to the footer */}
-      <Seam hatch open />
-
-      {/* the database: GitHub itself */}
-      <section className="band">
-        <div className="container stats">
-          <div className="stat">
-            <div className="stat-num">145M+</div>
-            <div className="stat-label">developers on GitHub</div>
-          </div>
-          <div className="stat">
-            <div className="stat-num">400M+</div>
-            <div className="stat-label">public repositories read</div>
-          </div>
-          <div className="stat">
-            <div className="stat-num">200K+</div>
-            <div className="stat-label">commits &amp; repos analyzed daily</div>
-          </div>
-        </div>
-      </section>
-
+      {/* the rule grid starts here: from the first panel down the rails run
+          unbroken to the footer */}
       <Seam />
 
       {/* feature: the CV, then the code behind it */}
@@ -319,8 +244,6 @@ export function Landing() {
         </div>
       </section>
 
-      <Seam hatch />
-
       {/* how it works: a hire, from the code up */}
       <section className="band band-head">
         <div className="container how-title">
@@ -334,21 +257,24 @@ export function Landing() {
         </div>
       </section>
       <section className="band how-band">
-        {/* the hall the machine stands in: a lazy image behind the band, so
-            it only downloads as the section nears the viewport */}
-        <img
-          className="how-bg"
-          src="/how/hall.jpg"
-          srcSet="/how/hall-small.jpg 1010w, /how/hall.jpg 1627w"
-          sizes="100vw"
-          width={1627}
-          height={967}
-          alt=""
-          loading="lazy"
-          decoding="async"
-          aria-hidden
-        />
         <div className="container how">
+            {/* the hall the machine stands in: a lazy image behind the panel,
+                inside the rails so it reads as the panel's floor and wall, not
+                as smudges on the dot grid around it */}
+          <div className="how-bg-wrap" aria-hidden>
+            <img
+              className="how-bg"
+              src="/how/hall.jpg"
+              srcSet="/how/hall-small.jpg 1010w, /how/hall.jpg 1627w"
+              sizes="100vw"
+              width={1627}
+              height={967}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              aria-hidden
+            />
+          </div>
           {/* the search as a machine, downhill: rough blocks come out of GitHub
               repositories, four stations find, read, match and contact them,
               the one that fits is shown on the pedestal at the end
@@ -370,8 +296,6 @@ export function Landing() {
         </div>
       </section>
 
-      <Seam hatch />
-
       {/* book a demo — vamo-style: a live run on a real search, zero friction */}
       <section className="band">
         <div className="container demo-band">
@@ -381,8 +305,6 @@ export function Landing() {
           <DemoLink className="btn-try">book a demo</DemoLink>
         </div>
       </section>
-
-      <Seam hatch />
 
       {/* team — framed like every other panel so the rails stay unbroken */}
       <section className="band">

@@ -13,7 +13,6 @@ import {
   POSTS,
   COMPANY_LINKEDIN,
   FOUNDERS,
-  PRICE_EUR_MONTHLY,
   BLOG_META,
   HOME_TITLE,
   PAGES,
@@ -41,6 +40,7 @@ const SOURCES = {
   "/try": ["src/pages/Try.tsx"],
   "/pricing": ["src/pages/Pricing.tsx"],
   "/about": ["src/pages/About.tsx", "src/components/Founders.tsx"],
+  "/engineers": ["src/pages/Engineers.tsx"],
   "/legal": ["src/pages/Legal.tsx"],
   "/terms": ["src/pages/Terms.tsx"],
 };
@@ -137,11 +137,12 @@ const SITE_GRAPH = [
     operatingSystem: "Web",
     description:
       "Azerit analyzes GitHub to find the developers who have already built what you are hiring for, scores them on their public code, contacts them about their work, and sends you the one who fits.",
+    // a fee per hire, set on the first call: no fixed price to publish
     offers: {
       "@type": "Offer",
-      price: String(PRICE_EUR_MONTHLY),
       priceCurrency: "EUR",
       url: `${SITE_URL}/pricing`,
+      description: "One fee per engineer hired, quoted on the role. No hire, no fee.",
     },
     publisher: { "@id": ORG_ID },
   },
@@ -319,7 +320,7 @@ console.log(`Sitemap with ${urls.length} URLs in dist/sitemap.xml`);
 const llmsPage = (path, title, desc) => `- [${title}](${SITE_URL}${path}): ${desc}`;
 const llms = `# Azerit
 
-> Azerit is a recruiting service for software engineers. Tell it the role you're hiring for; it searches GitHub for the developers who have already built what you need, reads their code (commits, pull requests, reviews), contacts them about their own work, and sends you the one who fits and wants to talk, with skills proven by their work. Built by two engineers from Centrale, Paris. 300 € a month, up to 10 open roles, first search free.
+> Azerit is a recruiting service for software engineers. Tell it the role you're hiring for; it searches GitHub for the developers who have already built what you need, reads their code (commits, pull requests, reviews), contacts them about their own work, and sends you the one who fits and wants to talk, with skills proven by their work. Built by two engineers from Centrale, Paris. One fee per engineer hired, quoted on the role: no hire, no fee, nothing to start a search.
 
 Azerit does not rank CVs or keywords: it starts from public code. Every match comes with the projects and contributions behind it. Azerit does the outreach itself: candidates are contacted through the professional email they publish, with one personal message about their own work, which is why reply rates are around 30% instead of the 1 to 3% of LinkedIn InMails. The client meets the engineer who answered.
 
